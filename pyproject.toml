@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "CNV"
+version = "0.1.0"
+description = ""
+authors = ["Rafael Junior Fenker Debastiani <rjdebastiani@hotmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.black]
+line-length = 88
+target-version = ['py313']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.2.8"
+psycopg = {extras = ["binary"], version = "^3.2.13"}
+python-decouple = "^3.8"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.11.0"
+isort = "<6.0.0"
+pre-commit = "^4.4.0"
+pytest = "^9.0.1"
+pytest-django = "^4.11.1"
+model-bakery = "^1.20.5"
+flake8 = "^7.3.0"
+mypy = "^1.19.0"
+pylint = "<4.0.0"
+autoflake8 = "^0.4.1"
+pylint-django = "^2.6.1"
+djangorestframework-stubs = "^3.16.6"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "core.settings"
+python_files = ["test_*.py", "*_test.py"]
+addopts = "--reuse-db"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
