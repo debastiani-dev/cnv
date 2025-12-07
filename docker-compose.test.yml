@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=test_secret_key
+      - DB_NAME=cnv
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=cnv
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
