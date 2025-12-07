@@ -29,8 +29,13 @@
                             <li>
                                 <ul role="list" class="-mx-2 space-y-1">
                                     <li>
-                                        <a href="{% url 'dashboard:home' %}" class="bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
-                                            Home
+                                        <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'dashboard:cattle-list' %}" class="{% if 'cattle' in request.resolver_match.url_name %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                            Cattle
                                         </a>
                                     </li>
                                     <!-- Add Cattle/Sales links here later -->
@@ -54,11 +59,15 @@
                     <li>
                         <ul role="list" class="-mx-2 space-y-1">
                             <li>
-                                <a href="{% url 'dashboard:home' %}" class="bg-gray-800 text-white group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
                                     Home
                                 </a>
                             </li>
-                            <!-- Add Cattle/Sales links here later -->
+                            <li>
+                                <a href="{% url 'dashboard:cattle-list' %}" class="{% if 'cattle' in request.resolver_match.url_name %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                    Cattle
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
@@ -107,6 +116,30 @@
 
         <main class="py-10">
             <div class="px-4 sm:px-6 lg:px-8">
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="rounded-md p-4 mb-2 {% if message.tags == 'error' %}bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/10{% elif message.tags == 'success' %}bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/10{% else %}bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10{% endif %}">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                {% if message.tags == 'error' %}
+                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                                </svg>
+                                {% elif message.tags == 'success' %}
+                                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                                </svg>
+                                {% endif %}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium">{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
                 {% block content %}{% endblock %}
             </div>
         </main>
