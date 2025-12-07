@@ -48,7 +48,7 @@ deps-check:
 .PHONY: dev/up
 dev/up: deps-check
 	@echo "${GREEN}Starting development environment${RESET}"
-	teller run -- docker compose --env-file .env up
+	docker compose --env-file .env up
 
 ## Stops and removes running containers
 .PHONY: dev/down
@@ -172,3 +172,27 @@ css-watch:
 css-build:
 	@echo "${GREEN}Building CSS${RESET}"
 	docker compose exec web npm run build
+
+## Starts development environment (detached)
+.PHONY: dev/up-d
+dev/up-d: deps-check
+	@echo "${GREEN}Starting development environment (detached)${RESET}"
+	docker compose --env-file .env up -d
+
+## Creates a superuser (admin/admin)
+.PHONY: dev/create-admin
+dev/create-admin:
+	@echo "${GREEN}Creating superuser 'admin'${RESET}"
+	docker compose exec -e DJANGO_SUPERUSER_PASSWORD=admin web python manage.py createsuperuser --noinput --username admin --email admin@example.com || true
+
+## Generates translation files
+.PHONY: i18n/makemessages
+i18n/makemessages:
+	@echo "${GREEN}Generating translation files${RESET}"
+	docker compose exec web python manage.py makemessages -l pt_BR --ignore=venv --ignore=.gemini
+
+## Compiles translation files
+.PHONY: i18n/compilemessages
+i18n/compilemessages:
+	@echo "${GREEN}Compiling translation files${RESET}"
+	docker compose exec web python manage.py compilemessages --ignore=venv --ignore=.gemini

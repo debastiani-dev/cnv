@@ -1,9 +1,10 @@
 {% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
 
 {% block content %}
 <div class="md:flex md:items-center md:justify-between">
     <div class="min-w-0 flex-1">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Dashboard</h2>
+        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">{% trans "Dashboard" %}</h2>
     </div>
 </div>
 
@@ -11,9 +12,9 @@
     <!-- Card -->
     <div class="overflow-hidden rounded-lg bg-white shadow">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-base font-semibold leading-6 text-gray-900">Welcome back, {{ user.first_name|default:user.username }}!</h3>
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% blocktrans with name=user.first_name|default:user.username %}Welcome back, {{ name }}!{% endblocktrans %}</h3>
             <div class="mt-2 text-sm text-gray-500">
-                <p>You are logged in to the management system.</p>
+                <p>{% trans "You are logged in to the management system." %}</p>
             </div>
         </div>
     </div>

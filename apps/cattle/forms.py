@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.translation import gettext as _
 from apps.cattle.models import Cattle
 
 class CattleForm(forms.ModelForm):
@@ -18,6 +19,8 @@ class CattleForm(forms.ModelForm):
             qs = qs.exclude(pk=self.instance.pk)
             
         if qs.exists():
-            raise forms.ValidationError(f"Cattle with tag '{tag}' already exists.")
+            raise forms.ValidationError(
+                _("Cattle with tag '%(tag)s' already exists.") % {"tag": tag}
+            )
             
         return tag

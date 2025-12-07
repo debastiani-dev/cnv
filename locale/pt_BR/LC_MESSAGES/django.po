@@ -1,0 +1,447 @@
+# Portuguese (Brazil) translations for Cabanha Nelore do Vale.
+# Copyright (C) 2025 debastiani.dev
+# This file is distributed under the same license as the Cabanha Nelore do Vale project.
+# Rafael Junior Fenker Debastiani <rjdebastiani@hotmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Cabanha Nelore do Vale 1.0\n"
+"Report-Msgid-Bugs-To: rjdebastiani@hotmail.com\n"
+"POT-Creation-Date: 2025-12-07 22:00+0000\n"
+"PO-Revision-Date: 2025-12-07 22:32+0000\n"
+"Last-Translator:   <admin@example.com>\n"
+"Language-Team: Portuguese (Brazil) <pt_BR@li.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Translated-Using: django-rosetta 0.10.3\n"
+
+#: apps/authentication/apps.py:9
+msgid "Authentication"
+msgstr "Autenticação"
+
+#: apps/authentication/models/user.py:52
+msgid "username"
+msgstr "usuário"
+
+#: apps/authentication/models/user.py:56
+msgid "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
+msgstr ""
+"Obrigatório. 150 caracteres ou menos. Apenas letras, dígitos e @/./+/-/_."
+
+#: apps/authentication/models/user.py:60
+msgid "A user with that username already exists."
+msgstr "Já existe um usuário com este nome."
+
+#: apps/authentication/models/user.py:63
+msgid "email address"
+msgstr "endereço de email"
+
+#: apps/authentication/models/user.py:64
+msgid "first name"
+msgstr "primeiro nome"
+
+#: apps/authentication/models/user.py:65
+msgid "last name"
+msgstr "sobrenome"
+
+#: apps/authentication/models/user.py:68
+msgid "staff status"
+msgstr "status de equipe"
+
+#: apps/authentication/models/user.py:70
+msgid "Designates whether the user can log into this admin site."
+msgstr "Designa se o usuário pode fazer login neste site de administração."
+
+#: apps/authentication/models/user.py:80
+msgid "active"
+msgstr "ativo"
+
+#: apps/authentication/models/user.py:83
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+"Designa se este usuário deve ser tratado como ativo. Desmarque isso em vez "
+"de excluir contas."
+
+#: apps/authentication/models/user.py:88
+msgid "date joined"
+msgstr "data de cadastro"
+
+#: apps/authentication/models/user.py:97
+msgid "user"
+msgstr "usuário"
+
+#: apps/authentication/models/user.py:98
+msgid "users"
+msgstr "usuários"
+
+#: apps/authentication/templates/authentication/login.html:7
+msgid "Sign in to your account"
+msgstr "Faça login em sua conta"
+
+#: apps/authentication/templates/authentication/login.html:18
+msgid "There were errors with your submission"
+msgstr "Houve erros no seu envio"
+
+#: apps/authentication/templates/authentication/login.html:37
+msgid "Username"
+msgstr "Usuário"
+
+#: apps/authentication/templates/authentication/login.html:44
+msgid "Password"
+msgstr "Senha"
+
+#: apps/authentication/templates/authentication/login.html:51
+msgid "Sign in"
+msgstr "Entrar"
+
+#: apps/authentication/views/login.py:11
+msgid "Login"
+msgstr "Login"
+
+#: apps/base/apps.py:9
+msgid "Base"
+msgstr "Base"
+
+#: apps/base/models/base_model.py:61 apps/base/models/base_model.py:73
+msgid "Created at"
+msgstr "Criado em"
+
+#: apps/base/models/base_model.py:62 apps/base/models/base_model.py:74
+msgid "Modified at"
+msgstr "Modificado em"
+
+#: apps/base/models/base_model.py:79
+msgid "uuid"
+msgstr "uuid"
+
+#: apps/base/templates/layouts/base_dashboard.html:15
+msgid "Close sidebar"
+msgstr "Fechar barra lateral"
+
+#: apps/base/templates/layouts/base_dashboard.html:33 apps/dashboard/apps.py:9
+#: apps/dashboard/templates/dashboard/home.html:7
+msgid "Dashboard"
+msgstr "Painel"
+
+#: apps/base/templates/layouts/base_dashboard.html:38
+#: apps/base/templates/layouts/base_dashboard.html:68
+#: apps/cattle/models/cattle.py:39 apps/cattle/models/cattle.py:40
+#: apps/cattle/models/sale.py:36
+#: apps/cattle/templates/cattle/cattle_list.html:10
+msgid "Cattle"
+msgstr "Gado"
+
+#: apps/base/templates/layouts/base_dashboard.html:63
+msgid "Home"
+msgstr "Início"
+
+#: apps/base/templates/layouts/base_dashboard.html:81
+msgid "Open sidebar"
+msgstr "Abrir barra lateral"
+
+#: apps/base/templates/layouts/base_dashboard.html:97
+msgid "Open user menu"
+msgstr "Abrir menu de usuário"
+
+#: apps/base/templates/layouts/base_dashboard.html:109
+msgid "Sign out"
+msgstr "Sair"
+
+#: apps/cattle/forms.py:23
+#, python-format
+msgid "Cattle with tag '%(tag)s' already exists."
+msgstr "Gado com a marca/brinco '%(tag)s' já existe."
+
+#: apps/cattle/models/cattle.py:9
+#: apps/cattle/templates/cattle/cattle_list.html:32
+#: apps/cattle/templates/cattle/cattle_trash_list.html:23
+msgid "Tag"
+msgstr "Marca/Brinco"
+
+#: apps/cattle/models/cattle.py:9
+msgid "Ear tag or ID"
+msgstr "Brinco ou ID"
+
+#: apps/cattle/models/cattle.py:11
+#: apps/cattle/templates/cattle/cattle_list.html:33
+#: apps/cattle/templates/cattle/cattle_trash_list.html:24
+msgid "Name"
+msgstr "Nome"
+
+#: apps/cattle/models/cattle.py:11
+msgid "Name/Nickname of the animal"
+msgstr "Nome/Apelido do animal"
+
+#: apps/cattle/models/cattle.py:12
+#: apps/cattle/templates/cattle/cattle_list.html:34
+#: apps/cattle/templates/cattle/cattle_trash_list.html:25
+msgid "Breed"
+msgstr "Raça"
+
+#: apps/cattle/models/cattle.py:13
+msgid "Birth Date"
+msgstr "Data de Nascimento"
+
+#: apps/cattle/models/cattle.py:15
+msgid "Weight (kg)"
+msgstr "Peso (kg)"
+
+#: apps/cattle/models/cattle.py:27
+msgid "Available"
+msgstr "Disponível"
+
+#: apps/cattle/models/cattle.py:28
+msgid "Sold"
+msgstr "Vendido"
+
+#: apps/cattle/models/cattle.py:29
+msgid "Dead"
+msgstr "Morto"
+
+#: apps/cattle/models/cattle.py:32
+#: apps/cattle/templates/cattle/cattle_list.html:35
+msgid "Status"
+msgstr "Status"
+
+#: apps/cattle/models/sale.py:10
+msgid "Sale Date"
+msgstr "Data da Venda"
+
+#: apps/cattle/models/sale.py:11
+msgid "Buyer"
+msgstr "Comprador"
+
+#: apps/cattle/models/sale.py:13
+msgid "Total Price"
+msgstr "Preço Total"
+
+#: apps/cattle/models/sale.py:15
+msgid "Notes"
+msgstr "Notas"
+
+#: apps/cattle/models/sale.py:18 apps/cattle/models/sale.py:30
+msgid "Sale"
+msgstr "Venda"
+
+#: apps/cattle/models/sale.py:19
+msgid "Sales"
+msgstr "Vendas"
+
+#: apps/cattle/models/sale.py:38
+msgid "Price"
+msgstr "Preço"
+
+#: apps/cattle/models/sale.py:41
+msgid "Sale Item"
+msgstr "Item da Venda"
+
+#: apps/cattle/models/sale.py:42
+msgid "Sale Items"
+msgstr "Itens da Venda"
+
+#: apps/cattle/templates/cattle/cattle_confirm_delete.html:4
+#: apps/cattle/templates/cattle/cattle_confirm_delete.html:9
+msgid "Delete Cattle"
+msgstr "Excluir Gado"
+
+#: apps/cattle/templates/cattle/cattle_confirm_delete.html:11
+#, python-format
+msgid ""
+"Are you sure you want to delete cattle <strong>%(tag)s</strong>? It will be "
+"moved to the Trash Bin."
+msgstr ""
+"Tem certeza de que deseja excluir o gado <strong>%(tag)s</strong>? Ele será "
+"movido para a Lixeira."
+
+#: apps/cattle/templates/cattle/cattle_confirm_delete.html:19
+#: apps/cattle/templates/cattle/cattle_confirm_permanent_delete.html:19
+#: apps/cattle/templates/cattle/cattle_confirm_restore.html:18
+#: apps/cattle/templates/cattle/cattle_form.html:48
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: apps/cattle/templates/cattle/cattle_confirm_delete.html:20
+msgid "Confirm Delete"
+msgstr "Confirmar Exclusão"
+
+#: apps/cattle/templates/cattle/cattle_confirm_permanent_delete.html:4
+#: apps/cattle/templates/cattle/cattle_confirm_permanent_delete.html:10
+msgid "Permanently Delete Cattle"
+msgstr "Excluir Permanentemente"
+
+#: apps/cattle/templates/cattle/cattle_confirm_permanent_delete.html:12
+#, python-format
+msgid ""
+"Are you sure you want to <strong>permanently delete</strong> the cattle "
+"<strong>%(tag)s</strong> (%(name)s)?"
+msgstr ""
+"Tem certeza de que deseja <strong>excluir permanentemente</strong> o gado "
+"<strong>%(tag)s</strong> (%(name)s)?"
+
+#: apps/cattle/templates/cattle/cattle_confirm_permanent_delete.html:13
+msgid "This action CANNOT be undone."
+msgstr "Esta ação NÃO pode ser desfeita."
+
+#: apps/cattle/templates/cattle/cattle_confirm_permanent_delete.html:18
+#: apps/cattle/templates/cattle/cattle_trash_list.html:43
+msgid "Delete Forever"
+msgstr "Excluir Para Sempre"
+
+#: apps/cattle/templates/cattle/cattle_confirm_restore.html:4
+#: apps/cattle/templates/cattle/cattle_confirm_restore.html:10
+msgid "Restore Cattle"
+msgstr "Restaurar Gado"
+
+#: apps/cattle/templates/cattle/cattle_confirm_restore.html:12
+#, python-format
+msgid ""
+"Are you sure you want to restore the cattle <strong>%(tag)s</strong> "
+"(%(name)s)?"
+msgstr ""
+"Tem certeza de que deseja restaurar o gado <strong>%(tag)s</strong> "
+"(%(name)s)?"
+
+#: apps/cattle/templates/cattle/cattle_confirm_restore.html:17
+msgid "Confirm Restore"
+msgstr "Confirmar Restauração"
+
+#: apps/cattle/templates/cattle/cattle_form.html:4
+#: apps/cattle/templates/cattle/cattle_form.html:10
+msgid "Edit Cattle"
+msgstr "Editar Gado"
+
+#: apps/cattle/templates/cattle/cattle_form.html:4
+#: apps/cattle/templates/cattle/cattle_list.html:23
+msgid "Add Cattle"
+msgstr "Adicionar Gado"
+
+#: apps/cattle/templates/cattle/cattle_form.html:10
+msgid "Add New Cattle"
+msgstr "Adicionar Novo Gado"
+
+#: apps/cattle/templates/cattle/cattle_form.html:22
+msgid "Please correct the errors below"
+msgstr "Por favor, corrija os erros abaixo"
+
+#: apps/cattle/templates/cattle/cattle_form.html:49
+msgid "Save"
+msgstr "Salvar"
+
+#: apps/cattle/templates/cattle/cattle_list.html:4
+msgid "Cattle Management"
+msgstr "Gerenciamento de Gado"
+
+#: apps/cattle/templates/cattle/cattle_list.html:11
+msgid ""
+"A list of all cattle in your herd including their tag, name, breed, and "
+"status."
+msgstr ""
+"Uma lista de todo o gado do seu rebanho, incluindo marca/brinco, nome, raça "
+"e status."
+
+#: apps/cattle/templates/cattle/cattle_list.html:20
+msgid "Search cattle..."
+msgstr "Pesquisar gado..."
+
+#: apps/cattle/templates/cattle/cattle_list.html:22
+msgid "Trash Bin"
+msgstr "Lixeira"
+
+#: apps/cattle/templates/cattle/cattle_list.html:37
+#: apps/cattle/templates/cattle/cattle_trash_list.html:28
+msgid "Actions"
+msgstr "Ações"
+
+#: apps/cattle/templates/cattle/cattle_list.html:51
+msgid "Edit"
+msgstr "Editar"
+
+#: apps/cattle/templates/cattle/cattle_list.html:52
+msgid "Delete"
+msgstr "Excluir"
+
+#: apps/cattle/templates/cattle/cattle_trash_list.html:4
+#: apps/cattle/templates/cattle/cattle_trash_list.html:10
+msgid "Cattle Trash Bin"
+msgstr "Lixeira de Gado"
+
+#: apps/cattle/templates/cattle/cattle_trash_list.html:11
+msgid "A list of all deleted cattle."
+msgstr "Uma lista de todo o gado excluído."
+
+#: apps/cattle/templates/cattle/cattle_trash_list.html:14
+msgid "Back to List"
+msgstr "Voltar para a Lista"
+
+#: apps/cattle/templates/cattle/cattle_trash_list.html:26
+msgid "Deleted Date"
+msgstr "Data de Exclusão"
+
+#: apps/cattle/templates/cattle/cattle_trash_list.html:42
+msgid "Restore"
+msgstr "Restaurar"
+
+#: apps/cattle/templates/cattle/cattle_trash_list.html:48
+msgid "Trash is empty."
+msgstr "A lixeira está vazia."
+
+#: apps/cattle/views.py:70
+msgid "Cattle restored successfully."
+msgstr "Gado restaurado com sucesso."
+
+#: apps/cattle/views.py:74 apps/cattle/views.py:83 apps/cattle/views.py:92
+#: apps/cattle/views.py:101
+msgid "Cattle not found."
+msgstr "Gado não encontrado."
+
+#: apps/cattle/views.py:90
+msgid "Cattle permanently deleted."
+msgstr "Gado excluído permanentemente."
+
+#: apps/dashboard/templates/dashboard/home.html:15
+#, python-format
+msgid "Welcome back, %(name)s!"
+msgstr "Bem-vindo de volta, %(name)s!"
+
+#: apps/dashboard/templates/dashboard/home.html:17
+msgid "You are logged in to the management system."
+msgstr "Você está logado no sistema de gerenciamento."
+
+#: apps/website/apps.py:9
+msgid "Website"
+msgstr "Website"
+
+#: apps/website/templates/website/home.html:8
+msgid "Cabanha Nelore do Vale"
+msgstr "Cabanha Nelore do Vale"
+
+#: apps/website/templates/website/home.html:10
+msgid "Premium management system for premium cattle."
+msgstr "Sistema de gerenciamento premium para gado premium."
+
+#: apps/website/templates/website/home.html:11
+msgid "Experience the difference in genetic quality and performance tracking."
+msgstr ""
+"Experimente a diferença na qualidade genética e no acompanhamento de "
+"desempenho."
+
+#: apps/website/templates/website/home.html:14
+msgid "Access System"
+msgstr "Acessar Sistema"
+
+#: apps/website/templates/website/home.html:15
+msgid "Learn more"
+msgstr "Saiba mais"
+
+#: core/settings.py:134
+msgid "English"
+msgstr "Inglês"
+
+#: core/settings.py:135
+msgid "Portuguese (Brazil)"
+msgstr "Português (Brasil)"
