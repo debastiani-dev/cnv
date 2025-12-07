@@ -3,9 +3,21 @@ from apps.cattle.models import Cattle
 
 class CattleService:
     @staticmethod
-    def get_all_cattle() -> QuerySet[Cattle]:
-        """Returns all cattle records ordered by tag."""
-        return Cattle.objects.all().order_by("tag")
+    def get_all_cattle(search_query: str = None) -> QuerySet[Cattle]:
+        """
+        Returns all cattle records ordered by tag.
+        Optionally filters by tag or name if search_query is provided.
+        """
+        queryset = Cattle.objects.all().order_by("tag")
+        
+        if search_query:
+            from django.db.models import Q
+            queryset = queryset.filter(
+                Q(tag__icontains=search_query) | 
+                Q(name__icontains=search_query)
+            )
+            
+        return queryset
 
     @staticmethod
     def create_cattle(data: dict) -> Cattle:

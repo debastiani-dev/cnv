@@ -16,7 +16,13 @@ class CattleListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return CattleService.get_all_cattle()
+        search_query = self.request.GET.get("q")
+        return CattleService.get_all_cattle(search_query=search_query)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_query"] = self.request.GET.get("q", "")
+        return context
 
 class CattleCreateView(LoginRequiredMixin, CreateView):
     model = Cattle
