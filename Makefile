@@ -154,3 +154,21 @@ pytest:
 pytest-cov:
 	@echo "${GREEN}Running tests with coverage report${RESET}"
 	python -m pytest --cov=apps --cov-report=term-missing -v --tb=short --reuse-db --cache-clear $(opts)
+
+## Installs frontend dependencies
+.PHONY: css-install
+css-install:
+	@echo "${GREEN}Installing frontend dependencies${RESET}"
+	docker compose exec web npm install
+
+## Watches CSS changes
+.PHONY: css-watch
+css-watch:
+	@echo "${GREEN}Watching CSS changes${RESET}"
+	docker compose exec web npm run watch
+
+## Builds CSS for production
+.PHONY: css-build
+css-build:
+	@echo "${GREEN}Building CSS${RESET}"
+	docker compose exec web npm run build

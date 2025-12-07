@@ -43,9 +43,15 @@ INSTALLED_APPS = [
     "apps.base",
     "apps.authentication",
     "apps.cattle",
+    "apps.website",
+    "apps.dashboard",
 ]
 
 AUTH_USER_MODEL = "authentication.User"
+
+LOGIN_URL = "authentication:login"
+LOGIN_REDIRECT_URL = "dashboard:home"
+LOGOUT_REDIRECT_URL = "website:home"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

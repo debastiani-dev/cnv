@@ -6,6 +6,10 @@ from django.utils.translation import gettext_lazy as _
 
 
 class BaseQuerySet(models.QuerySet):
+    """
+    Custom QuerySet with soft deletion support.
+    """
+
     def delete(self, destroy: bool = False) -> Union[int, tuple[int, dict[str, int]]]:
         """
         Soft delete items in the queryset unless destroy is True.

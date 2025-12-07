@@ -1,0 +1,14 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cabanha Nelore do Vale{% endblock %}</title>
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased" x-data="{ mobileMenuOpen: false }">
+    {% block layout %}{% endblock %}
+</body>
+</html>
