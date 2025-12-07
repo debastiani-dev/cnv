@@ -4,6 +4,10 @@ module.exports = {
         './apps/**/templates/**/*.html',
         './apps/**/forms.py',
     ],
+    safelist: [
+        'h-8',
+        'w-auto',
+    ],
     theme: {
         extend: {},
     },
