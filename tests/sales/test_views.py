@@ -6,10 +6,13 @@ from model_bakery import baker
 from apps.cattle.models import Cattle
 from apps.partners.models import Partner
 from apps.sales.models import Sale
+from tests.view_mixins import ItemLookupViewTestMixin
 
 
 @pytest.mark.django_db
-class TestSaleViews:
+class TestSaleViews(ItemLookupViewTestMixin):
+    lookup_url_name = "sales:api-item-lookup"
+
     def test_sale_list_view(self, client, django_user_model):
         user = baker.make(django_user_model)
         client.force_login(user)
@@ -67,36 +70,3 @@ class TestSaleViews:
         response = client.get(reverse("sales:detail", kwargs={"pk": sale.pk}))
         assert response.status_code == 200
         assert response.context["sale"] == sale
-
-    def test_item_lookup_view(self, client, django_user_model):
-        user = baker.make(django_user_model)
-        client.force_login(user)
-
-        cow1 = baker.make(Cattle, name="Bessie")
-        cow2 = baker.make(
-            Cattle, name="Daisy", is_deleted=True
-        )  # Should be filtered out
-
-        ct = ContentType.objects.get_for_model(Cattle)
-
-        url = reverse("sales:api-item-lookup")
-        response = client.get(f"{url}?content_type_id={ct.pk}")
-
-        assert response.status_code == 200
-        data = response.json()
-        assert "results" in data
-        ids = [item["id"] for item in data["results"]]
-        assert str(cow1.pk) in ids
-        assert str(cow2.pk) not in ids
-
-    def test_item_lookup_view_invalid_ct(self, client, django_user_model):
-        user = baker.make(django_user_model)
-        client.force_login(user)
-
-        # User model is not whitelisted
-        ct = ContentType.objects.get_for_model(django_user_model)
-
-        url = reverse("sales:api-item-lookup")
-        response = client.get(f"{url}?content_type_id={ct.pk}")
-
-        assert response.status_code == 403

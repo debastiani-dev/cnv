@@ -1,13 +1,13 @@
 import pytest
 from django.urls import reverse
 
+from apps.authentication.models import User
 from apps.cattle.models import Cattle
 
 
 @pytest.mark.django_db
 def test_dashboard_home_view_context(client):
     """Verify home view loads and context contains aggregated stats."""
-    from apps.authentication.models import User
 
     # Setup User and Login
     user = User.objects.create_user(username="testuser", password="password")
