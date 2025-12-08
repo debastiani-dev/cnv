@@ -1,6 +1,6 @@
 # pylint: disable=duplicate-code
 from django.db import transaction
-from django.db.models import Q, Sum
+from django.db.models import Count, Q, Sum
 
 from apps.base.utils.money import Money
 from apps.sales.models import Sale, SaleItem
@@ -28,7 +28,12 @@ class SaleService:
         """
         Returns all sales, optionally filtered by search query and partner.
         """
-        queryset = Sale.objects.all().select_related("partner").order_by("-date")
+        queryset = (
+            Sale.objects.all()
+            .select_related("partner")
+            .annotate(item_count=Count("items"))
+            .order_by("-date")
+        )
 
         if search_query:
             queryset = queryset.filter(

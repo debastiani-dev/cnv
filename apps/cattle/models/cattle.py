@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -83,6 +85,29 @@ class Cattle(BaseModel):
                 name="unique_active_cattle_tag",
             )
         ]
+
+    @property
+    def age(self):
+        """
+        Calculates the age of the cattle based on birth_date.
+        Returns a string like "2y 5m" or "-" if birth_date is not set.
+        """
+        if not self.birth_date:
+            return "-"
+
+        today = date.today()
+        # Calculate difference in months
+        diff_years = today.year - self.birth_date.year
+        diff_months = today.month - self.birth_date.month
+
+        # Adjust for negative months (e.g. not yet birthday this year)
+        if diff_months < 0:
+            diff_years -= 1
+            diff_months += 12
+
+        if diff_years > 0:
+            return f"{diff_years}y {diff_months}m"
+        return f"{diff_months}m"
 
     def __str__(self):
         return f"{self.tag} ({self.get_status_display()})"

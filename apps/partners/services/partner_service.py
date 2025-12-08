@@ -1,6 +1,7 @@
 from typing import Optional
 
-from django.db.models import Q, QuerySet
+from django.db.models import DecimalField, Q, QuerySet, Sum, Value
+from django.db.models.functions import Coalesce
 
 from apps.partners.models import Partner
 
@@ -10,8 +11,16 @@ class PartnerService:
     def get_partners(search_query: Optional[str] = None) -> QuerySet[Partner]:
         """
         Returns a queryset of partners, optionally filtered by a search query.
+        Annotated with total_sales and total_purchases.
         """
-        queryset = Partner.objects.all().order_by("name")
+        queryset = Partner.objects.annotate(
+            total_sales=Coalesce(
+                Sum("sales__total_amount"), Value(0), output_field=DecimalField()
+            ),
+            total_purchases=Coalesce(
+                Sum("purchases__total_amount"), Value(0), output_field=DecimalField()
+            ),
+        ).order_by("name")
 
         if search_query:
             queryset = queryset.filter(

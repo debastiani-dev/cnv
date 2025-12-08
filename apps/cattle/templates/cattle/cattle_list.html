@@ -59,6 +59,8 @@
                 <tr>
                   <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Cattle" %}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Breed" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Age" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Weight" %}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Status" %}</th>
                   <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                     <span class="sr-only">{% trans "Actions" %}</span>
@@ -90,6 +92,13 @@
                       </div>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cattle.breed }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <div class="flex flex-col">
+                        <span class="font-medium text-gray-900">{{ cattle.age }}</span>
+                        <span class="text-xs text-gray-400">{{ cattle.birth_date|default:'-' }}</span>
+                    </div>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cattle.weight_kg|default:"-" }} kg</td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
                         {% if cattle.status == 'available' %}

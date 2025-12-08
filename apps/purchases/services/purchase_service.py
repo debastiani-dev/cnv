@@ -1,6 +1,6 @@
 # pylint: disable=duplicate-code
 from django.db import transaction
-from django.db.models import Q, Sum
+from django.db.models import Count, Q, Sum
 
 from apps.base.utils.money import Money
 from apps.purchases.models import Purchase, PurchaseItem
@@ -30,7 +30,12 @@ class PurchaseService:
         """
         Returns all purchases, optionally filtered by search query and partner.
         """
-        queryset = Purchase.objects.all().select_related("partner").order_by("-date")
+        queryset = (
+            Purchase.objects.all()
+            .select_related("partner")
+            .annotate(item_count=Count("items"))
+            .order_by("-date")
+        )
 
         if search_query:
             queryset = queryset.filter(
