@@ -22,6 +22,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("apps.authentication.urls")),
     path("dashboard/", include("apps.dashboard.urls")),
+    path("partners/", include("apps.partners.urls")),
+    path("sales/", include("apps.sales.urls")),
     path("rosetta/", include("rosetta.urls")),
     path("", include("apps.website.urls")),
 ]
