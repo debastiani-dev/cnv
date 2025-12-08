@@ -15,7 +15,7 @@ class TestCattleForm:
         data = {
             "tag": "EXISTING",
             "name": "Duplicate",
-            "breed": "Angus",
+            "breed": "angus",
             "status": "available",
             "weight_kg": 500,
         }
@@ -32,7 +32,7 @@ class TestCattleForm:
         data = {
             "tag": "DELETED",
             "name": "New Version",
-            "breed": "Angus",
+            "breed": "angus",
             "status": "available",
             "weight_kg": 500,
         }

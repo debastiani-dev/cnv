@@ -41,10 +41,14 @@ class CattleService:
         }
 
     @staticmethod
-    def get_all_cattle(search_query: Optional[str] = None) -> QuerySet[Cattle]:
+    def get_all_cattle(
+        search_query: Optional[str] = None,
+        breed: Optional[str] = None,
+        status: Optional[str] = None,
+    ) -> QuerySet[Cattle]:
         """
         Returns all cattle records ordered by tag.
-        Optionally filters by tag or name if search_query is provided.
+        Optionally filters by tag, name, breed, or status.
         """
         queryset = Cattle.objects.all().order_by("tag")
 
@@ -52,6 +56,12 @@ class CattleService:
             queryset = queryset.filter(
                 Q(tag__icontains=search_query) | Q(name__icontains=search_query)
             )
+
+        if breed:
+            queryset = queryset.filter(breed=breed)
+
+        if status:
+            queryset = queryset.filter(status=status)
 
         return queryset
 

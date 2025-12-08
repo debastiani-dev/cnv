@@ -57,6 +57,35 @@ class TestCattleService:
         assert breakdown["Nelore"] == 1
         assert sum(breakdown.values()) == 3
 
+    def test_get_all_cattle_filters(self):
+        """Verify sorting by filters works."""
+        Cattle.objects.create(
+            tag="A1", breed=Cattle.BREED_ANGUS, status=Cattle.STATUS_AVAILABLE
+        )
+        Cattle.objects.create(
+            tag="A2", breed=Cattle.BREED_NELORE, status=Cattle.STATUS_SOLD
+        )
+        Cattle.objects.create(
+            tag="A3", breed=Cattle.BREED_ANGUS, status=Cattle.STATUS_DEAD
+        )
+
+        # Filter by Breed
+        qs = CattleService.get_all_cattle(breed=Cattle.BREED_ANGUS)
+        assert qs.count() == 2
+        assert list(qs.values_list("tag", flat=True)) == ["A1", "A3"]
+
+        # Filter by Status
+        qs = CattleService.get_all_cattle(status=Cattle.STATUS_AVAILABLE)
+        assert qs.count() == 1
+        assert qs.first().tag == "A1"
+
+        # Combine
+        qs = CattleService.get_all_cattle(
+            breed=Cattle.BREED_ANGUS, status=Cattle.STATUS_DEAD
+        )
+        assert qs.count() == 1
+        assert qs.first().tag == "A3"
+
     def test_breed_label_mapping(self):
         """Verify breed codes are mapped to title-cased labels."""
         Cattle.objects.create(

@@ -32,11 +32,19 @@ class CattleListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         search_query = self.request.GET.get("q")
-        return CattleService.get_all_cattle(search_query=search_query)
+        breed = self.request.GET.get("breed")
+        status = self.request.GET.get("status")
+        return CattleService.get_all_cattle(
+            search_query=search_query, breed=breed, status=status
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["search_query"] = self.request.GET.get("q", "")
+        context["selected_breed"] = self.request.GET.get("breed", "")
+        context["selected_status"] = self.request.GET.get("status", "")
+        context["breed_choices"] = Cattle.BREED_CHOICES
+        context["status_choices"] = Cattle.STATUS_CHOICES
         return context
 
 
