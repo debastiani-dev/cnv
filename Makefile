@@ -196,3 +196,19 @@ i18n/makemessages:
 i18n/compilemessages:
 	@echo "${GREEN}Compiling translation files${RESET}"
 	docker compose exec web python manage.py compilemessages --ignore=venv --ignore=.gemini
+
+## Release to Staging (Homologation)
+.PHONY: release-stg
+release-stg:
+	@read -p "Enter version (e.g. 1.0.0): " version; \
+	git tag -a stg-v$$version -m "Release stg-v$$version"; \
+	echo "Tag stg-v$$version created."; \
+	echo "Run 'git push origin --tags' to push."
+
+## Release to Production
+.PHONY: release-prod
+release-prod:
+	@read -p "Enter version (e.g. 1.0.0): " version; \
+	git tag -a prod-v$$version -m "Release prod-v$$version"; \
+	echo "Tag prod-v$$version created."; \
+	echo "Run 'git push origin --tags' to push."

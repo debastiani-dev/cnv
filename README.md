@@ -150,8 +150,7 @@ make pytest opts="-k test_name"
 ## Deployment
 
 ### Environments
-The project has three deployment environments defined in the Makefile:
-- `sdb` = Sandbox
+The project has two deployment environments defined in the Makefile:
 - `hom` = Staging (Homologation)
 - `prd` = Production
 
@@ -160,7 +159,6 @@ Deployments are performed via Git tags:
 
 ```bash
 # Release scripts available:
-make release-sdb
 make release-hom
 make release-prd
 ```
