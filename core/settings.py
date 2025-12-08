@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "apps.base",
     "apps.authentication",
     "apps.cattle",
+    "apps.partners",
+    "apps.sales",
     "apps.website",
     "apps.dashboard",
 ]
