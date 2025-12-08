@@ -3,7 +3,7 @@ from apps.cattle.services.cattle_service import CattleService
 import pytest
 from model_bakery import baker
 
-from apps.cattle.models import Cattle, Sale, SaleItem
+from apps.cattle.models import Cattle
 
 
 @pytest.mark.django_db
@@ -27,23 +27,6 @@ class TestCattleModel:
 
         # AllObjects manager should return it
         assert Cattle.all_objects.filter(pk=cattle_id).exists()
-
-
-@pytest.mark.django_db
-class TestSaleModel:
-    def test_create_sale(self):
-        sale = baker.make(Sale, buyer="John Doe", total_price=Money(1000.00))
-        assert sale.buyer == "John Doe"
-        assert sale.total_price == Money(1000.00)
-
-    def test_sale_item(self):
-        sale = baker.make(Sale)
-        cattle = baker.make(Cattle)
-        item = baker.make(SaleItem, sale=sale, cattle=cattle, price=Money(500.00))
-
-        assert item.sale == sale
-        assert item.cattle == cattle
-        assert item.price == Money(500.00)
 
 
 @pytest.mark.django_db

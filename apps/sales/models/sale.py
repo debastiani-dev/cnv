@@ -62,7 +62,10 @@ class SaleItem(BaseModel):
         verbose_name_plural = _("Transaction Items")
 
     def save(self, *args, **kwargs):
-        self.total_price = self.quantity * self.unit_price
+        from apps.base.utils.money import Money
+        # Use Money to calculate total price to ensure consistent rounding
+        total = Money(self.quantity) * Money(self.unit_price)
+        self.total_price = total
         super().save(*args, **kwargs)
         # TODO: Trigger signal to update Sale total
 
