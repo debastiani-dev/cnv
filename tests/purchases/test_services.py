@@ -61,6 +61,32 @@ class TestPurchaseService:
         assert purchase2 in deleted
         assert purchase1 not in deleted
 
+    def test_get_all_purchases_filters(self):
+        partner1 = baker.make("partners.Partner", name="Alpha")
+        partner2 = baker.make("partners.Partner", name="Beta")
+        purchase1 = baker.make(Purchase, partner=partner1, notes="Notes 1")
+        purchase2 = baker.make(Purchase, partner=partner2, notes="Notes 2")
+
+        # No filter
+        all_purchases = PurchaseService.get_all_purchases()
+        assert purchase1 in all_purchases
+        assert purchase2 in all_purchases
+
+        # Search filter (name)
+        search_results = PurchaseService.get_all_purchases(search_query="Alpha")
+        assert purchase1 in search_results
+        assert purchase2 not in search_results
+
+        # Search filter (notes)
+        search_results_notes = PurchaseService.get_all_purchases(search_query="Notes 2")
+        assert purchase2 in search_results_notes
+        assert purchase1 not in search_results_notes
+
+        # Partner filter
+        partner_results = PurchaseService.get_all_purchases(partner_id=str(partner1.pk))
+        assert purchase1 in partner_results
+        assert purchase2 not in partner_results
+
     # Creation from forms is tricky to mock fully without complex form setups,
     # but we can test the specific logic if we extract it or rely on
     # integration tests in test_views.

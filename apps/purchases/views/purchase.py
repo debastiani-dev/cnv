@@ -12,6 +12,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from apps.partners.models.partner import Partner
 from apps.purchases.forms import PurchaseForm, PurchaseItemFormSet
 from apps.purchases.models import Purchase
 from apps.purchases.services.purchase_service import PurchaseService
@@ -23,6 +24,28 @@ class PurchaseListView(LoginRequiredMixin, ListView):
     context_object_name = "purchases"
     ordering = ["-date"]
     paginate_by = 10
+
+    def get_queryset(self):
+        search_query = self.request.GET.get("q")
+        partner_id = self.request.GET.get("partner")
+
+        return PurchaseService.get_all_purchases(
+            search_query=search_query,
+            partner_id=partner_id,
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["search_query"] = self.request.GET.get("q", "")
+        context["selected_partner"] = self.request.GET.get("partner", "")
+        # For purchases, maybe filter is_supplier=True? Or just all partners?
+        # Typically purchases come from Suppliers. Sales to Customers.
+        # But system allows both. I'll use is_supplier=True for dropdown context if strictly separate.
+        # Let's check Partner model again. is_customer, is_supplier.
+        # SaleListView used is_customer=True. I should probably use is_supplier=True here.
+        context["partners"] = Partner.objects.filter(is_supplier=True)
+        return context
 
 
 class PurchaseCreateView(LoginRequiredMixin, CreateView):

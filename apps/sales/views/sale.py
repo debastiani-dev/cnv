@@ -11,6 +11,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from apps.partners.models.partner import Partner
 from apps.sales.forms import SaleForm, SaleItemFormSet
 from apps.sales.models import Sale
 from apps.sales.services.sale_service import SaleService
@@ -22,6 +23,22 @@ class SaleListView(LoginRequiredMixin, ListView):
     context_object_name = "sales"
     ordering = ["-date"]
     paginate_by = 10
+
+    def get_queryset(self):
+        search_query = self.request.GET.get("q")
+        partner_id = self.request.GET.get("partner")
+
+        return SaleService.get_all_sales(
+            search_query=search_query, partner_id=partner_id
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["search_query"] = self.request.GET.get("q", "")
+        context["selected_partner"] = self.request.GET.get("partner", "")
+        context["partners"] = Partner.objects.filter(is_customer=True)
+        return context
 
 
 class SaleCreateView(LoginRequiredMixin, CreateView):

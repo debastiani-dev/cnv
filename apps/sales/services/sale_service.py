@@ -1,5 +1,6 @@
+# pylint: disable=duplicate-code
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Q, Sum
 
 from apps.base.utils.money import Money
 from apps.sales.models import Sale, SaleItem
@@ -21,6 +22,24 @@ class SaleService:
             "total_revenue": total_revenue,
             "recent": recent_sales,
         }
+
+    @staticmethod
+    def get_all_sales(search_query: str | None = None, partner_id: str | None = None):
+        """
+        Returns all sales, optionally filtered by search query and partner.
+        """
+        queryset = Sale.objects.all().select_related("partner").order_by("-date")
+
+        if search_query:
+            queryset = queryset.filter(
+                Q(partner__name__icontains=search_query)
+                | Q(notes__icontains=search_query)
+            )
+
+        if partner_id:
+            queryset = queryset.filter(partner_id=partner_id)
+
+        return queryset
 
     @staticmethod
     @transaction.atomic
