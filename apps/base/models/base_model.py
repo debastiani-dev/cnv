@@ -76,6 +76,7 @@ class BaseModel(models.Model):
         default=uuid.uuid4,
         editable=False,
         unique=True,
+        primary_key=True,
         verbose_name=_("uuid"),
         db_index=True,
     )

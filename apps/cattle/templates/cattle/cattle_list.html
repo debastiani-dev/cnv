@@ -6,55 +6,65 @@
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
   <div class="sm:flex sm:items-center">
+    <!-- Header Text -->
     <div class="sm:flex-auto">
       <h1 class="text-base font-semibold leading-6 text-gray-900">{% trans "Cattle" %}</h1>
       <p class="mt-2 text-sm text-gray-700">{% trans "A list of all cattle in your herd including their tag, name, breed, and status." %}</p>
     </div>
-        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-x-3">
-            <form method="get" class="relative">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 1.857l4.458 4.459a1 1 0 01-1.414 1.414l-4.458-4.459A7.097 7.097 0 012 9z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <input type="text" name="q" value="{{ search_query }}" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="{% trans 'Search cattle...' %}">
-            </form>
-            <a href="{% url 'dashboard:cattle-trash' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "Trash Bin" %}</a>
-            <a href="{% url 'dashboard:cattle-create' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Add Cattle" %}</a>
-        </div>
+    
+    <!-- Actions & Search -->
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-x-3">
+        <!-- Search Form -->
+        <form method="get" class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 1.857l4.458 4.459a1 1 0 01-1.414 1.414l-4.458-4.459A7.097 7.097 0 012 9z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <input type="text" name="q" value="{{ search_query|default:'' }}" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="{% trans 'Search cattle...' %}">
+        </form>
+        
+        <!-- Action Buttons -->
+        <a href="{% url 'dashboard:cattle-trash' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "Trash Bin" %}</a>
+        <a href="{% url 'dashboard:cattle-create' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Add Cattle" %}</a>
+    </div>
   </div>
+
+  <!-- Table Section -->
   <div class="mt-8 flow-root">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-        <table class="min-w-full divide-y divide-gray-300">
-          <thead>
-            <tr>
-              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">{% trans "Tag" %}</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Name" %}</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Breed" %}</th>
-              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Status" %}</th>
-              <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                <span class="sr-only">{% trans "Actions" %}</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            {% for cattle in cattle_list %}
-            <tr>
-              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ cattle.tag }}</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cattle.name|default:"-" }}</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cattle.breed }}</td>
-              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">{{ cattle.status }}</span>
-              </td>
-              <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                <a href="{% url 'dashboard:cattle-update' cattle.pk %}" class="text-indigo-600 hover:text-indigo-900">{% trans "Edit" %}</a>
-                <a href="{% url 'dashboard:cattle-delete' cattle.pk %}" class="ml-4 text-red-600 hover:text-red-900">{% trans "Delete" %}</a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Tag" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Name" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Breed" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Status" %}</th>
+                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                    <span class="sr-only">{% trans "Actions" %}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                {% for cattle in cattle_list %}
+                <tr>
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ cattle.tag }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cattle.name|default:"-" }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cattle.breed }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">{{ cattle.status }}</span>
+                  </td>
+                  <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                    <a href="{% url 'dashboard:cattle-update' cattle.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-4">{% trans "Edit" %}</a>
+                    <a href="{% url 'dashboard:cattle-delete' cattle.pk %}" class="text-red-600 hover:text-red-900">{% trans "Delete" %}</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
       </div>
     </div>
   </div>

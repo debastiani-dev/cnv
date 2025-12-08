@@ -63,6 +63,9 @@ class User(BaseModel, AbstractBaseUser, auth_models.PermissionsMixin):
     email = models.EmailField(_("email address"), blank=True)
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
+    profile_image = models.ImageField(
+        _("profile image"), upload_to="profile_images/", blank=True, null=True
+    )
 
     is_staff = models.BooleanField(
         _("staff status"),

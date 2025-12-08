@@ -44,7 +44,7 @@ class TestAuthenticationViews:
 
         # Check if user is authenticated
         # client.login() works, but testing the view post directly does session auth
-        assert int(client.session["_auth_user_id"]) == user.id
+        assert client.session["_auth_user_id"] == str(user.pk)
 
     def test_logout_view(self, client):
         user = User.objects.create_user(username="testuser", password="password")
@@ -52,11 +52,6 @@ class TestAuthenticationViews:
         url = reverse("authentication:logout")
 
         response = client.post(url)
-        # Django 5.0+ logout might require POST or behave differently depending
-        # on config, but standard is view is usually post-only or get allowed
-        # if configured.
-        # auth_views.LogoutView in recent Django allows GET but POST is preferred?
-        # Actually in recent Django versions GET is deprecated for logout.
-        # Let's try POST.
+
         assert response.status_code == 302
         assert "_auth_user_id" not in client.session

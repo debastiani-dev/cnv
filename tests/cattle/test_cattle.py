@@ -16,17 +16,17 @@ class TestCattleModel:
 
     def test_soft_delete(self):
         cattle = baker.make(Cattle)
-        cattle_id = cattle.id
+        cattle_id = cattle.pk
         cattle.delete()
 
         assert cattle.is_deleted
         assert cattle.deleted_date is not None
 
         # Default manager should not return it
-        assert not Cattle.objects.filter(id=cattle_id).exists()
+        assert not Cattle.objects.filter(pk=cattle_id).exists()
 
         # AllObjects manager should return it
-        assert Cattle.all_objects.filter(id=cattle_id).exists()
+        assert Cattle.all_objects.filter(pk=cattle_id).exists()
 
 
 @pytest.mark.django_db

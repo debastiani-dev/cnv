@@ -13,8 +13,8 @@ urlpatterns = [
     path("", CattleListView.as_view(), name="cattle-list"),
     path("trash/", CattleTrashListView.as_view(), name="cattle-trash"),
     path("create/", CattleCreateView.as_view(), name="cattle-create"),
-    path("update/<int:pk>/", CattleUpdateView.as_view(), name="cattle-update"),
-    path("delete/<int:pk>/", CattleDeleteView.as_view(), name="cattle-delete"),
-    path("restore/<int:pk>/", CattleRestoreView.as_view(), name="cattle-restore"),
-    path("delete-forever/<int:pk>/", CattlePermanentDeleteView.as_view(), name="cattle-permanent-delete"),
+    path("update/<uuid:pk>/", CattleUpdateView.as_view(), name="cattle-update"),
+    path("delete/<uuid:pk>/", CattleDeleteView.as_view(), name="cattle-delete"),
+    path("restore/<uuid:pk>/", CattleRestoreView.as_view(), name="cattle-restore"),
+    path("delete-forever/<uuid:pk>/", CattlePermanentDeleteView.as_view(), name="cattle-permanent-delete"),
 ]
