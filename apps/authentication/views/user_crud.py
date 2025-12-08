@@ -123,7 +123,7 @@ class UserTrashView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
 class UserRestoreView(LoginRequiredMixin, PermissionRequiredMixin, RedirectView):
     permission_required = "authentication.delete_user"  # restore is basically un-delete
-    url = reverse_lazy("authentication:user-trash")
+    url = reverse_lazy("authentication:user-trash")  # type: ignore
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse_lazy("authentication:user-trash")

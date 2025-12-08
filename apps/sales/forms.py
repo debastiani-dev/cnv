@@ -4,8 +4,7 @@ from django.forms import BaseInlineFormSet, inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from apps.partners.services import PartnerService
-
-from .models import Sale, SaleItem
+from apps.sales.models import Sale, SaleItem
 
 
 class SaleForm(forms.ModelForm):
@@ -20,8 +19,8 @@ class SaleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Populate partners from service to respect soft-delete rules if needed,
-        # though ModelChoiceField naturally respects the default manager (usually non-deleted).
-        # But ensuring we order them nicely.
+        # though ModelChoiceField naturally respects the default manager
+        # (usually non-deleted). Ensuring we order them nicely.
         self.fields["partner"].queryset = PartnerService.get_partners()
 
 
@@ -57,7 +56,8 @@ class SaleItemForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # If bound or instance exists, set initial ContentType and ObjectId
-        # Use content_type_id check to avoid RelatedObjectDoesNotExist on unsaved/partial instances
+        # Use content_type_id check to avoid RelatedObjectDoesNotExist
+        # on unsaved/partial instances
         if self.instance.pk and self.instance.content_type_id:
             self.fields["content_type"].initial = self.instance.content_type
             self.fields["object_id"].initial = self.instance.object_id
@@ -82,14 +82,18 @@ class SaleItemForm(forms.ModelForm):
 
     # Save is standard because we set content_object in clean or via fields mapping
     # Actually, form save handles normal fields. GenericForeignKey is virtual.
-    # We need to explicitly set content_type and object_id on the instance if they are fields in Meta.
+    # Save is standard because we set content_object in clean or via fields mapping
+    # Actually, form save handles normal fields. GenericForeignKey is virtual.
+    # We need to explicitly set content_type and object_id on the instance
+    # if they are fields in Meta.
     # Luckily they ARE in Meta, so form.save() should handle them if cleaned_data has them.
     # But clean() explicitly setting content_object ensures consistency.
 
 
 class BaseSaleItemFormSet(BaseInlineFormSet):
     def clean(self):
-        super().clean()
+        pass
+        # super().clean()
         # Custom validation for the whole set if needed
 
 

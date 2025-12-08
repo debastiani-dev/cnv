@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.models.base_model import BaseModel
+from apps.base.utils.money import Money
 from apps.partners.models.partner import Partner
 
 
@@ -64,13 +65,12 @@ class SaleItem(BaseModel):
         verbose_name_plural = _("Transaction Items")
 
     def save(self, *args, **kwargs):
-        from apps.base.utils.money import Money
 
         # Use Money to calculate total price to ensure consistent rounding
         total = Money(self.quantity) * Money(self.unit_price)
         self.total_price = total
         super().save(*args, **kwargs)
-        # TODO: Trigger signal to update Sale total
+        # TODO: Trigger signal to update Sale total # pylint: disable=fixme
 
     def __str__(self):
         return f"{self.quantity}x {self.content_object} in {self.sale}"

@@ -1,11 +1,13 @@
-from django.db.models import QuerySet
+from typing import Optional
+
+from django.db.models import Q, QuerySet
 
 from apps.cattle.models import Cattle
 
 
 class CattleService:
     @staticmethod
-    def get_all_cattle(search_query: str = None) -> QuerySet[Cattle]:
+    def get_all_cattle(search_query: Optional[str] = None) -> QuerySet[Cattle]:
         """
         Returns all cattle records ordered by tag.
         Optionally filters by tag or name if search_query is provided.
@@ -13,8 +15,6 @@ class CattleService:
         queryset = Cattle.objects.all().order_by("tag")
 
         if search_query:
-            from django.db.models import Q
-
             queryset = queryset.filter(
                 Q(tag__icontains=search_query) | Q(name__icontains=search_query)
             )
@@ -50,7 +50,8 @@ class CattleService:
         # Check for conflict
         if Cattle.objects.filter(tag=cattle.tag).exists():
             raise ValueError(
-                f"Cannot restore: Tag '{cattle.tag}' is already in use by an active record."
+                f"Cannot restore: Tag '{cattle.tag}' is already in use "
+                f"by an active record."
             )
 
         cattle.restore()

@@ -34,7 +34,8 @@ class TestSaleService:
         SaleService.hard_delete_sale(sale)  # Wait, we want soft delete first usually?
         # The service has hard_delete_sale, let's check view logic.
         # Views use SaleService.get_deleted_sales, restore_sale, hard_delete_sale.
-        # Standard deletion is via Django's DeleteView (which calls obj.delete() -> SoftDeleteModel.delete() -> sets is_deleted=True)
+        # Standard deletion is via Django's DeleteView
+        # (which calls obj.delete() -> SoftDeleteModel.delete() -> sets is_deleted=True)
 
         sale.delete()
         assert sale.is_deleted
@@ -53,4 +54,5 @@ class TestSaleService:
         assert sale1 not in deleted
 
     # Creation from forms is tricky to mock fully without complex form setups,
-    # but we can test the specific logic if we extract it or rely on integration tests in test_views.
+    # but we can test the specific logic if we extract it or rely on
+    # integration tests in test_views.

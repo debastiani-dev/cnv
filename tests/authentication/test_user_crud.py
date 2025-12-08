@@ -1,3 +1,4 @@
+# pylint: disable = unused-argument, redefined-outer-name
 import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse

@@ -1,9 +1,12 @@
+import uuid
+
 import pytest
 from django.contrib.contenttypes.models import ContentType
 from model_bakery import baker
 
 from apps.cattle.models import Cattle
 from apps.sales.forms import SaleItemForm
+from apps.sales.models.sale import Sale, SaleItem
 
 
 @pytest.mark.django_db
@@ -26,8 +29,6 @@ class TestSaleItemForm:
     def test_sale_item_form_invalid_object_id(self):
         ct = ContentType.objects.get_for_model(Cattle)
         # Random UUID
-        import uuid
-
         data = {
             "content_type": ct.pk,
             "object_id": uuid.uuid4(),
@@ -43,7 +44,6 @@ class TestSaleItemForm:
     def test_sale_item_form_init_with_instance(self):
         # Test pre-filling logic
         cow = baker.make(Cattle, name="Bessie")
-        from apps.sales.models import Sale, SaleItem
 
         sale = baker.make(Sale)
         item = SaleItem.objects.create(

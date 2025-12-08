@@ -1,9 +1,12 @@
-from typing import Any, Dict
+from typing import Any, Dict, cast
 
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
 
-User = get_user_model()
+from apps.authentication.models.user import User
+
+# runtime user model
+UserModel = get_user_model()
 
 
 class UserService:
@@ -12,7 +15,7 @@ class UserService:
         """
         Returns all users in the system.
         """
-        return User.objects.all().order_by("-date_joined")
+        return UserModel.objects.all().order_by("-date_joined")
 
     @staticmethod
     def create_user(data: Dict[str, Any]) -> User:
@@ -26,7 +29,7 @@ class UserService:
         if not password:
             raise ValueError("Password is required to create a user.")
 
-        return User.objects.create_user(password=password, **data)
+        return cast(Any, UserModel.objects).create_user(password=password, **data)
 
     @staticmethod
     def update_user(user: User, data: Dict[str, Any]) -> User:

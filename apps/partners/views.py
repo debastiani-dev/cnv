@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -29,7 +30,9 @@ class PartnerListView(LoginRequiredMixin, ListView):
 class PartnerTrashView(LoginRequiredMixin, ListView):
     model = Partner
     template_name = "partners/partner_trash_list.html"
-    context_object_name = "favorites"  # Using same context name or "partners"? "partners" is better. keeping consistency with list view context usually.
+    context_object_name = "favorites"
+    # Using same context name or "partners"? "partners" is better.
+    # keeping consistency with list view context usually.
     # Note: Using "partners" as context object name for consistency with template
     context_object_name = "partners"
     paginate_by = 10
@@ -64,7 +67,6 @@ class PartnerHardDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         PartnerService.hard_delete_partner(self.object)
-        from django.http import HttpResponseRedirect
 
         return HttpResponseRedirect(self.success_url)
 

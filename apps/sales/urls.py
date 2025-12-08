@@ -1,7 +1,7 @@
 from django.urls import path
 
-from . import views
-from .views.api import ItemLookupView
+from apps.sales import views
+from apps.sales.views.api import ItemLookupView
 
 app_name = "sales"
 

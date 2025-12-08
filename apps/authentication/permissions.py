@@ -13,7 +13,8 @@ class AdminRequiredMixin(UserPassesTestMixin):
 class AdminOrSelfMixin(UserPassesTestMixin):
     """
     Mixin to allow access to superusers OR the user themselves (for update/detail).
-    Assumes the view has a `get_object()` method or similar that returns the target user.
+    Assumes the view has a `get_object()` method or similar that returns
+    the target user.
     """
 
     def test_func(self):

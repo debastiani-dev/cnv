@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db.models import Q, QuerySet
 
 from apps.partners.models import Partner
@@ -5,7 +7,7 @@ from apps.partners.models import Partner
 
 class PartnerService:
     @staticmethod
-    def get_partners(search_query: str = None) -> QuerySet[Partner]:
+    def get_partners(search_query: Optional[str] = None) -> QuerySet[Partner]:
         """
         Returns a queryset of partners, optionally filtered by a search query.
         """

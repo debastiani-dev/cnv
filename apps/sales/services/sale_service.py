@@ -19,7 +19,8 @@ class SaleService:
         for item in sale_items_data:
             item.sale = sale_instance
             item.save()  # formatting and total_price calc happens in model save
-            total_amount += Money(item.total_price)
+            # money library handles addition, but mypy might not know __add__ returns Money
+            total_amount += Money(item.total_price)  # type: ignore
 
         sale_instance.total_amount = total_amount
         sale_instance.save()
@@ -34,10 +35,10 @@ class SaleService:
         """
         # Use aggregation or python loop. Python loop is safer with Money class precision
         # though DB aggregation is faster. Given Money logic in app, let's use app logic.
-        items = sale.items.all()
+        items = sale.items.all()  # type: ignore
         total = Money(0)
         for item in items:
-            total += Money(item.total_price)
+            total += Money(item.total_price)  # type: ignore
 
         sale.total_amount = total
         sale.save()

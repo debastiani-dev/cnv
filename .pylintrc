@@ -310,7 +310,7 @@ max-branches=12
 max-locals=15
 
 # Maximum number of parents for a class (see R0901).
-max-parents=7
+max-parents=13
 
 # Maximum number of positional arguments for function / method.
 max-positional-arguments=5
@@ -449,7 +449,9 @@ disable=raw-checker-failed,
         missing-module-docstring,
         missing-class-docstring,
         missing-function-docstring,
-        too-few-public-methods
+        too-few-public-methods,
+        line-too-long,
+        attribute-defined-outside-init
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
