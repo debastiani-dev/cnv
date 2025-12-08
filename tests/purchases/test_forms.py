@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 import uuid
 
 import pytest

@@ -1,13 +1,13 @@
 {% extends "layouts/base_dashboard.html" %}
 {% load i18n %}
 
-{% block title %}{% if form.instance.pk %}{% trans "Edit Cattle" %}{% else %}{% trans "Add Cattle" %}{% endif %}{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-xl">
         <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            {% if form.instance.pk %}{% trans "Edit Cattle" %}{% else %}{% trans "Add New Cattle" %}{% endif %}
+            {{ title }}
         </h2>
     </div>
 

@@ -46,6 +46,11 @@ class CattleCreateView(LoginRequiredMixin, CreateView):
     template_name = "cattle/cattle_form.html"
     success_url = reverse_lazy("dashboard:cattle-list")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = _("Add Cattle")
+        return context
+
     def form_valid(self, form):
         self.object = CattleService.create_cattle(form.cleaned_data)
         return HttpResponseRedirect(self.get_success_url())
@@ -56,6 +61,11 @@ class CattleUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CattleForm
     template_name = "cattle/cattle_form.html"
     success_url = reverse_lazy("dashboard:cattle-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = _("Edit Cattle")
+        return context
 
     def form_valid(self, form):
         CattleService.update_cattle(self.object, form.cleaned_data)
