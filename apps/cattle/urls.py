@@ -1,7 +1,7 @@
 from django.urls import path
 from apps.cattle.views import (
     CattleListView, CattleCreateView, CattleUpdateView, CattleDeleteView,
-    CattleTrashListView, CattleRestoreView, CattlePermanentDeleteView
+    CattleTrashListView, CattleRestoreView, CattlePermanentDeleteView, CattleDetailView
 )
 
 # We don't define app_name here if we are including it into 'dashboard' namespace or similar.
@@ -11,6 +11,7 @@ from apps.cattle.views import (
 
 urlpatterns = [
     path("", CattleListView.as_view(), name="cattle-list"),
+    path("detail/<uuid:pk>/", CattleDetailView.as_view(), name="cattle-detail"),
     path("trash/", CattleTrashListView.as_view(), name="cattle-trash"),
     path("create/", CattleCreateView.as_view(), name="cattle-create"),
     path("update/<uuid:pk>/", CattleUpdateView.as_view(), name="cattle-update"),

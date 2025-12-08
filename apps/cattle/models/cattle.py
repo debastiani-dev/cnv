@@ -18,6 +18,12 @@ class Cattle(BaseModel):
         blank=True,
         null=True,
     )
+    image = models.ImageField(
+        _("Profile Image"),
+        upload_to="cattle_images/",
+        blank=True,
+        null=True,
+    )
 
     # Status choices
     STATUS_AVAILABLE = "available"

@@ -1,5 +1,5 @@
 {% extends 'layouts/base_dashboard.html' %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{% trans "Cattle Trash Bin" %}{% endblock %}
 
@@ -20,7 +20,8 @@
         <table class="min-w-full divide-y divide-gray-300">
           <thead>
             <tr>
-              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">{% trans "Tag" %}</th>
+              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">{% trans "Image" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Tag" %}</th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Name" %}</th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Breed" %}</th>
               <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Deleted Date" %}</th>
@@ -32,7 +33,16 @@
           <tbody class="divide-y divide-gray-200">
             {% for cattle in cattle_list %}
             <tr>
-              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ cattle.tag }}</td>
+              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                  <div class="h-10 w-10 flex-shrink-0">
+                      {% if cattle.image %}
+                          <img class="h-10 w-10 rounded-full object-cover" style="width: 40px; height: 40px;" src="{{ cattle.image.url }}" alt="">
+                      {% else %}
+                          <img class="h-10 w-10 rounded-full object-cover" style="width: 40px; height: 40px;" src="{% static 'img/default_cow.png' %}" alt="">
+                      {% endif %}
+                  </div>
+              </td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">{{ cattle.tag }}</td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cattle.name|default:"-" }}</td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cattle.breed }}</td>
               <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -45,7 +55,7 @@
             </tr>
             {% empty %}
             <tr>
-              <td colspan="5" class="py-4 text-center text-sm text-gray-500">{% trans "Trash is empty." %}</td>
+              <td colspan="6" class="py-4 text-center text-sm text-gray-500">{% trans "Trash is empty." %}</td>
             </tr>
             {% endfor %}
           </tbody>

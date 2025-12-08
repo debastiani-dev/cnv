@@ -1,0 +1,108 @@
+{% extends 'layouts/base_dashboard.html' %}
+{% load i18n static %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    
+    <!-- Breadcrumb / Back Navigation -->
+    <div class="mb-8">
+        <a href="{% url 'dashboard:cattle-list' %}" class="text-sm font-medium text-gray-500 hover:text-gray-700 flex items-center">
+            <svg class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clip-rule="evenodd" />
+            </svg>
+            {% trans "Back to Cattle List" %}
+        </a>
+    </div>
+
+    <div class="overflow-hidden rounded-lg bg-white shadow ring-1 ring-black ring-opacity-5">
+        <!-- Header / Banner -->
+        <div class="h-32 bg-indigo-600"></div>
+        
+        <div class="px-4 pb-6 sm:px-6">
+            <!-- Profile Info Wrapper -->
+            <div class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-x-8 items-end">
+                <!-- Container 1: Image -->
+                <div class="flex -mt-16 sm:-mt-24 z-10 sm:block justify-center sm:justify-start p-2">
+                    {% if cattle.image %}
+                        <img class="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32 object-cover bg-white" style="max-width: 8rem; max-height: 8rem;" src="{{ cattle.image.url }}" alt="{{ cattle.tag }}">
+                    {% else %}
+                        <img class="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32 object-cover bg-white" style="max-width: 8rem; max-height: 8rem;" src="{% static 'img/default_cow.png' %}" alt="Default Cow">
+                    {% endif %}
+                </div>
+                
+                <!-- Container 2: Name & Details -->
+                <div class="min-w-0 flex-1 pb-1 sm:pb-2 text-center sm:text-left pt-2 sm:pt-0">
+                     <h1 class="truncate text-2xl font-bold text-gray-900">{{ cattle.name|default:cattle.tag }}</h1>
+                     <p class="text-sm font-medium text-gray-500">TAG: {{ cattle.tag }}</p>
+                </div>
+            </div>
+
+        <!-- Details Grid -->
+        <dl class="mt-6">
+            <!-- Tag -->
+            <div class="border-t border-gray-100 bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Tag / ID" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ cattle.tag }}</dd>
+            </div>
+
+            <!-- Name -->
+            <div class="border-t border-gray-100 bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Name" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ cattle.name|default:"-" }}</dd>
+            </div>
+
+            <!-- Breed -->
+            <div class="border-t border-gray-100 bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Breed" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ cattle.breed|default:"-" }}</dd>
+            </div>
+
+            <!-- Status -->
+            <div class="border-t border-gray-100 bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Status" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                            {% if cattle.status == 'available' %} bg-green-100 text-green-800
+                            {% elif cattle.status == 'sold' %} bg-blue-100 text-blue-800
+                            {% elif cattle.status == 'dead' %} bg-red-100 text-red-800
+                            {% else %} bg-gray-100 text-gray-800 {% endif %}">
+                            {{ cattle.get_status_display }}
+                        </span>
+                </dd>
+            </div>
+
+            <!-- Weight -->
+            <div class="border-t border-gray-100 bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Weight" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                    {% if cattle.weight_kg %}
+                        {{ cattle.weight_kg }} kg
+                    {% else %}
+                        -
+                    {% endif %}
+                </dd>
+            </div>
+
+            <!-- Birth Date -->
+            <div class="border-t border-gray-100 bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Birth Date" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ cattle.birth_date|date:"SHORT_DATE_FORMAT"|default:"-" }}</dd>
+            </div>
+        </dl>
+        
+        <!-- Footer / Action Buttons -->
+        <div class="border-t border-gray-200 bg-gray-50 px-4 py-4 sm:px-6 flex justify-end space-x-4">
+             <a href="{% url 'dashboard:cattle-update' cattle.pk %}" class="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
+                    <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
+                </svg>
+                {% trans "Edit Cattle" %}
+            </a>
+            <a href="{% url 'dashboard:cattle-delete' cattle.pk %}" class="inline-flex justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
+                {% trans "Delete Cattle" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

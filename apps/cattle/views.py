@@ -5,10 +5,15 @@ from django.contrib import messages
 from django.utils.translation import gettext as _
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from apps.cattle.services.cattle_service import CattleService
 from apps.cattle.forms import CattleForm
 from apps.cattle.models import Cattle
+
+class CattleDetailView(LoginRequiredMixin, DetailView):
+    model = Cattle
+    template_name = "cattle/cattle_detail.html"
+    context_object_name = "cattle"
 
 class CattleListView(LoginRequiredMixin, ListView):
     model = Cattle
