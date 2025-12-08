@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-from django.utils.translation import gettext_lazy as _
 
 from decouple import config
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -150,8 +150,8 @@ USE_I18N = True
 USE_TZ = True
 
 # Rosetta settings
-ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = 'en'
-ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = 'English'
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = "en"
+ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME = "English"
 
 
 # Static files (CSS, JavaScript, Images)

@@ -1,5 +1,7 @@
 from django.db.models import QuerySet
+
 from apps.cattle.models import Cattle
+
 
 class CattleService:
     @staticmethod
@@ -9,14 +11,14 @@ class CattleService:
         Optionally filters by tag or name if search_query is provided.
         """
         queryset = Cattle.objects.all().order_by("tag")
-        
+
         if search_query:
             from django.db.models import Q
+
             queryset = queryset.filter(
-                Q(tag__icontains=search_query) | 
-                Q(name__icontains=search_query)
+                Q(tag__icontains=search_query) | Q(name__icontains=search_query)
             )
-            
+
         return queryset
 
     @staticmethod
@@ -44,14 +46,16 @@ class CattleService:
         Raises ValueError if the tag is already in use by an active record.
         """
         cattle = Cattle.all_objects.get(pk=pk)
-        
+
         # Check for conflict
         if Cattle.objects.filter(tag=cattle.tag).exists():
-            raise ValueError(f"Cannot restore: Tag '{cattle.tag}' is already in use by an active record.")
-            
+            raise ValueError(
+                f"Cannot restore: Tag '{cattle.tag}' is already in use by an active record."
+            )
+
         cattle.restore()
         return cattle
-    
+
     @staticmethod
     def hard_delete_cattle(pk: int) -> None:
         """Permanently deletes a cattle record from the database."""

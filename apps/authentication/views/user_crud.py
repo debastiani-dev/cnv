@@ -1,19 +1,25 @@
-from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView, RedirectView
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
-from django.contrib import messages
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    RedirectView,
+    UpdateView,
+)
 
 from ..forms import UserForm, UserUpdateSelfForm
-from ..models import User as AppUser
-from ..permissions import AdminRequiredMixin, AdminOrSelfMixin
+from ..permissions import AdminOrSelfMixin, AdminRequiredMixin
 from ..services.user_service import UserService
 
 User = get_user_model()
+
 
 class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
     model = User
@@ -23,7 +29,7 @@ class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
 
     def get_queryset(self):
         return UserService.get_all_users()
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = _("Users")
@@ -59,7 +65,7 @@ class UserCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
 class UserUpdateView(LoginRequiredMixin, AdminOrSelfMixin, UpdateView):
     model = User
     template_name = "authentication/user_form.html"
-    
+
     def get_form_class(self):
         # If user is admin, they can edit everything using UserForm
         if self.request.user.is_superuser:

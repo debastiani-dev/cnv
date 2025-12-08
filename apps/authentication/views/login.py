@@ -12,6 +12,5 @@ class LoginView(auth_views.LoginView):
         return context
 
 
-
 class LogoutView(auth_views.LogoutView):
     pass

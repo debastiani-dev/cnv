@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 
 app_name = "partners"
@@ -11,5 +12,9 @@ urlpatterns = [
     path("<uuid:pk>/edit/", views.PartnerUpdateView.as_view(), name="update"),
     path("<uuid:pk>/delete/", views.PartnerDeleteView.as_view(), name="delete"),
     path("<uuid:pk>/restore/", views.PartnerRestoreView.as_view(), name="restore"),
-    path("<uuid:pk>/hard-delete/", views.PartnerHardDeleteView.as_view(), name="hard-delete"),
+    path(
+        "<uuid:pk>/hard-delete/",
+        views.PartnerHardDeleteView.as_view(),
+        name="hard-delete",
+    ),
 ]

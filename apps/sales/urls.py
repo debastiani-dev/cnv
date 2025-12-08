@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 from .views.api import ItemLookupView
 
@@ -12,6 +13,10 @@ urlpatterns = [
     path("<uuid:pk>/delete/", views.SaleDeleteView.as_view(), name="delete"),
     path("trash/", views.SaleTrashView.as_view(), name="trash"),
     path("<uuid:pk>/restore/", views.SaleRestoreView.as_view(), name="restore"),
-    path("<uuid:pk>/permanent-delete/", views.SaleHardDeleteView.as_view(), name="permanent-delete"),
+    path(
+        "<uuid:pk>/permanent-delete/",
+        views.SaleHardDeleteView.as_view(),
+        name="permanent-delete",
+    ),
     path("api/item-lookup/", ItemLookupView.as_view(), name="api-item-lookup"),
 ]

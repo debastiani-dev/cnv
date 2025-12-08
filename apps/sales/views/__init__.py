@@ -1,12 +1,19 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
 from django.db import transaction
+from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
-from ..models import Sale
 from ..forms import SaleForm, SaleItemFormSet
+from ..models import Sale
 from ..services.sale_service import SaleService
+
 
 class SaleListView(LoginRequiredMixin, ListView):
     model = Sale
@@ -14,6 +21,7 @@ class SaleListView(LoginRequiredMixin, ListView):
     context_object_name = "sales"
     ordering = ["-date"]
     paginate_by = 10
+
 
 class SaleCreateView(LoginRequiredMixin, CreateView):
     model = Sale
@@ -36,13 +44,14 @@ class SaleCreateView(LoginRequiredMixin, CreateView):
         if items.is_valid():
             try:
                 SaleService.create_sale_from_forms(form, items)
-                return super().form_valid(form) # Redirects to success_url
+                return super().form_valid(form)  # Redirects to success_url
             except Exception as e:
                 # Handle error
                 form.add_error(None, str(e))
                 return self.form_invalid(form)
         else:
             return self.form_invalid(form)
+
 
 class SaleUpdateView(LoginRequiredMixin, UpdateView):
     model = Sale
@@ -63,32 +72,36 @@ class SaleUpdateView(LoginRequiredMixin, UpdateView):
         context = self.get_context_data()
         items = context["items"]
         if items.is_valid():
-             # We can reuse the logic, form.save() updates instance, forms set updates items.
-             # Service might duplicate creation logic if not careful.
-             # For update, we can just save them standardly, but total calculation needs to happen.
-             # Let's use service logic adapted or just manual save + service total update.
+            # We can reuse the logic, form.save() updates instance, forms set updates items.
+            # Service might duplicate creation logic if not careful.
+            # For update, we can just save them standardly, but total calculation needs to happen.
+            # Let's use service logic adapted or just manual save + service total update.
             with transaction.atomic():
                 self.object = form.save()
-                items.save() # Handles add/edit
-                
+                items.save()  # Handles add/edit
+
                 # Handle deletions explicitly if items.save() doesn't (it usually does if commit=True)
                 # inlineformset_factory saves deleted objects too.
-                
+
                 # Update totals
                 SaleService.update_sale_totals(self.object)
-                
+
             return super().form_valid(form)
         else:
             return self.form_invalid(form)
+
+
 class SaleDetailView(LoginRequiredMixin, DetailView):
     model = Sale
     template_name = "sales/sale_detail.html"
     context_object_name = "sale"
 
+
 class SaleDeleteView(LoginRequiredMixin, DeleteView):
     model = Sale
     template_name = "sales/sale_confirm_delete.html"
     success_url = reverse_lazy("sales:list")
+
 
 class SaleTrashView(LoginRequiredMixin, ListView):
     model = Sale
@@ -99,6 +112,7 @@ class SaleTrashView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return SaleService.get_deleted_sales()
 
+
 class SaleRestoreView(LoginRequiredMixin, UpdateView):
     model = Sale
     fields = []
@@ -106,11 +120,12 @@ class SaleRestoreView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("sales:trash")
 
     def get_queryset(self):
-         return Sale.all_objects.filter(is_deleted=True)
+        return Sale.all_objects.filter(is_deleted=True)
 
     def form_valid(self, form):
         SaleService.restore_sale(self.object)
         return super().form_valid(form)
+
 
 class SaleHardDeleteView(LoginRequiredMixin, DeleteView):
     model = Sale
@@ -118,9 +133,10 @@ class SaleHardDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("sales:trash")
 
     def get_queryset(self):
-         return Sale.all_objects.filter(is_deleted=True)
+        return Sale.all_objects.filter(is_deleted=True)
 
     def form_valid(self, form):
         SaleService.hard_delete_sale(self.object)
         from django.http import HttpResponseRedirect
+
         return HttpResponseRedirect(self.success_url)

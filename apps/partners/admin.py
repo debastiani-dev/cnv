@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from apps.partners.models import Partner
+
 
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):

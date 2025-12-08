@@ -1,7 +1,8 @@
 from django.db import transaction
-from django.db.models import Sum
-from apps.sales.models import Sale, SaleItem
+
 from apps.base.utils.money import Money
+from apps.sales.models import Sale, SaleItem
+
 
 class SaleService:
     @staticmethod
@@ -12,17 +13,17 @@ class SaleService:
         """
         # Save the sale first to get a PK
         sale_instance.save()
-        
+
         total_amount = Money(0)
-        
+
         for item in sale_items_data:
             item.sale = sale_instance
-            item.save() # formatting and total_price calc happens in model save
+            item.save()  # formatting and total_price calc happens in model save
             total_amount += Money(item.total_price)
-            
+
         sale_instance.total_amount = total_amount
         sale_instance.save()
-        
+
         return sale_instance
 
     @staticmethod
@@ -37,7 +38,7 @@ class SaleService:
         total = Money(0)
         for item in items:
             total += Money(item.total_price)
-            
+
         sale.total_amount = total
         sale.save()
 
@@ -48,18 +49,18 @@ class SaleService:
         Orchestrates creation from Django Forms.
         """
         sale = form.save(commit=False)
-        sale.save() # Get PK
-        
+        sale.save()  # Get PK
+
         # Save formset items
         instances = formset.save(commit=False)
         for instance in instances:
             instance.sale = sale
-            instance.save() 
-        
+            instance.save()
+
         # Handle deletions
         for obj in formset.deleted_objects:
             obj.delete()
-            
+
         SaleService.update_sale_totals(sale)
         return sale
 

@@ -1,9 +1,10 @@
-from typing import Dict, Any, Optional
+from typing import Any, Dict
+
 from django.contrib.auth import get_user_model
 from django.db.models import QuerySet
-from django.db import transaction
 
 User = get_user_model()
+
 
 class UserService:
     @staticmethod
@@ -19,12 +20,12 @@ class UserService:
         Creates a new user.
         Passes data to the UserManager's create_user method.
         """
-        # Extract password to handle it specifically if needed, 
+        # Extract password to handle it specifically if needed,
         # but UserManager.create_user handles it.
         password = data.pop("password", None)
         if not password:
             raise ValueError("Password is required to create a user.")
-            
+
         return User.objects.create_user(password=password, **data)
 
     @staticmethod
@@ -35,14 +36,14 @@ class UserService:
         for field, value in data.items():
             if hasattr(user, field):
                 setattr(user, field, value)
-        
+
         user.save()
         return user
 
     @staticmethod
     def delete_user(user: User) -> None:
         """
-        Deletes a user. 
+        Deletes a user.
         Using standard delete (hard delete) as per standard auth behavior.
         """
         user.delete()

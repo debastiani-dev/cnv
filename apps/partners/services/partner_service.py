@@ -1,5 +1,7 @@
-from django.db.models import QuerySet, Q
+from django.db.models import Q, QuerySet
+
 from apps.partners.models import Partner
+
 
 class PartnerService:
     @staticmethod
@@ -8,14 +10,14 @@ class PartnerService:
         Returns a queryset of partners, optionally filtered by a search query.
         """
         queryset = Partner.objects.all().order_by("name")
-        
+
         if search_query:
             queryset = queryset.filter(
-                Q(name__icontains=search_query) | 
-                Q(tax_id__icontains=search_query) |
-                Q(email__icontains=search_query)
+                Q(name__icontains=search_query)
+                | Q(tax_id__icontains=search_query)
+                | Q(email__icontains=search_query)
             )
-        
+
         return queryset
 
     @staticmethod

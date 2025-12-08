@@ -1,10 +1,13 @@
 from django.contrib import admin
+
 from apps.sales.models import Sale, SaleItem
+
 
 class SaleItemInline(admin.TabularInline):
     model = SaleItem
     extra = 1
-    autocomplete_fields = [] # Cannot autocomplete generic FK easily without config
+    autocomplete_fields = []  # Cannot autocomplete generic FK easily without config
+
 
 @admin.register(Sale)
 class SaleAdmin(admin.ModelAdmin):
