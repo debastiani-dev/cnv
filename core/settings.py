@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "apps.cattle",
     "apps.partners",
     "apps.sales",
+    "apps.purchases",
     "apps.website",
     "apps.dashboard",
 ]
