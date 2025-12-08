@@ -1,22 +1,349 @@
 {% extends "layouts/base_dashboard.html" %}
 {% load i18n %}
+{% load humanize %}
+
+{% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-<div class="md:flex md:items-center md:justify-between">
-    <div class="min-w-0 flex-1">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">{% trans "Dashboard" %}</h2>
+<style>
+    .rounded-3xl {
+        border-radius: 0.5rem !important;
+    }
+    .p-10 {
+        padding: 1.5rem !important;
+    }
+    .px-10 {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+    .gap-10 {
+        gap: 1.5rem !important;
+    }
+    .space-y-12 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 1.5rem !important;
+    }
+    .h-12 {
+        height: 3rem !important;
+    }
+    .w-12 {
+        width: 3rem !important;
+    }
+    .ml-8 {
+        margin-left: 2rem !important;
+    }
+</style>
+<div class="px-6 py-8 sm:px-8 lg:px-12 max-w-7xl mx-auto space-y-12">
+    <!-- Page Header -->
+    <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+            <h2 class="text-3xl font-bold leading-9 text-gray-900 sm:truncate sm:tracking-tight">
+                {% trans "Dashboard" %}
+            </h2>
+        </div>
     </div>
-</div>
 
-<div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    <!-- Card -->
-    <div class="overflow-hidden rounded-lg bg-white shadow">
-        <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-base font-semibold leading-6 text-gray-900">{% blocktrans with name=user.first_name|default:user.username %}Welcome back, {{ name }}!{% endblocktrans %}</h3>
-            <div class="mt-2 text-sm text-gray-500">
-                <p>{% trans "You are logged in to the management system." %}</p>
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- Total Cattle -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.011.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Total Cattle" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold text-gray-900">{{ cattle_stats.total }}</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Revenue -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 2.025v.75c0 .414.336.75.75.75H18a.75.75 0 00-.75.75v.75m7.5-3.75h-9c-1.1 0-2 .9-2 2v2.25" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Sales" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold text-gray-900">R$ {{ sales_stats.total_revenue|intcomma }}</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Cost -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Purchases" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold text-gray-900">R$ {{ purchases_stats.total_cost|intcomma }}</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Net Profit -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Net Profit" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold {% if net_profit >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                                    R$ {{ net_profit|intcomma }}
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2">
+        <!-- Herd Composition -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-10">
+            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">{% trans "Herd Composition" %}</h3>
+            <div id="herdChart"></div>
+        </div>
+
+        <!-- Financial Overview -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-10">
+             <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">{% trans "Financial Overview" %}</h3>
+            <div id="financialChart"></div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2">
+        <!-- Recent Sales -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden">
+             <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                 <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Sales" %}</h3>
+             </div>
+             <ul class="divide-y divide-gray-200">
+                {% for sale in sales_stats.recent %}
+                <li class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100">
+                                <span class="text-sm font-medium leading-none text-emerald-700">S</span>
+                            </span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">{{ sale.partner.name }}</p>
+                            <p class="truncate text-xs text-gray-500">{{ sale.date|date:"d M Y" }}</p>
+                        </div>
+                        <div class="text-right text-sm font-semibold text-emerald-600">
+                            + R$ {{ sale.total_amount|intcomma }}
+                        </div>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="px-6 py-4 text-center text-sm text-gray-500">{% trans "No recent sales." %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Recent Purchases -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden">
+             <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                 <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Purchases" %}</h3>
+             </div>
+            <ul class="divide-y divide-gray-200">
+                {% for purchase in purchases_stats.recent %}
+                <li class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-4">
+                         <div class="flex-shrink-0">
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-rose-100">
+                                <span class="text-sm font-medium leading-none text-rose-700">P</span>
+                            </span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">{{ purchase.partner.name }}</p>
+                            <p class="truncate text-xs text-gray-500">{{ purchase.date|date:"d M Y" }}</p>
+                        </div>
+                        <div class="text-right text-sm font-semibold text-rose-600">
+                            - R$ {{ purchase.total_amount|intcomma }}
+                        </div>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="px-6 py-4 text-center text-sm text-gray-500">{% trans "No recent purchases." %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<!-- Data for Charts -->
+{{ cattle_stats.breed_breakdown|json_script:"cattle-stats-data" }}
+{{ sales_stats.total_revenue|json_script:"sales-total-data" }}
+{{ purchases_stats.total_cost|json_script:"purchases-total-data" }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Herd Composition Chart (ApexCharts) ---
+        const cattleStatsData = JSON.parse(document.getElementById('cattle-stats-data').textContent);
+        const cattleLabels = Object.keys(cattleStatsData).map(key => key.charAt(0).toUpperCase() + key.slice(1));
+        const cattleValues = Object.values(cattleStatsData);
+        
+        var herdOptions = {
+            series: cattleValues,
+            chart: {
+                type: 'donut',
+                height: 350,
+                fontFamily: 'Inter, sans-serif'
+            },
+            labels: cattleLabels,
+            colors: [
+                '#6366f1', // Indigo
+                '#10b981', // Emerald
+                '#f59e0b', // Amber
+                '#f43f5e', // Rose
+                '#06b6d4', // Cyan
+                '#8b5cf6', // Violet
+                '#84cc16', // Lime
+                '#d946ef', // Fuchsia
+                '#64748b'  // Slate
+            ],
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '65%'
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            legend: {
+                position: 'bottom',
+                fontSize: '14px',
+                fontFamily: 'Inter, sans-serif',
+                markers: {
+                    width: 10,
+                    height: 10,
+                    radius: 12
+                }
+            },
+             stroke: {
+                show: false
+            }
+        };
+
+        var herdChart = new ApexCharts(document.querySelector("#herdChart"), herdOptions);
+        herdChart.render();
+
+
+        // --- Financial Overview Chart (ApexCharts) ---
+        const salesTotal = JSON.parse(document.getElementById('sales-total-data').textContent);
+        const purchasesTotal = JSON.parse(document.getElementById('purchases-total-data').textContent);
+
+        var financialOptions = {
+            series: [{
+                name: 'Amount',
+                data: [salesTotal, purchasesTotal]
+            }],
+            chart: {
+                type: 'bar',
+                height: 350,
+                fontFamily: 'Inter, sans-serif',
+                toolbar: {
+                    show: false
+                }
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    columnWidth: '45%',
+                    distributed: true, // Different colors per bar
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            legend: {
+                show: false
+            },
+            colors: ['#10b981', '#f43f5e'], // Emerald, Rose
+            xaxis: {
+                categories: ['Sales', 'Purchases'],
+                labels: {
+                    style: {
+                        fontSize: '14px',
+                        fontWeight: 600
+                    }
+                },
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false
+                }
+            },
+             yaxis: {
+                labels: {
+                    formatter: function (value) {
+                        return "R$ " + value.toLocaleString();
+                    }
+                }
+            },
+            grid: {
+                borderColor: '#f1f5f9',
+                strokeDashArray: 4,
+                yaxis: {
+                    lines: {
+                        show: true
+                    }
+                }
+            },
+             tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return "R$ " + val.toLocaleString()
+                    }
+                }
+            }
+        };
+
+        var financialChart = new ApexCharts(document.querySelector("#financialChart"), financialOptions);
+        financialChart.render();
+    });
+</script>
 {% endblock %}

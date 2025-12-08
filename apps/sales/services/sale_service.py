@@ -1,10 +1,27 @@
 from django.db import transaction
+from django.db.models import Sum
 
 from apps.base.utils.money import Money
 from apps.sales.models import Sale, SaleItem
 
 
 class SaleService:
+    @staticmethod
+    def get_sales_stats() -> dict:
+        """
+        Returns statistics about sales.
+        """
+        queryset = Sale.objects.all()
+        total_count = queryset.count()
+        total_revenue = queryset.aggregate(total=Sum("total_amount"))["total"] or 0
+        recent_sales = queryset.order_by("-date", "-created_at")[:5]
+
+        return {
+            "count": total_count,
+            "total_revenue": total_revenue,
+            "recent": recent_sales,
+        }
+
     @staticmethod
     @transaction.atomic
     def create_sale(sale_instance: Sale, sale_items_data: list[SaleItem]) -> Sale:

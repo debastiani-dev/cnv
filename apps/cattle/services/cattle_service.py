@@ -1,11 +1,45 @@
 from typing import Optional
 
-from django.db.models import Q, QuerySet
+from django.db.models import Count, Q, QuerySet
 
 from apps.cattle.models import Cattle
 
 
 class CattleService:
+    @staticmethod
+    def get_cattle_stats() -> dict:
+        """
+        Returns statistics about cattle.
+        """
+        total_cattle = Cattle.objects.filter(status=Cattle.STATUS_AVAILABLE).count()
+        status_counts = Cattle.objects.values("status").annotate(count=Count("status"))
+
+        # Convert QuerySet to a more usable dict
+        stats = {item["status"]: item["count"] for item in status_counts}
+
+        # Calculate breed breakdown
+        # Calculate breed breakdown for active herd only
+        active_cattle = Cattle.objects.filter(status=Cattle.STATUS_AVAILABLE)
+        breed_counts = active_cattle.values("breed").annotate(count=Count("breed"))
+        breed_dict = dict(Cattle.BREED_CHOICES)
+
+        breed_stats = {}
+        for item in breed_counts:
+            code = item["breed"] or Cattle.BREED_OTHER
+            label = breed_dict.get(
+                code, code
+            ).title()  # Fallback to code if not found, title cased
+            breed_stats[label] = item["count"]
+
+        return {
+            "total": total_cattle,
+            "status_breakdown": stats,
+            "breed_breakdown": breed_stats,
+            "available": stats.get(Cattle.STATUS_AVAILABLE, 0),
+            "sold": stats.get(Cattle.STATUS_SOLD, 0),
+            "dead": stats.get(Cattle.STATUS_DEAD, 0),
+        }
+
     @staticmethod
     def get_all_cattle(search_query: Optional[str] = None) -> QuerySet[Cattle]:
         """

@@ -1,10 +1,27 @@
 from django.db import transaction
+from django.db.models import Sum
 
 from apps.base.utils.money import Money
 from apps.purchases.models import Purchase, PurchaseItem
 
 
 class PurchaseService:
+    @staticmethod
+    def get_purchases_stats() -> dict:
+        """
+        Returns statistics about purchases.
+        """
+        queryset = Purchase.objects.all()
+        total_count = queryset.count()
+        total_cost = queryset.aggregate(total=Sum("total_amount"))["total"] or 0
+        recent_purchases = queryset.order_by("-date", "-created_at")[:5]
+
+        return {
+            "count": total_count,
+            "total_cost": total_cost,
+            "recent": recent_purchases,
+        }
+
     @staticmethod
     @transaction.atomic
     def create_purchase(
