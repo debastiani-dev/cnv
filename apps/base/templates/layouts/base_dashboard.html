@@ -52,28 +52,30 @@
                 </div>
 
                 <!-- Sidebar Content -->
-                <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
-                    <div class="flex h-16 shrink-0 items-center">
-                        <img class="h-8 w-auto" src="{% static 'img/logo.png' %}" alt="CNV System">
+                <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-stone-300 px-6 pb-4">
+                    <div class="flex h-16 shrink-0 items-center justify-center">
+                        <a href="{% url 'dashboard:home' %}">
+                            <img class="h-8 w-auto" src="{% static 'img/logo.png' %}" alt="CNV System">
+                        </a>
                     </div>
                     <nav class="flex flex-1 flex-col">
                         <ul role="list" class="flex flex-1 flex-col gap-y-7">
                             <li>
                                 <ul role="list" class="-mx-2 space-y-1">
                                     <li>
-                                        <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                        <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
                                             {% trans "Dashboard" %}
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{% url 'dashboard:cattle-list' %}" class="{% if 'cattle' in request.resolver_match.url_name %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                        <a href="{% url 'dashboard:cattle-list' %}" class="{% if 'cattle' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
                                             {% trans "Cattle" %}
                                         </a>
                                     </li>
                                     <!-- Admin Links -->
                                     {% if request.user.is_superuser %}
                                     <li>
-                                        <a href="{% url 'authentication:user-list' %}" class="{% if 'users' in request.resolver_match.url_name %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                        <a href="{% url 'authentication:user-list' %}" class="{% if 'users' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
                                             {% trans "Users" %}
                                         </a>
                                     </li>
@@ -89,28 +91,30 @@
 
     <!-- Desktop Sidebar (Static) -->
     <div id="static-sidebar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
-            <div class="flex h-16 shrink-0 items-center">
-                <img class="h-8 w-auto" src="{% static 'img/logo.png' %}" alt="CNV">
+        <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-stone-300 px-6 pb-4">
+            <div class="flex h-16 shrink-0 items-center justify-center">
+                <a href="{% url 'dashboard:home' %}">
+                    <img class="h-8 w-auto" src="{% static 'img/logo.png' %}" alt="CNV">
+                </a>
             </div>
             <nav class="flex flex-1 flex-col">
                 <ul role="list" class="flex flex-1 flex-col gap-y-7">
                     <li>
                         <ul role="list" class="-mx-2 space-y-1">
                             <li>
-                                <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
                                     {% trans "Dashboard" %}
                                 </a>
                             </li>
                             <li>
-                                <a href="{% url 'dashboard:cattle-list' %}" class="{% if 'cattle' in request.resolver_match.url_name %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                <a href="{% url 'dashboard:cattle-list' %}" class="{% if 'cattle' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
                                     {% trans "Cattle" %}
                                 </a>
                             </li>
                             <!-- Admin Links -->
                             {% if request.user.is_superuser %}
                             <li>
-                                <a href="{% url 'authentication:user-list' %}" class="{% if 'users' in request.resolver_match.url_name %}bg-gray-800 text-white{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
+                                <a href="{% url 'authentication:user-list' %}" class="{% if 'user' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6">
                                     {% trans "Users" %}
                                 </a>
                             </li>
@@ -125,7 +129,7 @@
     <!-- Main Content Area -->
     <div id="main-content" class="lg:pl-72">
         <!-- Top Bar -->
-        <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-stone-300 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
             <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" @click="sidebarOpen = true">
                 <span class="sr-only">{% trans "Open sidebar" %}</span>
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -145,8 +149,17 @@
                     <div class="relative" x-data="{ open: false }">
                         <button type="button" class="-m-1.5 flex items-center p-1.5" id="user-menu-button" aria-expanded="false" aria-haspopup="true" @click="open = !open" @click.outside="open = false">
                             <span class="sr-only">{% trans "Open user menu" %}</span>
-                            <span class="hidden lg:flex lg:items-center">
-                                <span class="ml-4 text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">{{ user.get_full_name|default:user.username }}</span>
+                            <span class="flex items-center">
+                                <span class="text-sm font-semibold leading-6 text-gray-900" aria-hidden="true">{{ user.get_full_name|default:user.username }}</span>
+                                {% if user.profile_image %}
+                                    <img class="ml-4 h-8 w-8 rounded-full bg-gray-50" src="{{ user.profile_image.url }}" alt="">
+                                {% else %}
+                                    <span class="ml-4 inline-block h-8 w-8 overflow-hidden rounded-full bg-gray-100">
+                                        <svg class="h-full w-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                    </span>
+                                {% endif %}
                                 <svg class="ml-2 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                                 </svg>

@@ -1,11 +1,16 @@
 {% extends "layouts/base_public.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block content %}
 <div class="relative px-6 pt-14 lg:px-8">
     <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
         <div class="text-center">
-            <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{% trans "Cabanha Nelore do Vale" %}</h1>
+            <div class="mx-auto max-w-2xl text-center">
+                <div class="mb-8 flex justify-center">
+                    <img class="h-20 w-auto" src="{% static 'img/logo.png' %}" alt="CNV System">
+                </div>
+
             <p class="mt-6 text-lg leading-8 text-gray-600">
                 {% trans "Premium management system for premium cattle." %}
                 {% trans "Experience the difference in genetic quality and performance tracking." %}
