@@ -17,12 +17,18 @@ from django.views.generic import (
 from apps.cattle.forms import CattleForm
 from apps.cattle.models import Cattle
 from apps.cattle.services.cattle_service import CattleService
+from apps.health.services import HealthService
 
 
 class CattleDetailView(LoginRequiredMixin, DetailView):
     model = Cattle
     template_name = "cattle/cattle_detail.html"
     context_object_name = "cattle"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["health_events"] = HealthService.get_animal_health_history(self.object)
+        return context
 
 
 class CattleListView(LoginRequiredMixin, ListView):
@@ -53,7 +59,7 @@ class CattleCreateView(LoginRequiredMixin, CreateView):
     model = Cattle
     form_class = CattleForm
     template_name = "cattle/cattle_form.html"
-    success_url = reverse_lazy("dashboard:cattle-list")
+    success_url = reverse_lazy("cattle:list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -69,7 +75,7 @@ class CattleUpdateView(LoginRequiredMixin, UpdateView):
     model = Cattle
     form_class = CattleForm
     template_name = "cattle/cattle_form.html"
-    success_url = reverse_lazy("dashboard:cattle-list")
+    success_url = reverse_lazy("cattle:list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -84,7 +90,7 @@ class CattleUpdateView(LoginRequiredMixin, UpdateView):
 class CattleDeleteView(LoginRequiredMixin, DeleteView):
     model = Cattle
     template_name = "cattle/cattle_confirm_delete.html"
-    success_url = reverse_lazy("dashboard:cattle-list")
+    success_url = reverse_lazy("cattle:list")
 
     def delete(self, request, *args, **kwargs):
         # Default implementation or simple pass, logic moved to post
@@ -125,7 +131,7 @@ class CattleRestoreView(LoginRequiredMixin, View):
         except Cattle.DoesNotExist:
             messages.error(request, _("Cattle not found."))
 
-        return HttpResponseRedirect(reverse_lazy("dashboard:cattle-list"))
+        return HttpResponseRedirect(reverse_lazy("cattle:list"))
 
     def get(self, request, pk):
         try:
@@ -135,7 +141,7 @@ class CattleRestoreView(LoginRequiredMixin, View):
             )
         except Cattle.DoesNotExist:
             messages.error(request, _("Cattle not found."))
-            return HttpResponseRedirect(reverse_lazy("dashboard:cattle-list"))
+            return HttpResponseRedirect(reverse_lazy("cattle:list"))
 
 
 class CattlePermanentDeleteView(LoginRequiredMixin, View):
@@ -157,7 +163,7 @@ class CattlePermanentDeleteView(LoginRequiredMixin, View):
                 },
             )
 
-        return HttpResponseRedirect(reverse_lazy("dashboard:cattle-trash"))
+        return HttpResponseRedirect(reverse_lazy("cattle:trash"))
 
     def get(self, request, pk):
         try:
@@ -169,4 +175,4 @@ class CattlePermanentDeleteView(LoginRequiredMixin, View):
             )
         except Cattle.DoesNotExist:
             messages.error(request, _("Cattle not found."))
-            return HttpResponseRedirect(reverse_lazy("dashboard:cattle-trash"))
+            return HttpResponseRedirect(reverse_lazy("cattle:trash"))

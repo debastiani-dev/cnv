@@ -1,10 +1,12 @@
 from django import forms
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.forms import BaseInlineFormSet, inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from apps.partners.services import PartnerService
 from apps.sales.models import Sale, SaleItem
+from apps.sales.services.sale_service import SaleService
 
 
 class SaleForm(forms.ModelForm):
@@ -75,8 +77,18 @@ class SaleItemForm(forms.ModelForm):
             try:
                 obj = model.objects.get(pk=obj_id)
                 self.instance.content_object = obj
+
+                # Verify Safety Valve
+                SaleService.validate_item_for_sale(obj)
+
             except model.DoesNotExist:
                 self.add_error("object_id", _("Selected item does not exist."))
+            except ValidationError as e:
+                # Catch service validation errors (like withdrawal block)
+                # and display them on the form
+                self.add_error("object_id", e.message)
+                # Also raise regular ValidationError to stop processing if needed by Django
+                raise forms.ValidationError(e.message)
 
         return cleaned_data
 

@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 
 from apps.cattle.services.cattle_service import CattleService
+from apps.health.services import HealthService
 from apps.purchases.services.purchase_service import PurchaseService
 from apps.sales.services.sale_service import SaleService
 
@@ -20,6 +21,9 @@ class HomeView(LoginRequiredMixin, TemplateView):
         # Calculate Net Profit
         net_profit = sales_stats["total_revenue"] - purchases_stats["total_cost"]
 
+        # Health Stats
+        active_withdrawal_count = HealthService.get_active_withdrawal_count()
+
         # Add to context
         context.update(
             {
@@ -27,6 +31,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 "sales_stats": sales_stats,
                 "purchases_stats": purchases_stats,
                 "net_profit": net_profit,
+                "active_withdrawal_count": active_withdrawal_count,
             }
         )
         return context

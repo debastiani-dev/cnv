@@ -65,6 +65,27 @@
             </div>
         </div>
 
+        <!-- Animals in Withdrawal -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "In Withdrawal" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold text-gray-900">{{ active_withdrawal_count }}</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Sales Revenue -->
         <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
             <div class="p-10">

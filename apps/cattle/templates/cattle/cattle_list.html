@@ -1,7 +1,7 @@
 {% extends "layouts/base_dashboard.html" %}
 {% load i18n static %}
 
-{% block title %}{% trans "Cattle Management" %}{% endblock %}
+{% block title %}{% trans "Cattle" %}{% endblock %}
 
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
@@ -42,10 +42,10 @@
                 {% endfor %}
             </select>
         </form>
-        
-        <!-- Action Buttons -->
-        <a href="{% url 'dashboard:cattle-trash' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "Trash Bin" %}</a>
-        <a href="{% url 'dashboard:cattle-create' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Add Cattle" %}</a>
+              <!-- Action Buttons -->
+        <a href="{% url 'cattle:trash' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "Trash Bin" %}</a>
+        <button type="submit" form="bulk-action-form" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-300 hover:bg-indigo-50">{% trans "New Sanitary Event" %}</button>
+        <a href="{% url 'cattle:create' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Add Cattle" %}</a>
     </div>
   </div>
 
@@ -54,9 +54,14 @@
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <form id="bulk-action-form" method="POST" action="{% url 'health:event-create' %}">
+            {% csrf_token %}
             <table class="min-w-full divide-y divide-gray-300">
               <thead class="bg-gray-50">
                 <tr>
+                  <th scope="col" class="relative px-7 sm:w-12 sm:px-6 py-3.5">
+                    <input type="checkbox" id="select-all" class="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                  </th>
                   <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Cattle" %}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Breed" %}</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Sex" %}</th>
@@ -71,10 +76,13 @@
               <tbody class="divide-y divide-gray-200 bg-white">
                 {% for cattle in cattle_list %}
                 <tr>
+                  <td class="relative px-7 sm:w-12 sm:px-6 py-4">
+                    <input type="checkbox" name="cattle_ids" value="{{ cattle.pk }}" class="cattle-checkbox absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                  </td>
                   <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                       <div class="flex items-center">
                           <div class="h-10 w-10 flex-shrink-0">
-                              <a href="{% url 'dashboard:cattle-detail' cattle.pk %}">
+                              <a href="{% url 'cattle:detail' cattle.pk %}">
                                   {% if cattle.image %}
                                       <img class="h-10 w-10 rounded-full object-cover" style="width: 40px; height: 40px;" src="{{ cattle.image.url }}" alt="">
                                   {% else %}
@@ -84,7 +92,7 @@
                           </div>
                           <div class="ml-4">
                               <div class="font-medium text-gray-900">
-                                  <a href="{% url 'dashboard:cattle-detail' cattle.pk %}" class="hover:text-indigo-600">
+                                  <a href="{% url 'cattle:detail' cattle.pk %}" class="hover:text-indigo-600">
                                       {{ cattle.tag }}
                                   </a>
                               </div>
@@ -116,16 +124,26 @@
                     </span>
                   </td>
                   <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                    <a href="{% url 'dashboard:cattle-update' cattle.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-4">{% trans "Edit" %}</a>
-                    <a href="{% url 'dashboard:cattle-delete' cattle.pk %}" class="text-red-600 hover:text-red-900">{% trans "Delete" %}</a>
+                    <a href="{% url 'cattle:update' cattle.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-4">{% trans "Edit" %}</a>
+                    <a href="{% url 'cattle:delete' cattle.pk %}" class="text-red-600 hover:text-red-900">{% trans "Delete" %}</a>
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
+            </form>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+    document.getElementById('select-all').addEventListener('change', function() {
+        var checkboxes = document.querySelectorAll('.cattle-checkbox');
+        for (var checkbox of checkboxes) {
+            checkbox.checked = this.checked;
+        }
+    });
+</script>
 {% endblock %}

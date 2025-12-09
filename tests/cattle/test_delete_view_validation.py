@@ -16,7 +16,7 @@ class TestCattleDeleteViewValidation:
         user = baker.make(User)
         client.force_login(user)
         cattle = baker.make(Cattle)
-        url = reverse("dashboard:cattle-delete", kwargs={"pk": cattle.pk})
+        url = reverse("cattle:delete", kwargs={"pk": cattle.pk})
 
         # Patch the service to raise ValidationError
         with patch("apps.cattle.views.CattleService.delete_cattle") as mock_delete:
@@ -37,7 +37,7 @@ class TestCattleDeleteViewValidation:
         client.force_login(user)
         # Create soft-deleted cattle
         cattle = baker.make(Cattle, is_deleted=True)
-        url = reverse("dashboard:cattle-permanent-delete", kwargs={"pk": cattle.pk})
+        url = reverse("cattle:permanent-delete", kwargs={"pk": cattle.pk})
 
         with patch("apps.cattle.views.CattleService.hard_delete_cattle") as mock_delete:
             mock_delete.side_effect = ValidationError("Cannot delete linked cattle")

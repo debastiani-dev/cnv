@@ -1,0 +1,113 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "New Sanitary Event" %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">{% trans "New Sanitary Event" %}</h1>
+      <p class="mt-2 text-sm text-gray-700 dark:text-gray-400">
+        {% trans "Record a health event for the selected animals." %}
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-8 flow-root">
+    <div class="lg:grid lg:grid-cols-12 lg:gap-x-12">
+        <div class="lg:col-span-8">
+            <form method="POST" class="bg-white dark:bg-gray-800 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+                {% csrf_token %}
+                
+                <!-- Hidden inputs for Cattle IDs -->
+                {% for cow_id in cattle_ids %}
+                    <input type="hidden" name="cattle_ids" value="{{ cow_id }}">
+                {% endfor %}
+                <input type="hidden" name="action" value="save_event">
+
+                <div class="px-4 py-6 sm:p-8">
+                    <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                        
+                        <div class="sm:col-span-3">
+                            <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{{ form.date.label }}</label>
+                            <div class="mt-2">
+                                {{ form.date }}
+                                {{ form.date.errors }}
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{{ form.title.label }}</label>
+                            <div class="mt-2">
+                                {{ form.title }}
+                                {{ form.title.errors }}
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="{{ form.medication.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{{ form.medication.label }}</label>
+                            <div class="mt-2">
+                                {{ form.medication }}
+                                {{ form.medication.errors }}
+                            </div>
+                        </div>
+
+                        <div class="sm:col-span-3">
+                            <label for="{{ form.total_cost.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{{ form.total_cost.label }}</label>
+                            <div class="mt-2">
+                                {{ form.total_cost }}
+                                {{ form.total_cost.errors }}
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">{% trans "Total cost for the batch/bottle. Will be divided among animals." %}</p>
+                        </div>
+
+                        <div class="col-span-full">
+                            <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">{{ form.notes.label }}</label>
+                            <div class="mt-2">
+                                {{ form.notes }}
+                                {{ form.notes.errors }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+                    <a href="{% url 'cattle:list' %}" class="text-sm font-semibold leading-6 text-gray-900 dark:text-white">{% trans "Cancel" %}</a>
+                    <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Save Event" %}</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar: Selected Cattle -->
+        <div class="lg:col-span-4 mt-8 lg:mt-0">
+            <div class="bg-gray-50 dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        {% blocktrans count count=selected_cattle|length %}
+                            Selected Animal ({{ count }})
+                        {% plural %}
+                            Selected Animals ({{ count }})
+                        {% endblocktrans %}
+                    </h3>
+                    <div class="mt-5 max-h-96 overflow-y-auto">
+                        <ul role="list" class="divide-y divide-gray-200">
+                            {% for cow in selected_cattle %}
+                            <li class="py-4 flex items-center">
+                                <div class="flex-auto">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ cow.primary_tag }}</p>
+                                    <p class="text-sm text-gray-500">{{ cow.name|default:"-" }}</p>
+                                </div>
+                                <div class="ml-auto">
+                                   <!-- Maybe status pill here later -->
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

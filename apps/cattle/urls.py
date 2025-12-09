@@ -1,32 +1,20 @@
 from django.urls import path
 
-from apps.cattle.views import (
-    CattleCreateView,
-    CattleDeleteView,
-    CattleDetailView,
-    CattleListView,
-    CattlePermanentDeleteView,
-    CattleRestoreView,
-    CattleTrashListView,
-    CattleUpdateView,
-)
+from apps.cattle import views
 
-# We don't define app_name here if we are including it into 'dashboard' namespace or similar.
-# But good practice to keep it clean.
-# However, the previous `apps/dashboard/urls.py` had `app_name = "dashboard"`.
-# If we include this inside dashboard urls, the names will be `dashboard:cattle-list` etc.
+app_name = "cattle"
 
 urlpatterns = [
-    path("", CattleListView.as_view(), name="cattle-list"),
-    path("detail/<uuid:pk>/", CattleDetailView.as_view(), name="cattle-detail"),
-    path("trash/", CattleTrashListView.as_view(), name="cattle-trash"),
-    path("create/", CattleCreateView.as_view(), name="cattle-create"),
-    path("update/<uuid:pk>/", CattleUpdateView.as_view(), name="cattle-update"),
-    path("delete/<uuid:pk>/", CattleDeleteView.as_view(), name="cattle-delete"),
-    path("restore/<uuid:pk>/", CattleRestoreView.as_view(), name="cattle-restore"),
+    path("", views.CattleListView.as_view(), name="list"),
+    path("create/", views.CattleCreateView.as_view(), name="create"),
+    path("<uuid:pk>/", views.CattleDetailView.as_view(), name="detail"),
+    path("<uuid:pk>/edit/", views.CattleUpdateView.as_view(), name="update"),
+    path("<uuid:pk>/delete/", views.CattleDeleteView.as_view(), name="delete"),
+    path("trash/", views.CattleTrashListView.as_view(), name="trash"),
+    path("<uuid:pk>/restore/", views.CattleRestoreView.as_view(), name="restore"),
     path(
-        "delete-forever/<uuid:pk>/",
-        CattlePermanentDeleteView.as_view(),
-        name="cattle-permanent-delete",
+        "<uuid:pk>/permanent-delete/",
+        views.CattlePermanentDeleteView.as_view(),
+        name="permanent-delete",
     ),
 ]

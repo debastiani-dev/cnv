@@ -1,8 +1,12 @@
 # pylint: disable=duplicate-code
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Count, Q, Sum
+from django.utils.translation import gettext_lazy as _
 
 from apps.base.utils.money import Money
+from apps.cattle.models import Cattle
+from apps.health.services import HealthService
 from apps.sales.models import Sale, SaleItem
 
 
@@ -47,6 +51,26 @@ class SaleService:
         return queryset
 
     @staticmethod
+    def validate_item_for_sale(item_object):
+        """
+        Performs all checks to ensure an item is sellable.
+        1. Is it available? (Not sold/dead)
+        2. Is it biologically safe? (Withdrawal period)
+        """
+        if hasattr(item_object, "is_active") and not item_object.is_active:
+            raise ValidationError(_("This item is not active/available for sale."))
+
+        # Biological Safety Valve (Cattle Only)
+        if isinstance(item_object, Cattle):
+            is_blocked, reason = HealthService.check_withdrawal_status(item_object)
+            if is_blocked:
+                raise ValidationError(
+                    _("Sanitary Block: %(reason)s") % {"reason": reason}
+                )
+
+        return True
+
+    @staticmethod
     @transaction.atomic
     def create_sale(sale_instance: Sale, sale_items_data: list[SaleItem]) -> Sale:
         """
@@ -58,6 +82,10 @@ class SaleService:
         total_amount = Money(0)
 
         for item in sale_items_data:
+            # Check Withdrawal Logic
+            if item.content_object:
+                SaleService.validate_item_for_sale(item.content_object)
+
             item.sale = sale_instance
             item.save()  # formatting and total_price calc happens in model save
             # money library handles addition, but mypy might not know __add__ returns Money
@@ -96,6 +124,10 @@ class SaleService:
         # Save formset items
         instances = formset.save(commit=False)
         for instance in instances:
+            # Check Withdrawal Logic
+            if instance.content_object:
+                SaleService.validate_item_for_sale(instance.content_object)
+
             instance.sale = sale
             instance.save()
 

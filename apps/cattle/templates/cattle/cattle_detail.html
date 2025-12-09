@@ -1,12 +1,14 @@
 {% extends 'layouts/base_dashboard.html' %}
 {% load i18n static %}
 
+{% block title %}{{ cattle.tag }} - {{ cattle.name|default:"Cattle Detail" }}{% endblock %}
+
 {% block content %}
 <div class="px-4 sm:px-6 lg:px-8">
     
     <!-- Breadcrumb / Back Navigation -->
     <div class="mb-8">
-        <a href="{% url 'dashboard:cattle-list' %}" class="text-sm font-medium text-gray-500 hover:text-gray-700 flex items-center">
+        <a href="{% url 'cattle:list' %}" class="text-sm font-medium text-gray-500 hover:text-gray-700 flex items-center">
             <svg class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clip-rule="evenodd" />
             </svg>
@@ -98,7 +100,7 @@
                 <dt class="text-sm font-medium text-gray-500">{% trans "Sire" %}</dt>
                 <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                     {% if cattle.sire %}
-                        <a href="{% url 'dashboard:cattle-detail' cattle.sire.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ cattle.sire.tag }} ({{ cattle.sire.name|default:"-" }})</a>
+                        <a href="{% url 'cattle:detail' cattle.sire.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ cattle.sire.tag }} ({{ cattle.sire.name|default:"-" }})</a>
                     {% else %}
                         {{ cattle.sire_external_id|default:"-" }}
                     {% endif %}
@@ -110,7 +112,7 @@
                 <dt class="text-sm font-medium text-gray-500">{% trans "Dam" %}</dt>
                 <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                     {% if cattle.dam %}
-                        <a href="{% url 'dashboard:cattle-detail' cattle.dam.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ cattle.dam.tag }} ({{ cattle.dam.name|default:"-" }})</a>
+                        <a href="{% url 'cattle:detail' cattle.dam.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ cattle.dam.tag }} ({{ cattle.dam.name|default:"-" }})</a>
                     {% else %}
                         {{ cattle.dam_external_id|default:"-" }}
                     {% endif %}
@@ -132,16 +134,56 @@
         
         <!-- Footer / Action Buttons -->
         <div class="border-t border-gray-200 bg-gray-50 px-4 py-4 sm:px-6 flex justify-end space-x-4">
-             <a href="{% url 'dashboard:cattle-update' cattle.pk %}" class="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+             <a href="{% url 'cattle:update' cattle.pk %}" class="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                 <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M5.433 13.917l1.262-3.155A4 4 0 017.58 9.42l6.92-6.918a2.121 2.121 0 013 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 01-.65-.65z" />
                     <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0010 3H4.75A2.75 2.75 0 002 5.75v9.5A2.75 2.75 0 004.75 18h9.5A2.75 2.75 0 0017 15.25V10a.75.75 0 00-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5z" />
                 </svg>
                 {% trans "Edit Cattle" %}
             </a>
-            <a href="{% url 'dashboard:cattle-delete' cattle.pk %}" class="inline-flex justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
+            <a href="{% url 'cattle:delete' cattle.pk %}" class="inline-flex justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
                 {% trans "Delete Cattle" %}
             </a>
+        </div>
+    </div>
+
+    <!-- Health History Section -->
+    <div class="mt-8 overflow-hidden rounded-lg bg-white shadow ring-1 ring-black ring-opacity-5">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Health History" %}</h3>
+            <p class="mt-1 text-sm text-gray-500">{% trans "Record of sanitary events, vaccinations, and checks." %}</p>
+        </div>
+        <div class="border-t border-gray-200">
+            {% if health_events %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Date" %}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Event" %}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Medication" %}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Cost" %}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Notes" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for target in health_events %}
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ target.event.date }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ target.event.title }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ target.event.medication|default:"-" }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">${{ target.cost_capture|default:"0.00" }}</td>
+                            <td class="px-3 py-4 text-sm text-gray-500 max-w-xs truncate">{{ target.event.notes|default:"-" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="px-4 py-5 sm:px-6 text-sm text-gray-500 text-center">
+                {% trans "No health events recorded." %}
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>

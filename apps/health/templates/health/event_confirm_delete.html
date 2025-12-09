@@ -1,0 +1,40 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete Event" %}{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-lg mt-10">
+    <div class="bg-white dark:bg-gray-900 shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">{% trans "Delete Sanitary Event" %}</h3>
+            <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <p>{% blocktrans with title=object.title date=object.date %}Are you sure you want to delete the event <strong>{{ title }}</strong> ({{ date }})? It will be moved to the Trash Bin.{% endblocktrans %}</p>
+            </div>
+            
+            {% if error %}
+            <div class="mt-4 rounded-md bg-red-50 p-4 dark:bg-red-900/20">
+                <div class="flex">
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800 dark:text-red-200">{% trans "Error" %}</h3>
+                        <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                            <p>{{ error }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="mt-5">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="flex items-center justify-end gap-x-3">
+                        <a href="{% url 'health:event-list' %}" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:hover:bg-gray-600">{% trans "Cancel" %}</a>
+                        <button type="submit" class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">{% trans "Confirm Delete" %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
