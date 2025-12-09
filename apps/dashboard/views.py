@@ -23,6 +23,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
         # Health Stats
         active_withdrawal_count = HealthService.get_active_withdrawal_count()
+        recent_health_events = HealthService.get_recent_events(limit=5)
 
         # Add to context
         context.update(
@@ -32,6 +33,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 "purchases_stats": purchases_stats,
                 "net_profit": net_profit,
                 "active_withdrawal_count": active_withdrawal_count,
+                "recent_health_events": recent_health_events,
             }
         )
         return context

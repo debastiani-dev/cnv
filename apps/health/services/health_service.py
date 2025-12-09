@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import Any, Dict, List, Optional, Tuple
 
 from django.db import transaction
+from django.db.models import Count
 from django.utils import timezone
 
 from apps.cattle.models import Cattle
@@ -175,3 +176,14 @@ class HealthService:
         Permanently deletes an event.
         """
         event.delete(destroy=True)
+
+    @staticmethod
+    def get_recent_events(limit: int = 5):
+        """
+        Returns the most recent sanitary events.
+        """
+        return (
+            SanitaryEvent.objects.annotate(target_count=Count("targets"))
+            .select_related("medication")
+            .order_by("-date", "-created_at")[:limit]
+        )

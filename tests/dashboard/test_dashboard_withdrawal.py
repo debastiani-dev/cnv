@@ -73,3 +73,14 @@ class TestDashboardWithdrawalKPI:
 
         # Check context
         assert response.context["active_withdrawal_count"] == 1
+        assert "recent_health_events" in response.context
+        # We created 3 events (event1, event2, event4).
+        # event1: -2 days
+        # event2: -10 days
+        # event4: today
+        # Order should be event4, event1, event2
+        recent = response.context["recent_health_events"]
+        assert len(recent) == 3
+        assert recent[0] == event4
+        assert recent[1] == event1
+        assert recent[2] == event2
