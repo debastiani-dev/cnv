@@ -83,10 +83,50 @@
                 </dd>
             </div>
 
+            <!-- Sex & Electronic ID -->
+            <div class="border-t border-gray-100 bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Sex" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ cattle.get_sex_display }}</dd>
+            </div>
+            <div class="border-t border-gray-100 bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Electronic ID" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ cattle.electronic_id|default:"-" }}</dd>
+            </div>
+
+            <!-- Sire -->
+            <div class="border-t border-gray-100 bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Sire" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                    {% if cattle.sire %}
+                        <a href="{% url 'dashboard:cattle-detail' cattle.sire.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ cattle.sire.tag }} ({{ cattle.sire.name|default:"-" }})</a>
+                    {% else %}
+                        {{ cattle.sire_external_id|default:"-" }}
+                    {% endif %}
+                </dd>
+            </div>
+
+            <!-- Dam -->
+            <div class="border-t border-gray-100 bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Dam" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                    {% if cattle.dam %}
+                        <a href="{% url 'dashboard:cattle-detail' cattle.dam.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ cattle.dam.tag }} ({{ cattle.dam.name|default:"-" }})</a>
+                    {% else %}
+                        {{ cattle.dam_external_id|default:"-" }}
+                    {% endif %}
+                </dd>
+            </div>
+
             <!-- Birth Date -->
             <div class="border-t border-gray-100 bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt class="text-sm font-medium text-gray-500">{% trans "Birth Date" %}</dt>
-                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ cattle.birth_date|date:"SHORT_DATE_FORMAT"|default:"-" }}</dd>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ cattle.birth_date|date:"SHORT_DATE_FORMAT"|default:"-" }} ({{ cattle.age }})</dd>
+            </div>
+
+            <!-- Notes -->
+            <div class="border-t border-gray-100 bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Notes" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0 whitespace-pre-line">{{ cattle.notes|default:"-" }}</dd>
             </div>
         </dl>
         

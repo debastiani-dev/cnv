@@ -1,9 +1,13 @@
 from datetime import date
 
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.models.base_model import BaseModel
+from apps.purchases.models.purchase import PurchaseItem
+from apps.sales.models.sale import SaleItem
 
 
 class Cattle(BaseModel):
@@ -40,12 +44,32 @@ class Cattle(BaseModel):
         (STATUS_DEAD, _("Dead")),
     ]
 
+    # Sex choices
+    SEX_MALE = "male"
+    SEX_FEMALE = "female"
+    SEX_CHOICES = [
+        (SEX_MALE, _("Male")),
+        (SEX_FEMALE, _("Female")),
+    ]
+
     tag = models.CharField(_("Tag"), max_length=50, help_text=_("Ear tag or ID"))
     name = models.CharField(
         _("Name"),
         max_length=100,
         blank=True,
         help_text=_("Name/Nickname of the animal"),
+    )
+    electronic_id = models.CharField(
+        _("Electronic ID"),
+        max_length=100,
+        blank=True,
+        help_text=_("RFID or EID tag number"),
+    )
+    sex = models.CharField(
+        _("Sex"),
+        max_length=10,
+        choices=SEX_CHOICES,
+        default=SEX_FEMALE,
     )
     breed = models.CharField(
         _("Breed"),
@@ -62,6 +86,41 @@ class Cattle(BaseModel):
         blank=True,
         null=True,
     )
+
+    # Parentage (Hybrid Approach)
+    sire = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="offspring_sire",
+        verbose_name=_("Sire (Internal)"),
+        help_text=_("Father, if registered in the herd."),
+    )
+    sire_external_id = models.CharField(
+        _("Sire (External ID)"),
+        max_length=100,
+        blank=True,
+        help_text=_("Father's Name/ID if not in the herd."),
+    )
+    dam = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="offspring_dam",
+        verbose_name=_("Dam (Internal)"),
+        help_text=_("Mother, if registered in the herd."),
+    )
+    dam_external_id = models.CharField(
+        _("Dam (External ID)"),
+        max_length=100,
+        blank=True,
+        help_text=_("Mother's Name/ID if not in the herd."),
+    )
+
+    notes = models.TextField(_("Notes"), blank=True)
+
     image = models.ImageField(
         _("Profile Image"),
         upload_to="cattle_images/",
@@ -85,6 +144,53 @@ class Cattle(BaseModel):
                 name="unique_active_cattle_tag",
             )
         ]
+
+    def delete(self, using=None, keep_parents=False, destroy=False):
+        """
+        Override delete to check for linked transactions (Sales/Purchases)
+        before allowing both Soft and Hard deletes.
+        """
+        # Check Linked Sales
+        ct = ContentType.objects.get_for_model(self)
+        if SaleItem.objects.filter(content_type=ct, object_id=self.pk).exists():
+            raise ValidationError(
+                _(
+                    "Cannot delete cattle because it is part of a Sale transaction. Please delete the transaction item first."
+                )
+            )
+
+        # Check Linked Purchases
+        if PurchaseItem.objects.filter(content_type=ct, object_id=self.pk).exists():
+            raise ValidationError(
+                _(
+                    "Cannot delete cattle because it is part of a Purchase transaction. Please delete the transaction item first."
+                )
+            )
+
+        return super().delete(using=using, keep_parents=keep_parents, destroy=destroy)
+
+    def clean(self):
+        super().clean()
+
+        if self.sire and self.sire_external_id:
+            raise ValidationError(
+                _(
+                    "You cannot specify both an internal Sire and an external Sire ID. Please choose one."
+                )
+            )
+
+        if self.dam and self.dam_external_id:
+            raise ValidationError(
+                _(
+                    "You cannot specify both an internal Dam and an external Dam ID. Please choose one."
+                )
+            )
+
+        if self.pk:
+            if self.sire and self.sire.pk == self.pk:
+                raise ValidationError(_("A cattle cannot be its own sire."))
+            if self.dam and self.dam.pk == self.pk:
+                raise ValidationError(_("A cattle cannot be its own dam."))
 
     @property
     def age(self):

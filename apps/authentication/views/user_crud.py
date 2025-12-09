@@ -1,8 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
@@ -102,7 +103,28 @@ class UserDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["title"] = _("Delete User")
         context["segment"] = "users"
+        context["segment"] = "users"
         return context
+
+    def delete(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            # We call delete on the object directly to trigger model validation
+            self.object.delete()
+            messages.success(self.request, _("User deleted successfully."))
+        except ValidationError as e:
+            return render(
+                request,
+                self.template_name,
+                {
+                    "target_user": self.object,
+                    "error": e.message if hasattr(e, "message") else str(e.messages[0]),
+                },
+            )
+        return HttpResponseRedirect(self.success_url)
 
 
 class UserTrashView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
@@ -145,9 +167,21 @@ class UserDeletePermanentView(LoginRequiredMixin, PermissionRequiredMixin, Delet
     def get_queryset(self):
         return User.all_objects.filter(is_deleted=True)
 
-    def form_valid(self, form):
-        # We need to call hard delete.
-        # BaseModel.delete(destroy=True)
-        self.object.delete(destroy=True)
-        messages.success(self.request, _("User permanently deleted."))
+    def delete(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            self.object.delete(destroy=True)
+            messages.success(self.request, _("User permanently deleted."))
+        except ValidationError as e:
+            return render(
+                request,
+                self.template_name,
+                {
+                    "target_user": self.object,
+                    "error": e.message if hasattr(e, "message") else str(e.messages[0]),
+                },
+            )
         return HttpResponseRedirect(self.success_url)

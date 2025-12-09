@@ -11,6 +11,20 @@
             {% blocktrans with name=target_user.username %}Are you sure you want to delete user <strong>{{ name }}</strong>? It will be moved to the Trash Bin.{% endblocktrans %}
         </p>
     </div>
+    </div>
+
+    {% if error %}
+    <div class="mt-4 rounded-md bg-red-50 p-4">
+        <div class="flex">
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">{% trans "Error" %}</h3>
+                <div class="mt-2 text-sm text-red-700">
+                    <p>{{ error }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <form method="POST">

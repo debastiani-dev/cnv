@@ -7,9 +7,25 @@ from apps.cattle.models import Cattle
 class CattleForm(forms.ModelForm):
     class Meta:
         model = Cattle
-        fields = ["tag", "name", "birth_date", "weight_kg", "breed", "status", "image"]
+        fields = [
+            "tag",
+            "electronic_id",
+            "name",
+            "sex",
+            "birth_date",
+            "weight_kg",
+            "breed",
+            "status",
+            "sire",
+            "sire_external_id",
+            "dam",
+            "dam_external_id",
+            "notes",
+            "image",
+        ]
         widgets = {
             "birth_date": forms.DateInput(attrs={"type": "date"}),
+            "notes": forms.Textarea(attrs={"rows": 3}),
         }
 
     def clean_tag(self):

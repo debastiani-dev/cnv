@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -86,8 +87,22 @@ class CattleDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("dashboard:cattle-list")
 
     def delete(self, request, *args, **kwargs):
+        # Default implementation or simple pass, logic moved to post
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        CattleService.delete_cattle(self.object)
+        try:
+            CattleService.delete_cattle(self.object)
+        except ValidationError as e:
+            return render(
+                request,
+                self.template_name,
+                {
+                    "object": self.object,
+                    "error": e.message if hasattr(e, "message") else str(e.messages[0]),
+                },
+            )
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -130,6 +145,17 @@ class CattlePermanentDeleteView(LoginRequiredMixin, View):
             messages.success(request, _("Cattle permanently deleted."))
         except Cattle.DoesNotExist:
             messages.error(request, _("Cattle not found."))
+        except ValidationError as e:
+            # Need to fetch object to render template
+            cattle = Cattle.all_objects.get(pk=pk)
+            return render(
+                request,
+                "cattle/cattle_confirm_permanent_delete.html",
+                {
+                    "cattle": cattle,
+                    "error": e.message if hasattr(e, "message") else str(e.messages[0]),
+                },
+            )
 
         return HttpResponseRedirect(reverse_lazy("dashboard:cattle-trash"))
 

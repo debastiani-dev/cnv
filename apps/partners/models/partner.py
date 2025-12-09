@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -24,3 +25,20 @@ class Partner(BaseModel):
 
     def __str__(self):
         return self.name
+
+    def delete(self, using=None, keep_parents=False, destroy=False):
+        """
+        Override delete to check for linked transactions (Sales/Purchases)
+        before allowing both Soft and Hard deletes.
+        """
+        if self.sales.exists():
+            raise ValidationError(
+                _("Cannot delete partner because they have associated Sales.")
+            )
+
+        if self.purchases.exists():
+            raise ValidationError(
+                _("Cannot delete partner because they have associated Purchases.")
+            )
+
+        return super().delete(using=using, keep_parents=keep_parents, destroy=destroy)

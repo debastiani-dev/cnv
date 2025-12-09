@@ -1,5 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
+from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -30,10 +33,6 @@ class PartnerListView(LoginRequiredMixin, ListView):
 class PartnerTrashView(LoginRequiredMixin, ListView):
     model = Partner
     template_name = "partners/partner_trash_list.html"
-    context_object_name = "favorites"
-    # Using same context name or "partners"? "partners" is better.
-    # keeping consistency with list view context usually.
-    # Note: Using "partners" as context object name for consistency with template
     context_object_name = "partners"
     paginate_by = 10
 
@@ -66,7 +65,20 @@ class PartnerHardDeleteView(LoginRequiredMixin, DeleteView):
         return Partner.all_objects.filter(is_deleted=True)
 
     def form_valid(self, form):
-        PartnerService.hard_delete_partner(self.object)
+        try:
+            PartnerService.hard_delete_partner(self.object)
+        except (ValidationError, ProtectedError) as e:
+            error_msg = e.message if hasattr(e, "message") else str(e)
+            if isinstance(e, ProtectedError):
+                error_msg = "Cannot delete this partner because it is referenced by other records."
+            elif isinstance(e, ValidationError) and hasattr(e, "messages"):
+                error_msg = e.messages[0]
+
+            return render(
+                self.request,
+                self.template_name,
+                {"object": self.object, "error": error_msg},
+            )
 
         return HttpResponseRedirect(self.success_url)
 
@@ -91,6 +103,25 @@ class PartnerDeleteView(LoginRequiredMixin, DeleteView):
     model = Partner
     template_name = "partners/partner_confirm_delete.html"
     success_url = SUCCESS_URL
+
+    def delete(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            PartnerService.delete_partner(self.object)
+        except (ValidationError, ProtectedError) as e:
+            error_msg = e.message if hasattr(e, "message") else str(e)
+            if isinstance(e, ProtectedError):
+                error_msg = "Cannot delete this partner because it is referenced by other records."
+            elif isinstance(e, ValidationError) and hasattr(e, "messages"):
+                error_msg = e.messages[0]
+
+            return render(
+                request, self.template_name, {"object": self.object, "error": error_msg}
+            )
+        return HttpResponseRedirect(self.success_url)
 
 
 class PartnerDetailView(LoginRequiredMixin, DetailView):

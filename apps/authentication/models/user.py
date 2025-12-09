@@ -1,6 +1,7 @@
 from django.contrib.auth import models as auth_models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager as CustomBaseUserManager
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -99,6 +100,35 @@ class User(BaseModel, AbstractBaseUser, auth_models.PermissionsMixin):
     class Meta(BaseModel.Meta):
         verbose_name = _("user")
         verbose_name_plural = _("users")
+
+    def delete(self, using=None, keep_parents=False, destroy=False):
+        """
+        Override delete to prevent deleting the last superuser.
+        """
+        if self.is_superuser:
+            # Check if this is the last active superuser
+            # We check both is_deleted=False (soft deleted count) and destroy flag.
+            # If destroy=True, we look at all objects.
+            # If destroy=False (soft delete), we assume we interpret 'active' as non-deleted.
+
+            # Actually, simpliest rule: "Cannot delete the last superuser."
+            # Find all superusers that are NOT deleted (if soft deleting)
+            # OR just all superusers period?
+            # If I soft delete the last superuser, I can't login. So blocking soft delete is required.
+
+            # Count active superusers excluding self
+            active_superusers = User.objects.filter(is_superuser=True).exclude(
+                pk=self.pk
+            )
+
+            if not active_superusers.exists():
+                raise ValidationError(
+                    _(
+                        "Cannot delete the last active superuser. Please promote another user to superuser first."
+                    )
+                )
+
+        return super().delete(using=using, keep_parents=keep_parents, destroy=destroy)
 
     def clean(self):
         super().clean()

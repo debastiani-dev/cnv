@@ -18,6 +18,7 @@ class TestCattleForm:
             "breed": "angus",
             "status": "available",
             "weight_kg": 500,
+            "sex": "female",
         }
         form = CattleForm(data=data)
         assert not form.is_valid()
@@ -35,6 +36,7 @@ class TestCattleForm:
             "breed": "angus",
             "status": "available",
             "weight_kg": 500,
+            "sex": "female",
         }
         form = CattleForm(data=data)
         assert form.is_valid()
