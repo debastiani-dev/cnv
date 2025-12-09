@@ -16,7 +16,10 @@ module.exports = {
         'text-stone-900',
         'text-stone-600',
         'hover:bg-stone-400',
-        'hover:text-stone-900'
+        'hover:text-stone-900',
+        'bg-stone-200',
+        'text-stone-700',
+        'text-stone-500'
     ],
     theme: {
         extend: {},
