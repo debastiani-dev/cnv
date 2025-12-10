@@ -1,8 +1,10 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import CreateView, ListView
 
 from apps.reproduction.models import BreedingEvent
@@ -42,3 +44,84 @@ class BreedingCreateView(CreateView):
         except (ValueError, ValidationError) as e:
             form.add_error(None, str(e))
             return self.form_invalid(form)
+
+
+class BreedingTrashListView(LoginRequiredMixin, ListView):
+    model = BreedingEvent
+    template_name = "reproduction/breeding_event_trash_list.html"
+    context_object_name = "events"
+
+    def get_queryset(self):
+        return ReproductionService.get_deleted_breeding_events()
+
+
+class BreedingRestoreView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        try:
+            ReproductionService.restore_breeding_event(pk)
+            messages.success(request, _("Breeding event restored successfully."))
+        except ValueError as e:
+            messages.error(request, str(e))
+        except BreedingEvent.DoesNotExist:
+            messages.error(request, _("Breeding event not found."))
+
+        return redirect("reproduction:breeding_list")
+
+    def get(self, request, pk):
+        try:
+            event = BreedingEvent.all_objects.get(pk=pk)
+            return render(
+                request,
+                "reproduction/breeding_event_confirm_restore.html",
+                {"event": event},
+            )
+        except BreedingEvent.DoesNotExist:
+            messages.error(request, _("Breeding event not found."))
+            return redirect("reproduction:breeding_list")
+
+
+class BreedingPermanentDeleteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        try:
+            ReproductionService.hard_delete_breeding_event(pk)
+            messages.success(request, _("Breeding event permanently deleted."))
+        except BreedingEvent.DoesNotExist:
+            messages.error(request, _("Breeding event not found."))
+
+        return redirect("reproduction:breeding_trash")
+
+    def get(self, request, pk):
+        try:
+            event = BreedingEvent.all_objects.get(pk=pk)
+            return render(
+                request,
+                "reproduction/breeding_event_confirm_permanent_delete.html",
+                {"event": event},
+            )
+        except BreedingEvent.DoesNotExist:
+            messages.error(request, _("Breeding event not found."))
+            return redirect("reproduction:breeding_trash")
+
+
+class BreedingDeleteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        try:
+            event = BreedingEvent.objects.get(pk=pk)
+            event.delete()
+            messages.success(request, _("Breeding event deleted."))
+        except BreedingEvent.DoesNotExist:
+            messages.error(request, _("Breeding event not found."))
+
+        return redirect("reproduction:breeding_list")
+
+    def get(self, request, pk):
+        try:
+            event = BreedingEvent.objects.get(pk=pk)
+            return render(
+                request,
+                "reproduction/breeding_event_confirm_delete.html",
+                {"object": event},
+            )
+        except BreedingEvent.DoesNotExist:
+            messages.error(request, _("Breeding event not found."))
+            return redirect("reproduction:breeding_list")

@@ -1,13 +1,19 @@
 from django.urls import path
 
 from apps.reproduction.views import (
-    BreedingCreateView,
-    BreedingListView,
     CalvingCreateView,
     CalvingListView,
     DiagnosisCreateView,
     DiagnosisListView,
     ReproductionOverviewView,
+)
+from apps.reproduction.views.breeding import (
+    BreedingCreateView,
+    BreedingDeleteView,
+    BreedingListView,
+    BreedingPermanentDeleteView,
+    BreedingRestoreView,
+    BreedingTrashListView,
 )
 from apps.reproduction.views.season import (
     SeasonCreateView,
@@ -22,6 +28,22 @@ urlpatterns = [
     path("", ReproductionOverviewView.as_view(), name="overview"),
     path("breeding/", BreedingListView.as_view(), name="breeding_list"),
     path("breeding/add/", BreedingCreateView.as_view(), name="breeding_add"),
+    path("breeding/trash/", BreedingTrashListView.as_view(), name="breeding_trash"),
+    path(
+        "breeding/<uuid:pk>/delete/",
+        BreedingDeleteView.as_view(),
+        name="breeding_delete",
+    ),
+    path(
+        "breeding/<uuid:pk>/restore/",
+        BreedingRestoreView.as_view(),
+        name="breeding_restore",
+    ),
+    path(
+        "breeding/<uuid:pk>/permanent-delete/",
+        BreedingPermanentDeleteView.as_view(),
+        name="breeding_permanent_delete",
+    ),
     path("diagnosis/", DiagnosisListView.as_view(), name="diagnosis_list"),
     path("diagnosis/add/", DiagnosisCreateView.as_view(), name="diagnosis_add"),
     path("calving/", CalvingListView.as_view(), name="calving_list"),

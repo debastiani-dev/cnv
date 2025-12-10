@@ -130,3 +130,32 @@ class ReproductionService:
         dam.save()
 
         return calving, calf
+
+    @staticmethod
+    def get_deleted_breeding_events():
+        """
+        Returns all soft-deleted BreedingEvents.
+        """
+        return (
+            BreedingEvent.all_objects.filter(is_deleted=True)
+            .select_related("dam", "sire")
+            .order_by("-modified_at")
+        )
+
+    @staticmethod
+    @transaction.atomic
+    def restore_breeding_event(pk: str) -> None:
+        """
+        Restores a soft-deleted breeding event.
+        """
+        event = BreedingEvent.all_objects.get(pk=pk)
+        event.restore()
+
+    @staticmethod
+    @transaction.atomic
+    def hard_delete_breeding_event(pk: str) -> None:
+        """
+        Permanently deletes a breeding event.
+        """
+        event = BreedingEvent.all_objects.get(pk=pk)
+        event.delete(destroy=True)
