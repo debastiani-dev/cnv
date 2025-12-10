@@ -4,7 +4,12 @@ from django.db import transaction
 from django.utils.translation import gettext as _
 
 from apps.cattle.models.cattle import Cattle
-from apps.reproduction.models import BreedingEvent, Calving, PregnancyCheck
+from apps.reproduction.models import (
+    BreedingEvent,
+    Calving,
+    PregnancyCheck,
+    ReproductiveSeason,
+)
 
 
 class ReproductionService:
@@ -217,3 +222,30 @@ class ReproductionService:
         """
         record = Calving.all_objects.get(pk=pk)
         record.delete(destroy=True)
+
+    @staticmethod
+    def get_deleted_seasons():
+        """
+        Returns all soft-deleted Reproductive Seasons.
+        """
+        return ReproductiveSeason.all_objects.filter(is_deleted=True).order_by(
+            "-modified_at"
+        )
+
+    @staticmethod
+    @transaction.atomic
+    def restore_season(pk: str) -> None:
+        """
+        Restores a soft-deleted Reproductive Season.
+        """
+        season = ReproductiveSeason.all_objects.get(pk=pk)
+        season.restore()
+
+    @staticmethod
+    @transaction.atomic
+    def hard_delete_season(pk: str) -> None:
+        """
+        Permanently deletes a Reproductive Season.
+        """
+        season = ReproductiveSeason.all_objects.get(pk=pk)
+        season.delete(destroy=True)

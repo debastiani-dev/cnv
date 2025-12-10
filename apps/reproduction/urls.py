@@ -29,6 +29,9 @@ from apps.reproduction.views.season import (
     SeasonCreateView,
     SeasonDeleteView,
     SeasonListView,
+    SeasonPermanentDeleteView,
+    SeasonRestoreView,
+    SeasonTrashListView,
     SeasonUpdateView,
 )
 
@@ -92,6 +95,17 @@ urlpatterns = [
     ),
     path("season/", SeasonListView.as_view(), name="season_list"),
     path("season/add/", SeasonCreateView.as_view(), name="season_add"),
+    path("season/trash/", SeasonTrashListView.as_view(), name="season_trash"),
     path("season/<uuid:pk>/edit/", SeasonUpdateView.as_view(), name="season_edit"),
     path("season/<uuid:pk>/delete/", SeasonDeleteView.as_view(), name="season_delete"),
+    path(
+        "season/<uuid:pk>/restore/",
+        SeasonRestoreView.as_view(),
+        name="season_restore",
+    ),
+    path(
+        "season/<uuid:pk>/permanent-delete/",
+        SeasonPermanentDeleteView.as_view(),
+        name="season_permanent_delete",
+    ),
 ]
