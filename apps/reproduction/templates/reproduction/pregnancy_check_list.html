@@ -10,7 +10,8 @@
       <h1 class="text-base font-semibold leading-6 text-gray-900">{% trans "Pregnancy Diagnosis" %}</h1>
       <p class="mt-2 text-sm text-gray-700">{% trans "History of pregnancy checks performed." %}</p>
     </div>
-    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center">
+      <a href="{% url 'reproduction:diagnosis_trash' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 mr-3">{% trans "Trash Bin" %}</a>
       <a href="{% url 'reproduction:diagnosis_add' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
         {% trans "Record Diagnosis" %}
       </a>
@@ -46,7 +47,7 @@
                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ check.breeding_event.date }}</td>
                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ check.expected_calving_date|default:"-" }}</td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                  <!-- Actions placeholder -->
+                  <a href="{% url 'reproduction:diagnosis_delete' check.pk %}" class="text-red-600 hover:text-red-900">{% trans "Delete" %}</a>
                 </td>
               </tr>
               {% empty %}

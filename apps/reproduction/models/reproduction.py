@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import ProtectedError
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.models.base_model import BaseModel
@@ -114,6 +115,49 @@ class PregnancyCheck(BaseModel):
 
     def __str__(self):
         return f"{self.breeding_event.dam} - {self.get_result_display()}"
+
+    def delete(self, *args, **kwargs):
+        # Enforce strict deletion rule: Cannot delete if used elsewhere
+        if not kwargs.get("destroy", False):
+            self._check_dependencies()
+        super().delete(*args, **kwargs)
+
+    def _check_dependencies(self):
+        """Check for any reverse relations (generic check for future-proofing)."""
+        has_related_objects = False
+        related_objects = []
+
+        for rel in self._meta.get_fields(include_hidden=True):
+            if not (
+                (rel.one_to_many or rel.one_to_one)
+                and rel.auto_created
+                and not rel.concrete
+            ):
+                continue
+
+            related_name = rel.get_accessor_name()
+            if not hasattr(self, related_name):
+                continue
+
+            manager = getattr(self, related_name)
+            # Depending on relation type, it might be a Manager or single object
+            if hasattr(manager, "exists"):
+                if manager.exists():
+                    has_related_objects = True
+                    related_objects.extend(list(manager.all()))
+            elif (
+                manager is not None
+            ):  # One-to-one reverse accessor returns object or None
+                has_related_objects = True
+                related_objects.append(manager)
+
+        if has_related_objects:
+            raise ProtectedError(
+                _(
+                    "Cannot delete this Pregnancy Check because it is referenced by other objects."
+                ),
+                related_objects,
+            )
 
 
 class Calving(BaseModel):

@@ -159,3 +159,32 @@ class ReproductionService:
         """
         event = BreedingEvent.all_objects.get(pk=pk)
         event.delete(destroy=True)
+
+    @staticmethod
+    def get_deleted_pregnancy_checks():
+        """
+        Returns all soft-deleted PregnancyChecks.
+        """
+        return (
+            PregnancyCheck.all_objects.filter(is_deleted=True)
+            .select_related("breeding_event__dam")
+            .order_by("-modified_at")
+        )
+
+    @staticmethod
+    @transaction.atomic
+    def restore_pregnancy_check(pk: str) -> None:
+        """
+        Restores a soft-deleted pregnancy check.
+        """
+        check = PregnancyCheck.all_objects.get(pk=pk)
+        check.restore()
+
+    @staticmethod
+    @transaction.atomic
+    def hard_delete_pregnancy_check(pk: str) -> None:
+        """
+        Permanently deletes a pregnancy check.
+        """
+        check = PregnancyCheck.all_objects.get(pk=pk)
+        check.delete(destroy=True)
