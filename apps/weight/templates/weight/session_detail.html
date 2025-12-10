@@ -1,0 +1,102 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{{ session.name }}{% endblock %}
+
+{% block content %}
+<div class="md:flex md:items-center md:justify-between mb-6">
+  <div class="min-w-0 flex-1">
+    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">{{ session.name }}</h2>
+    <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
+        <div class="mt-2 flex items-center text-sm text-gray-500">
+            <svg class="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4h.25V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
+            </svg>
+            {{ session.date }}
+        </div>
+        <div class="mt-2 flex items-center text-sm text-gray-500">
+            <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">{{ session.get_session_type_display }}</span>
+        </div>
+    </div>
+  </div>
+  <div class="mt-4 flex md:ml-4 md:mt-0">
+    <!-- Action: Re-weigh / Add weights -->
+    <!-- Assuming we want to allow adding more weights to this session, we might need a way to select animals first or go to batch entry if we knew which animals.
+         For a simple 'Add Weights' button, we might need to go to a selection screen first?
+         For now, user creates session via Cattle List -> Bulk Action -> Create Session.
+         Or manually creates session -> ??? -> Batch Entry
+         
+         Since BatchEntry expects cattle_ids in session or GET param, jumping straight there without IDs is tricky.
+         Let's omit 'Add Weights' button here for simplicity unless we implement a 'Select Cattle for Session' view.
+    -->
+  </div>
+</div>
+
+<!-- Stats / Summary -->
+<div class="mb-8">
+    <dl class="mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-4 shadow rounded-lg overflow-hidden">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8">
+            <dt class="text-sm font-medium leading-6 text-gray-500">{% trans "Total Animals" %}</dt>
+            <dd class="text-3xl font-medium leading-10 text-gray-900 tracking-tight">{{ session.records.count }}</dd>
+        </div>
+        <!-- Add more stats like Avg Weight, Avg ADG here later -->
+    </dl>
+</div>
+
+<!-- Records List -->
+<div class="flow-root">
+  <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+      <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Tag" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Weight (kg)" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "ADG" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Days Info" %}</th>
+              <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                <span class="sr-only">{% trans "Actions" %}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+            {% for record in session.records.all %}
+            <tr>
+              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                <a href="{% url 'cattle:detail' record.animal.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ record.animal.tag }}</a>
+              </td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ record.weight_kg }}</td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm font-medium {% if record.adg and record.adg > 0 %}text-green-600{% elif record.adg and record.adg < 0 %}text-red-600{% else %}text-gray-500{% endif %}">
+                 {% if record.adg %}
+                   {{ record.adg }} kg/d
+                 {% else %}
+                   -
+                 {% endif %}
+              </td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                {% if record.days_since_prev_weight %}
+                    {{ record.days_since_prev_weight }} days
+                {% else %}
+                    -
+                {% endif %}
+              </td>
+              <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                 <a href="{% url 'weight:record-update' record.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-4">{% trans "Edit" %}</a>
+                 <a href="{% url 'weight:record-delete' record.pk %}" class="text-red-600 hover:text-red-900">{% trans "Delete" %}</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="px-3 py-4 text-sm text-center text-gray-500">
+                    {% trans "No records in this session." %}
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

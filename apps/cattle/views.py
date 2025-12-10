@@ -15,10 +15,12 @@ from django.views.generic import (
     UpdateView,
 )
 
+from apps.base.views.mixins import HandleProtectedErrorMixin
 from apps.cattle.forms import CattleForm
-from apps.cattle.models import Cattle
+from apps.cattle.models.cattle import Cattle
 from apps.cattle.services.cattle_service import CattleService
-from apps.health.services import HealthService
+from apps.health.services.health_service import HealthService
+from apps.weight.services.weight_service import WeightService
 
 
 class CattleDetailView(LoginRequiredMixin, DetailView):
@@ -29,6 +31,7 @@ class CattleDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["health_events"] = HealthService.get_animal_health_history(self.object)
+        context["weight_history"] = WeightService.get_animal_weight_history(self.object)
         return context
 
 
@@ -88,7 +91,7 @@ class CattleUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class CattleDeleteView(LoginRequiredMixin, DeleteView):
+class CattleDeleteView(LoginRequiredMixin, HandleProtectedErrorMixin, DeleteView):
     model = Cattle
     template_name = "cattle/cattle_confirm_delete.html"
     success_url = reverse_lazy("cattle:list")
@@ -102,22 +105,7 @@ class CattleDeleteView(LoginRequiredMixin, DeleteView):
         try:
             CattleService.delete_cattle(self.object)
         except (ValidationError, ProtectedError) as e:
-            error_message = e.message if hasattr(e, "message") else str(e)
-            if hasattr(e, "messages"):
-                error_message = str(e.messages[0])
-            elif isinstance(e, ProtectedError):
-                error_message = _(
-                    "Cannot delete this cattle because it is referenced by other objects."
-                )
-
-            return render(
-                request,
-                self.template_name,
-                {
-                    "object": self.object,
-                    "error": error_message,
-                },
-            )
+            return self.handle_delete_error(request, e)
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -153,7 +141,7 @@ class CattleRestoreView(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse_lazy("cattle:list"))
 
 
-class CattlePermanentDeleteView(LoginRequiredMixin, View):
+class CattlePermanentDeleteView(LoginRequiredMixin, HandleProtectedErrorMixin, View):
     def post(self, request, pk):
         try:
             CattleService.hard_delete_cattle(pk)
@@ -163,21 +151,13 @@ class CattlePermanentDeleteView(LoginRequiredMixin, View):
         except (ValidationError, ProtectedError) as e:
             # Need to fetch object to render template
             cattle = Cattle.all_objects.get(pk=pk)
-            error_message = e.message if hasattr(e, "message") else str(e)
-            if hasattr(e, "messages"):
-                error_message = str(e.messages[0])
-            elif isinstance(e, ProtectedError):
-                error_message = _(
-                    "Cannot delete this cattle because it is referenced by other objects."
-                )
-
-            return render(
+            # manually set self.object or pass it
+            self.object = cattle
+            return self.handle_delete_error(
                 request,
-                "cattle/cattle_confirm_permanent_delete.html",
-                {
-                    "cattle": cattle,
-                    "error": error_message,
-                },
+                e,
+                template_name="cattle/cattle_confirm_permanent_delete.html",
+                context_object_name="cattle",
             )
 
         return HttpResponseRedirect(reverse_lazy("cattle:trash"))

@@ -143,6 +143,18 @@ class Cattle(BaseModel):
 
     notes = models.TextField(_("Notes"), blank=True)
 
+    # Weight Cache (Updated by WeightService)
+    current_weight = models.DecimalField(
+        _("Current Weight (kg)"),
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    last_weighing_date = models.DateField(
+        _("Last Weighing Date"), null=True, blank=True
+    )
+
     image = models.ImageField(
         _("Profile Image"),
         upload_to="cattle_images/",

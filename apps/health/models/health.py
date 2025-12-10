@@ -2,8 +2,8 @@ from django.db import models
 from django.db.models import ProtectedError
 from django.utils.translation import gettext_lazy as _
 
-from apps.authentication.models.user import User
 from apps.base.models.base_model import BaseModel
+from apps.base.models.mixins import PerformedByMixin
 from apps.cattle.models.cattle import Cattle
 
 
@@ -83,18 +83,17 @@ class Medication(BaseModel):
         # Check for related SanitaryEvents (even soft-deleted ones)
         # If destroy=True, Django's on_delete=models.PROTECT handles it (DB integrity).
         # If destroy=False (soft delete), we must check manually.
-        if not kwargs.get("destroy", False):
-            if self.events.exists():
-                raise ProtectedError(
-                    _(
-                        "Cannot delete this medication because it has been used in sanitary events (active or archived)."
-                    ),
-                    self.events.all(),
-                )
+        if not kwargs.get("destroy", False) and self.events.exists():
+            raise ProtectedError(
+                _(
+                    "Cannot delete this medication because it has been used in sanitary events (active or archived)."
+                ),
+                self.events.all(),
+            )
         return super().delete(*args, **kwargs)
 
 
-class SanitaryEvent(BaseModel):
+class SanitaryEvent(PerformedByMixin, BaseModel):
     """
     Represents a health event performed on a group of animals (or single animal).
     e.g., 'Routine Foot-and-Mouth Vaccination'.
@@ -103,15 +102,6 @@ class SanitaryEvent(BaseModel):
     date = models.DateField(_("Date of Event"))
     title = models.CharField(_("Event Title"), max_length=150)
     notes = models.TextField(_("Notes/Observation"), blank=True)
-
-    performed_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="sanitary_events",
-        verbose_name=_("Performed By"),
-    )
 
     # Medication is optional (e.g. for procedures like dehorning)
     medication = models.ForeignKey(

@@ -161,6 +161,81 @@
         </div>
     </div>
 
+    <!-- Performance History Section -->
+    <div class="mt-8 overflow-hidden rounded-lg bg-white shadow ring-1 ring-black ring-opacity-5 mb-8">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Performance History" %}</h3>
+            <p class="mt-1 text-sm text-gray-500">{% trans "Weight records and growth performance." %}</p>
+        </div>
+        <div class="border-t border-gray-200 p-4">
+            {% if weight_history %}
+                <!-- Chart Container -->
+                <div id="weightChart" class="w-full h-64 mb-6"></div>
+
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Date" %}</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Weight (kg)" %}</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "ADG (kg/d)" %}</th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Session" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            {% for record in weight_history %}
+                            <tr>
+                                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ record.session.date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ record.weight_kg }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm font-medium {% if record.adg and record.adg > 0 %}text-green-600{% elif record.adg and record.adg < 0 %}text-red-600{% else %}text-gray-500{% endif %}">
+                                    {{ record.adg|default:"-" }}
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <a href="{% url 'weight:session-detail' record.session.pk %}" class="text-indigo-600 hover:text-indigo-900">{{ record.session.name }}</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ApexCharts Script -->
+                 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+                 <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var options = {
+                            series: [{
+                                name: '{% trans "Weight" %}',
+                                data: [
+                                    {% for record in weight_history %}
+                                        { x: "{{ record.session.date|date:'Y-m-d' }}", y: {{ record.weight_kg }} },
+                                    {% endfor %}
+                                ]
+                            }],
+                            chart: {
+                                type: 'line',
+                                height: 350,
+                                toolbar: { show: false }
+                            },
+                            stroke: { curve: 'smooth', width: 2 },
+                            colors: ['#4f46e5'], // Indigo-600
+                            xaxis: { type: 'datetime' },
+                            yaxis: { title: { text: 'Kg' } },
+                            markers: { size: 4 }
+                        };
+
+                        var chart = new ApexCharts(document.querySelector("#weightChart"), options);
+                        chart.render();
+                    });
+                </script>
+            {% else %}
+                <div class="text-sm text-gray-500 text-center py-4">
+                    {% trans "No weight records found." %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
     <!-- Health History Section -->
     <div class="mt-8 overflow-hidden rounded-lg bg-white shadow ring-1 ring-black ring-opacity-5">
         <div class="px-4 py-5 sm:px-6">
