@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -100,13 +101,21 @@ class CattleDeleteView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         try:
             CattleService.delete_cattle(self.object)
-        except ValidationError as e:
+        except (ValidationError, ProtectedError) as e:
+            error_message = e.message if hasattr(e, "message") else str(e)
+            if hasattr(e, "messages"):
+                error_message = str(e.messages[0])
+            elif isinstance(e, ProtectedError):
+                error_message = _(
+                    "Cannot delete this cattle because it is referenced by other objects."
+                )
+
             return render(
                 request,
                 self.template_name,
                 {
                     "object": self.object,
-                    "error": e.message if hasattr(e, "message") else str(e.messages[0]),
+                    "error": error_message,
                 },
             )
         return HttpResponseRedirect(self.get_success_url())
@@ -151,15 +160,23 @@ class CattlePermanentDeleteView(LoginRequiredMixin, View):
             messages.success(request, _("Cattle permanently deleted."))
         except Cattle.DoesNotExist:
             messages.error(request, _("Cattle not found."))
-        except ValidationError as e:
+        except (ValidationError, ProtectedError) as e:
             # Need to fetch object to render template
             cattle = Cattle.all_objects.get(pk=pk)
+            error_message = e.message if hasattr(e, "message") else str(e)
+            if hasattr(e, "messages"):
+                error_message = str(e.messages[0])
+            elif isinstance(e, ProtectedError):
+                error_message = _(
+                    "Cannot delete this cattle because it is referenced by other objects."
+                )
+
             return render(
                 request,
                 "cattle/cattle_confirm_permanent_delete.html",
                 {
                     "cattle": cattle,
-                    "error": e.message if hasattr(e, "message") else str(e.messages[0]),
+                    "error": error_message,
                 },
             )
 
