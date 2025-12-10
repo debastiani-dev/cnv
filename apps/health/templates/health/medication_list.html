@@ -10,7 +10,8 @@
       <h1 class="text-base font-semibold leading-6 text-gray-900">{% trans "Medications" %}</h1>
       <p class="mt-2 text-sm text-gray-700">{% trans "A list of all medications and treatments available for your herd." %}</p>
     </div>
-    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center">
+      <a href="{% url 'health:medication-trash' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 mr-3">{% trans "Trash Bin" %}</a>
       <a href="{% url 'health:medication-create' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Add Medication" %}</a>
     </div>
   </div>

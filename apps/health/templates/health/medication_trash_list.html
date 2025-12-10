@@ -1,0 +1,57 @@
+{% extends 'layouts/base_dashboard.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Medication Trash Bin" %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">{% trans "Medication Trash Bin" %}</h1>
+      <p class="mt-2 text-sm text-gray-700">{% trans "A list of all deleted medications." %}</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <a href="{% url 'health:medication-list' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Back to List" %}</a>
+    </div>
+  </div>
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead>
+            <tr>
+              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">{% trans "Name" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Type" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Unit" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Deleted Date" %}</th>
+              <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                <span class="sr-only">{% trans "Actions" %}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            {% for medication in medications %}
+            <tr>
+              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">{{ medication.name }}</td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ medication.get_medication_type_display }}</td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ medication.get_unit_display }}</td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                {{ medication.modified_at|date:"Y-m-d H:i" }}
+              </td>
+              <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                <a href="{% url 'health:medication-restore' medication.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-4">{% trans "Restore" %}</a>
+                <a href="{% url 'health:medication-permanent-delete' medication.pk %}" class="text-red-600 hover:text-red-900">{% trans "Delete Forever" %}</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="py-4 text-center text-sm text-gray-500">{% trans "Trash is empty." %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -80,16 +80,16 @@ class Medication(BaseModel):
         return f"{self.name} ({self.get_medication_type_display()})"
 
     def delete(self, *args, **kwargs):
-        # Check for related SanitaryEvents that are not deleted
-        # If destroy=True, Django's on_delete=models.PROTECT handles it.
+        # Check for related SanitaryEvents (even soft-deleted ones)
+        # If destroy=True, Django's on_delete=models.PROTECT handles it (DB integrity).
         # If destroy=False (soft delete), we must check manually.
         if not kwargs.get("destroy", False):
-            if self.events.filter(is_deleted=False).exists():
+            if self.events.exists():
                 raise ProtectedError(
                     _(
-                        "Cannot delete this medication because it is linked to existing sanitary events."
+                        "Cannot delete this medication because it has been used in sanitary events (active or archived)."
                     ),
-                    self.events.filter(is_deleted=False),
+                    self.events.all(),
                 )
         return super().delete(*args, **kwargs)
 

@@ -7,7 +7,7 @@ from django.db.models import Count
 from django.utils import timezone
 
 from apps.cattle.models import Cattle
-from apps.health.models import SanitaryEvent, SanitaryEventTarget
+from apps.health.models import Medication, SanitaryEvent, SanitaryEventTarget
 
 
 class HealthService:
@@ -187,3 +187,28 @@ class HealthService:
             .select_related("medication")
             .order_by("-date", "-created_at")[:limit]
         )
+
+    @staticmethod
+    def get_deleted_medications():
+        """
+        Returns all soft-deleted Medications.
+        """
+        return Medication.all_objects.filter(is_deleted=True).order_by("name")
+
+    @staticmethod
+    @transaction.atomic
+    def restore_medication(pk: str) -> None:
+        """
+        Restores a soft-deleted medication.
+        """
+        medication = Medication.all_objects.get(pk=pk)
+        medication.restore()
+
+    @staticmethod
+    @transaction.atomic
+    def hard_delete_medication(pk: str) -> None:
+        """
+        Permanently deletes a medication.
+        """
+        medication = Medication.all_objects.get(pk=pk)
+        medication.delete(destroy=True)

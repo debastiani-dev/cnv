@@ -4,6 +4,9 @@ from apps.health.views import (
     MedicationCreateView,
     MedicationDeleteView,
     MedicationListView,
+    MedicationPermanentDeleteView,
+    MedicationRestoreView,
+    MedicationTrashListView,
     MedicationUpdateView,
     SanitaryEventCreateView,
     SanitaryEventDeleteView,
@@ -46,6 +49,11 @@ urlpatterns = [
         "medications/create/", MedicationCreateView.as_view(), name="medication-create"
     ),
     path(
+        "medications/trash/",
+        MedicationTrashListView.as_view(),
+        name="medication-trash",
+    ),
+    path(
         "medications/<uuid:pk>/edit/",
         MedicationUpdateView.as_view(),
         name="medication-update",
@@ -54,5 +62,15 @@ urlpatterns = [
         "medications/<uuid:pk>/delete/",
         MedicationDeleteView.as_view(),
         name="medication-delete",
+    ),
+    path(
+        "medications/<uuid:pk>/restore/",
+        MedicationRestoreView.as_view(),
+        name="medication-restore",
+    ),
+    path(
+        "medications/<uuid:pk>/permanent-delete/",
+        MedicationPermanentDeleteView.as_view(),
+        name="medication-permanent-delete",
     ),
 ]

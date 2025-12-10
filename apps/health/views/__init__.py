@@ -12,6 +12,9 @@ from .medication_views import (
     MedicationCreateView,
     MedicationDeleteView,
     MedicationListView,
+    MedicationPermanentDeleteView,
+    MedicationRestoreView,
+    MedicationTrashListView,
     MedicationUpdateView,
 )
 
@@ -27,5 +30,8 @@ __all__ = [
     "MedicationCreateView",
     "MedicationDeleteView",
     "MedicationListView",
+    "MedicationPermanentDeleteView",
+    "MedicationRestoreView",
+    "MedicationTrashListView",
     "MedicationUpdateView",
 ]
