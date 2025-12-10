@@ -16,6 +16,7 @@ class CattleForm(forms.ModelForm):
             "weight_kg",
             "breed",
             "status",
+            "reproduction_status",
             "sire",
             "sire_external_id",
             "dam",

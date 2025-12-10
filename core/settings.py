@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "apps.partners",
     "apps.sales",
     "apps.purchases",
+    "apps.reproduction",
     "apps.health",
     "apps.website",
     "apps.dashboard",

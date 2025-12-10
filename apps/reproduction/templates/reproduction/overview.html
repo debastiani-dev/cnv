@@ -1,0 +1,222 @@
+{% extends 'layouts/base_dashboard.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Reproduction Overview" %}{% endblock %}
+
+{% block content %}
+<style>
+    .rounded-3xl {
+        border-radius: 0.5rem !important;
+    }
+    .p-10 {
+        padding: 1.5rem !important;
+    }
+    .px-10 {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+    .gap-10 {
+        gap: 1.5rem !important;
+    }
+    .space-y-12 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 1.5rem !important;
+    }
+    .h-12 {
+        height: 3rem !important;
+    }
+    .w-12 {
+        width: 3rem !important;
+    }
+    .ml-8 {
+        margin-left: 2rem !important;
+    }
+</style>
+
+<div class="px-6 py-8 sm:px-8 lg:px-12 max-w-7xl mx-auto space-y-12">
+  <!-- Page Header -->
+  <div class="md:flex md:items-center md:justify-between">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-3xl font-bold leading-9 text-gray-900 sm:truncate sm:tracking-tight">
+        {% trans "Reproduction Overview" %}
+      </h2>
+      <p class="mt-2 text-sm text-gray-500">{% trans "Overview of the genetics and breeding program." %}</p>
+    </div>
+  </div>
+
+  <!-- Active Season Banner -->
+  {% if active_season %}
+  <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-3xl">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="ml-3 flex-1 md:flex md:justify-between">
+        <p class="text-sm text-blue-700">{% trans "Active Season:" %} <span class="font-bold">{{ active_season.name }}</span> ({{ active_season.start_date }} {% if active_season.end_date %}- {{ active_season.end_date }}{% endif %})</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Total Females -->
+      <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+          <div class="p-10">
+              <div class="flex items-center">
+                  <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                      <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                      </svg>
+                  </div>
+                  <div class="ml-8 w-0 flex-1">
+                      <dl>
+                          <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Total Females" %}</dt>
+                          <dd>
+                              <div class="text-2xl font-bold text-gray-900">{{ total_females }}</div>
+                          </dd>
+                      </dl>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Open Cows -->
+      <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+          <div class="p-10">
+              <div class="flex items-center">
+                  <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                       <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                  </div>
+                  <div class="ml-8 w-0 flex-1">
+                      <dl>
+                          <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Open (Ready)" %}</dt>
+                          <dd>
+                              <div class="text-2xl font-bold text-emerald-600">{{ open_cows }}</div>
+                          </dd>
+                      </dl>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Bred Cows -->
+      <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+          <div class="p-10">
+              <div class="flex items-center">
+                  <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                      <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                  </div>
+                  <div class="ml-8 w-0 flex-1">
+                      <dl>
+                          <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Bred" %}</dt>
+                          <dd>
+                              <div class="text-2xl font-bold text-blue-600">{{ bred_cows }}</div>
+                          </dd>
+                      </dl>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Pregnant Cows -->
+      <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+          <div class="p-10">
+              <div class="flex items-center">
+                  <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                      <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                      </svg>
+                  </div>
+                  <div class="ml-8 w-0 flex-1">
+                      <dl>
+                          <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Pregnant" %}</dt>
+                          <dd>
+                              <div class="text-2xl font-bold text-purple-600">{{ pregnant_cows }}</div>
+                          </dd>
+                      </dl>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  <!-- Activity Section -->
+  <div class="grid grid-cols-1 gap-10 sm:grid-cols-2">
+      <!-- Recent Breedings -->
+      <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden">
+          <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+            <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Breedings" %}</h3>
+            <a href="{% url 'reproduction:breeding_list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
+          </div>
+          <ul role="list" class="divide-y divide-gray-200">
+            {% for event in recent_breedings %}
+            <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
+              <div class="flex items-center space-x-4">
+                  <div class="flex-shrink-0">
+                      <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                          <span class="text-sm font-medium leading-none text-blue-700">B</span>
+                      </span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-gray-900">
+                        {{ event.dam.tag }}
+                    </p>
+                    <p class="truncate text-xs text-gray-500">
+                      {% trans "Sire:" %} {{ event.sire.tag|default:event.sire_name|default:"-" }}
+                    </p>
+                  </div>
+                  <div class="text-right text-sm text-gray-500">
+                      <div class="font-medium text-gray-900">{{ event.date }}</div>
+                      <div class="text-xs">{{ event.get_breeding_method_display }}</div>
+                  </div>
+              </div>
+            </li>
+            {% empty %}
+            <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No recent breedings." %}</li>
+            {% endfor %}
+          </ul>
+      </div>
+      
+      <!-- Recent Calvings -->
+      <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden">
+          <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+            <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Calvings" %}</h3>
+            <a href="{% url 'reproduction:calving_list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
+          </div>
+          <ul role="list" class="divide-y divide-gray-200">
+            {% for calving in recent_calvings %}
+            <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
+              <div class="flex items-center space-x-4">
+                  <div class="flex-shrink-0">
+                      <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100">
+                          <span class="text-sm font-medium leading-none text-indigo-700">C</span>
+                      </span>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-gray-900">
+                        {{ calving.dam.tag }} -> {{ calving.calf.tag }}
+                    </p>
+                    <p class="truncate text-xs text-gray-500">
+                      {{ calving.get_ease_of_birth_display }}
+                    </p>
+                  </div>
+                  <div class="text-right text-sm text-gray-500">
+                      <div class="font-medium text-gray-900">{{ calving.date }}</div>
+                  </div>
+              </div>
+            </li>
+            {% empty %}
+            <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No recent calvings." %}</li>
+            {% endfor %}
+          </ul>
+      </div>
+  </div>
+
+</div>
+{% endblock %}

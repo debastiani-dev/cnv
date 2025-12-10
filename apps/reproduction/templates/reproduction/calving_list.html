@@ -1,0 +1,85 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Calving Records" %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">{% trans "Calving Records" %}</h1>
+      <p class="mt-2 text-sm text-gray-700">{% trans "History of calving events and new calves." %}</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <a href="{% url 'reproduction:calving_add' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        {% trans "Record Calving" %}
+      </a>
+    </div>
+  </div>
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Date" %}</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Dam" %}</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Calf" %}</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Ease" %}</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Linked Breeding" %}</th>
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                  <span class="sr-only">{% trans "Actions" %}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              {% for calving in calvings %}
+              <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ calving.date }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ calving.dam.tag }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-indigo-600">
+                    {% if calving.calf %}
+                        {{ calving.calf.tag }} ({{ calving.calf.get_sex_display }})
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ calving.get_ease_of_birth_display }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    {% if calving.breeding_event %}
+                        {{ calving.breeding_event.date }} ({{ calving.breeding_event.get_breeding_method_display }})
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <!-- Actions placeholder -->
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                  <td colspan="6" class="py-4 text-center text-sm text-gray-500">{% trans "No calving records found." %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- Pagination -->
+    {% if is_paginated %}
+         <div class="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+            <div class="flex flex-1 justify-between sm:hidden">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+                {% endif %}
+            </div>
+         </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -19,7 +19,7 @@
 
 <div x-data="{ 
     sidebarOpen: false, 
-    openCategory: '{% if 'cattle' in request.resolver_match.app_names %}animals{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names %}transactions{% elif 'health' in request.resolver_match.app_names %}health{% elif 'partners' in request.resolver_match.app_names %}business{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}' 
+    openCategory: '{% if 'cattle' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names %}transactions{% elif 'health' in request.resolver_match.app_names %}health{% elif 'partners' in request.resolver_match.app_names %}business{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}' 
 }" class="min-h-screen relative z-0">
     
     <!-- Mobile Sidebar (Off-canvas) -->
@@ -150,6 +150,29 @@
                                             {% trans "Medications" %}
                                         </a>
                                     </li>
+                                </ul>
+                            </li>
+                            <!-- Reproduction -->
+                            <li>
+                                <button type="button" @click="openCategory === 'reproduction' ? openCategory = null : openCategory = 'reproduction'" 
+                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                        :class="openCategory === 'reproduction' ? 'text-stone-900' : ''">
+                                    <span class="flex gap-x-3 items-center">
+                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                        </svg>
+                                        {% trans "Reproduction" %}
+                                    </span>
+                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'reproduction' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <ul x-show="openCategory === 'reproduction'" x-cloak>
+                                    <li><a href="{% url 'reproduction:overview' %}" class="{% if request.resolver_match.url_name == 'overview' and 'reproduction' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Overview" %}</a></li>
+                                    <li><a href="{% url 'reproduction:breeding_list' %}" class="{% if request.resolver_match.url_name == 'breeding_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Breeding Events" %}</a></li>
+                                    <li><a href="{% url 'reproduction:diagnosis_list' %}" class="{% if request.resolver_match.url_name == 'diagnosis_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Pregnancy Checks" %}</a></li>
+                                    <li><a href="{% url 'reproduction:calving_list' %}" class="{% if request.resolver_match.url_name == 'calving_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Calving Records" %}</a></li>
+                                    <li><a href="{% url 'reproduction:season_list' %}" class="{% if request.resolver_match.url_name == 'season_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Reproductive Seasons" %}</a></li>
                                 </ul>
                             </li>
                             
@@ -296,6 +319,29 @@
                         <ul x-show="openCategory === 'health'" x-cloak>
                             <li><a href="{% url 'health:event-list' %}" class="{% if request.resolver_match.url_name == 'event-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sanitary Events" %}</a></li>
                             <li><a href="{% url 'health:medication-list' %}" class="{% if 'medication' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Medications" %}</a></li>
+                        </ul>
+                    </li>
+                    <!-- Reproduction -->
+                    <li>
+                        <button type="button" @click="openCategory === 'reproduction' ? openCategory = null : openCategory = 'reproduction'" 
+                                class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                :class="openCategory === 'reproduction' ? 'text-stone-900' : ''">
+                            <span class="flex gap-x-3 items-center">
+                                <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                                {% trans "Reproduction" %}
+                            </span>
+                             <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'reproduction' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <ul x-show="openCategory === 'reproduction'" x-cloak>
+                            <li><a href="{% url 'reproduction:overview' %}" class="{% if request.resolver_match.url_name == 'overview' and 'reproduction' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Overview" %}</a></li>
+                            <li><a href="{% url 'reproduction:breeding_list' %}" class="{% if request.resolver_match.url_name == 'breeding_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Breeding Events" %}</a></li>
+                            <li><a href="{% url 'reproduction:diagnosis_list' %}" class="{% if request.resolver_match.url_name == 'diagnosis_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Pregnancy Checks" %}</a></li>
+                            <li><a href="{% url 'reproduction:calving_list' %}" class="{% if request.resolver_match.url_name == 'calving_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Calving Records" %}</a></li>
+                            <li><a href="{% url 'reproduction:season_list' %}" class="{% if request.resolver_match.url_name == 'season_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Reproductive Seasons" %}</a></li>
                         </ul>
                     </li>
                     

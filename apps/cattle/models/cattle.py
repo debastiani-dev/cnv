@@ -44,6 +44,19 @@ class Cattle(BaseModel):
         (STATUS_DEAD, _("Dead")),
     ]
 
+    # Reproduction Status choices
+    REP_STATUS_OPEN = "OPEN"
+    REP_STATUS_BRED = "BRED"
+    REP_STATUS_PREGNANT = "PREGNANT"
+    REP_STATUS_LACTATING = "LACTATING"
+
+    REP_STATUS_CHOICES = [
+        (REP_STATUS_OPEN, _("Open")),
+        (REP_STATUS_BRED, _("Bred")),
+        (REP_STATUS_PREGNANT, _("Pregnant")),
+        (REP_STATUS_LACTATING, _("Lactating")),
+    ]
+
     # Sex choices
     SEX_MALE = "male"
     SEX_FEMALE = "female"
@@ -85,6 +98,15 @@ class Cattle(BaseModel):
         decimal_places=2,
         blank=True,
         null=True,
+    )
+
+    reproduction_status = models.CharField(
+        _("Reproduction Status"),
+        max_length=20,
+        choices=REP_STATUS_CHOICES,
+        default=REP_STATUS_OPEN,
+        blank=True,
+        help_text=_("Biological status of the female."),
     )
 
     # Parentage (Hybrid Approach)

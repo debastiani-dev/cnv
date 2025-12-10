@@ -1,0 +1,24 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm Delete" %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-lg">
+    <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+        <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Delete Reproductive Season" %}</h3>
+        <div class="mt-2 max-w-xl text-sm text-gray-500">
+            <p>{% blocktrans with name=object.name %}Are you sure you want to delete current season: <strong>{{ name }}</strong>?{% endblocktrans %}</p>
+        </div>
+        <div class="mt-5">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">{% trans "Confirm Delete" %}</button>
+                <a href="{% url 'reproduction:season_list' %}" class="ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "Cancel" %}</a>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

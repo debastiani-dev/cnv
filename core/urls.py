@@ -22,15 +22,16 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("auth/", include("apps.authentication.urls")),
-    path("cattle/", include("apps.cattle.urls")),
-    path("dashboard/", include("apps.dashboard.urls")),
-    path("partners/", include("apps.partners.urls")),
-    path("sales/", include("apps.sales.urls")),
-    path("purchases/", include("apps.purchases.urls")),
-    path("health/", include("apps.health.urls")),
+    path("auth/", include("apps.authentication.urls", namespace="authentication")),
+    path("cattle/", include("apps.cattle.urls", namespace="cattle")),
+    path("dashboard/", include("apps.dashboard.urls", namespace="dashboard")),
+    path("partners/", include("apps.partners.urls", namespace="partners")),
+    path("sales/", include("apps.sales.urls", namespace="sales")),
+    path("purchases/", include("apps.purchases.urls", namespace="purchases")),
+    path("health/", include("apps.health.urls", namespace="health")),
+    path("reproduction/", include("apps.reproduction.urls", namespace="reproduction")),
     path("rosetta/", include("rosetta.urls")),
-    path("", include("apps.website.urls")),
+    path("", include("apps.website.urls", namespace="website")),
 ]
 
 if settings.DEBUG:

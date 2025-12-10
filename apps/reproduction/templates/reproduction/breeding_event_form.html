@@ -1,0 +1,177 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Record Breeding Event" %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-xl">
+        <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            {% trans "Record Breeding Event" %}
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            {% trans "Select the dam and the service details." %}
+        </p>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-xl">
+        <form class="space-y-6" method="POST">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="rounded-md bg-red-50 p-4">
+                    <div class="flex">
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">{% trans "Please correct the errors below" %}</h3>
+                            <ul class="list-disc pl-5 mt-2 text-sm text-red-700">
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Dam -->
+            <div>
+                <label for="{{ form.dam.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.dam.label }}</label>
+                <div class="mt-2">
+                    {{ form.dam }}
+                    {% if form.dam.help_text %}<p class="mt-2 text-xs text-gray-500">{{ form.dam.help_text }}</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.date.label }}</label>
+                <div class="mt-2">
+                    <input type="date" name="{{ form.date.name }}" id="{{ form.date.auto_id }}" value="{{ form.date.value|date:'Y-m-d'|default:'' }}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    {% if form.date.help_text %}<p class="mt-2 text-xs text-gray-500">{{ form.date.help_text }}</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Method -->
+            <div>
+                <label for="{{ form.breeding_method.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.breeding_method.label }}</label>
+                <div class="mt-2">
+                    {{ form.breeding_method }}
+                </div>
+            </div>
+
+            <!-- Sire Selection (Internal) -->
+            <div>
+                <label for="{{ form.sire.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.sire.label }}</label>
+                <div class="mt-2">
+                    {{ form.sire }}
+                    <p class="mt-2 text-xs text-gray-500">{% trans "Select a bull from your inventory." %}</p>
+                </div>
+            </div>
+
+            <div class="relative py-2">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                  <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center">
+                  <span class="bg-white px-2 text-sm text-gray-500">{% trans "OR" %}</span>
+                </div>
+            </div>
+
+            <!-- Sire Name (External) -->
+            <div>
+                <label for="{{ form.sire_name.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.sire_name.label }}</label>
+                <div class="mt-2">
+                    {{ form.sire_name }}
+                    <p class="mt-2 text-xs text-gray-500">{% trans "Enter name for external bull (e.g. AI straw)." %}</p>
+                </div>
+            </div>
+
+            <!-- Batch -->
+            <div>
+                <label for="{{ form.batch.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.batch.label }}</label>
+                <div class="mt-2">
+                    {{ form.batch }}
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-x-6">
+                <a href="{% url 'reproduction:breeding_list' %}" class="text-sm font-semibold leading-6 text-gray-900">{% trans "Cancel" %}</a>
+                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Record Breeding" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Style injection
+    document.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(el => {
+        if (!el.classList.contains('block') && el.type !== 'date') { // Skip date as we manually styled it
+            el.classList.add('block', 'w-full', 'rounded-md', 'border-0', 'py-1.5', 'text-gray-900', 'shadow-sm', 'ring-1', 'ring-inset', 'ring-gray-300', 'placeholder:text-gray-400', 'focus:ring-2', 'focus:ring-inset', 'focus:ring-indigo-600', 'sm:text-sm', 'sm:leading-6');
+        }
+    });
+
+    // Mutual Exclusivity Logic
+    const sireSelect = document.getElementById('{{ form.sire.auto_id }}');
+    const sireNameInput = document.getElementById('{{ form.sire_name.auto_id }}');
+
+    function toggleSireFields() {
+        if (sireSelect.value) {
+            sireNameInput.disabled = true;
+            sireNameInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+            sireNameInput.value = ''; // Clear it
+        } else {
+            sireNameInput.disabled = false;
+            sireNameInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+        }
+
+        if (sireNameInput.value) {
+            sireSelect.disabled = true;
+            sireSelect.classList.add('bg-gray-100', 'cursor-not-allowed');
+            sireSelect.value = ''; // Clear it
+        } else if (!sireSelect.value) { // Only re-enable if sireSelect doesn't have value (prevent circular clearing on init, though checking inputs handles it)
+            sireSelect.disabled = false;
+            sireSelect.classList.remove('bg-gray-100', 'cursor-not-allowed');
+        }
+    }
+    
+    // Improved logic:
+    // If user interacts with Select:
+    sireSelect.addEventListener('change', () => {
+        if (sireSelect.value) {
+            sireNameInput.value = '';
+            sireNameInput.disabled = true;
+            sireNameInput.classList.add('bg-gray-100');
+        } else {
+            sireNameInput.disabled = false;
+            sireNameInput.classList.remove('bg-gray-100');
+        }
+    });
+
+    // If user interacts with Input:
+    sireNameInput.addEventListener('input', () => {
+        if (sireNameInput.value) {
+            sireSelect.value = '';
+            sireSelect.disabled = true;
+            sireSelect.classList.add('bg-gray-100');
+        } else {
+            sireSelect.disabled = false;
+            sireSelect.classList.remove('bg-gray-100');
+        }
+    });
+
+    // Run on load to set initial state
+    if (sireSelect.value) {
+        sireNameInput.disabled = true;
+        sireNameInput.classList.add('bg-gray-100');
+    } else if (sireNameInput.value) {
+        sireSelect.disabled = true;
+        sireSelect.classList.add('bg-gray-100');
+    }
+
+</script>
+{% endblock %}

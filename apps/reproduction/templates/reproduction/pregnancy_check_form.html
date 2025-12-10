@@ -1,0 +1,108 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Record Pregnancy Diagnosis" %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-xl">
+        <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            {% trans "Record Pregnancy Diagnosis" %}
+        </h2>
+        <p class="mt-2 text-center text-sm text-gray-600">
+            {% trans "Select a bred cow and record the diagnosis result." %}
+        </p>
+    </div>
+
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-xl">
+        <form class="space-y-6" method="POST">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="rounded-md bg-red-50 p-4">
+                    <div class="flex">
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">{% trans "Please correct the errors below" %}</h3>
+                            <ul class="list-disc pl-5 mt-2 text-sm text-red-700">
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Breeding Event -->
+            <div>
+                <label for="{{ form.breeding_event.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.breeding_event.label }}</label>
+                <div class="mt-2">
+                    {{ form.breeding_event }}
+                    <p class="mt-2 text-xs text-gray-500">{% trans "Only showing cows currently marked as BRED." %}</p>
+                </div>
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.date.label }}</label>
+                <div class="mt-2">
+                    <input type="date" name="{{ form.date.name }}" id="{{ form.date.auto_id }}" value="{{ form.date.value|date:'Y-m-d'|default:'' }}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div>
+                <label for="{{ form.result.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.result.label }}</label>
+                <div class="mt-2">
+                    {{ form.result }}
+                </div>
+            </div>
+
+            <!-- Fetus Days -->
+            <div id="fetus-days-container">
+                <label for="{{ form.fetus_days.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{{ form.fetus_days.label }}</label>
+                <div class="mt-2">
+                    <input type="number" name="{{ form.fetus_days.name }}" id="{{ form.fetus_days.auto_id }}" value="{{ form.fetus_days.value|default:'' }}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <p class="mt-2 text-xs text-gray-500">{% trans "Estimated age of fetus in days (optional)." %}</p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-x-6 pt-6">
+                <a href="{% url 'reproduction:diagnosis_list' %}" class="text-sm font-semibold leading-6 text-gray-900">{% trans "Cancel" %}</a>
+                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Record Diagnosis" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Style injection
+    document.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(el => {
+        if (!el.classList.contains('block') && el.type !== 'date' && el.type !== 'number') { 
+            el.classList.add('block', 'w-full', 'rounded-md', 'border-0', 'py-1.5', 'text-gray-900', 'shadow-sm', 'ring-1', 'ring-inset', 'ring-gray-300', 'placeholder:text-gray-400', 'focus:ring-2', 'focus:ring-inset', 'focus:ring-indigo-600', 'sm:text-sm', 'sm:leading-6');
+        }
+    });
+
+    // UX Logic: Toggle Fetus Days
+    const resultSelect = document.getElementById('{{ form.result.auto_id }}');
+    const fetusContainer = document.getElementById('fetus-days-container');
+    const fetusInput = document.getElementById('{{ form.fetus_days.auto_id }}');
+
+    function toggleFetusDays() {
+        if (resultSelect.value === 'POSITIVE') {
+            fetusContainer.style.display = 'block';
+        } else {
+            fetusContainer.style.display = 'none';
+            fetusInput.value = '';
+        }
+    }
+
+    resultSelect.addEventListener('change', toggleFetusDays);
+    toggleFetusDays(); // Init
+</script>
+{% endblock %}
