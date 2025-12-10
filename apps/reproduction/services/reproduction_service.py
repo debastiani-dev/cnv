@@ -188,3 +188,32 @@ class ReproductionService:
         """
         check = PregnancyCheck.all_objects.get(pk=pk)
         check.delete(destroy=True)
+
+    @staticmethod
+    def get_deleted_calving_records():
+        """
+        Returns all soft-deleted Calving records.
+        """
+        return (
+            Calving.all_objects.filter(is_deleted=True)
+            .select_related("dam", "breeding_event")
+            .order_by("-modified_at")
+        )
+
+    @staticmethod
+    @transaction.atomic
+    def restore_calving_record(pk: str) -> None:
+        """
+        Restores a soft-deleted Calving record.
+        """
+        record = Calving.all_objects.get(pk=pk)
+        record.restore()
+
+    @staticmethod
+    @transaction.atomic
+    def hard_delete_calving_record(pk: str) -> None:
+        """
+        Permanently deletes a Calving record.
+        """
+        record = Calving.all_objects.get(pk=pk)
+        record.delete(destroy=True)

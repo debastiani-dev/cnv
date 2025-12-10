@@ -1,8 +1,11 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.shortcuts import redirect
+from django.db.models import ProtectedError
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import CreateView, ListView
 
 from apps.reproduction.forms import CalvingForm
@@ -50,3 +53,66 @@ class CalvingCreateView(CreateView):
         except (ValueError, ValidationError) as e:
             form.add_error(None, str(e))
             return self.form_invalid(form)
+
+
+class CalvingDeleteView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        calving = Calving.objects.get(pk=pk)
+        return render(
+            request, "reproduction/calving_confirm_delete.html", {"object": calving}
+        )
+
+    def post(self, request, pk):
+        calving = Calving.objects.get(pk=pk)
+        try:
+            calving.delete()
+            messages.success(request, _("Calving record deleted."))
+            return redirect("reproduction:calving_list")
+        except ProtectedError as e:
+            messages.error(
+                request,
+                _(
+                    "Cannot delete this calving record because it is referenced by other objects."
+                ),
+            )
+            return render(
+                request,
+                "reproduction/calving_confirm_delete.html",
+                {"object": calving, "error": str(e)},
+            )
+
+
+class CalvingTrashListView(LoginRequiredMixin, ListView):
+    template_name = "reproduction/calving_trash_list.html"
+    context_object_name = "records"
+
+    def get_queryset(self):
+        return ReproductionService.get_deleted_calving_records()
+
+
+class CalvingRestoreView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        record = Calving.all_objects.get(pk=pk)
+        return render(
+            request, "reproduction/calving_confirm_restore.html", {"object": record}
+        )
+
+    def post(self, request, pk):
+        ReproductionService.restore_calving_record(pk)
+        messages.success(request, _("Calving record restored."))
+        return redirect("reproduction:calving_trash")
+
+
+class CalvingPermanentDeleteView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        record = Calving.all_objects.get(pk=pk)
+        return render(
+            request,
+            "reproduction/calving_confirm_permanent_delete.html",
+            {"object": record},
+        )
+
+    def post(self, request, pk):
+        ReproductionService.hard_delete_calving_record(pk)
+        messages.success(request, _("Calving record permanently deleted."))
+        return redirect("reproduction:calving_trash")

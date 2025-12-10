@@ -8,7 +8,14 @@ from apps.reproduction.views.breeding import (
     BreedingRestoreView,
     BreedingTrashListView,
 )
-from apps.reproduction.views.calving import CalvingCreateView, CalvingListView
+from apps.reproduction.views.calving import (
+    CalvingCreateView,
+    CalvingDeleteView,
+    CalvingListView,
+    CalvingPermanentDeleteView,
+    CalvingRestoreView,
+    CalvingTrashListView,
+)
 from apps.reproduction.views.diagnosis import (
     DiagnosisCreateView,
     DiagnosisDeleteView,
@@ -67,6 +74,22 @@ urlpatterns = [
     ),
     path("calving/", CalvingListView.as_view(), name="calving_list"),
     path("calving/add/", CalvingCreateView.as_view(), name="calving_add"),
+    path("calving/trash/", CalvingTrashListView.as_view(), name="calving_trash"),
+    path(
+        "calving/<uuid:pk>/restore/",
+        CalvingRestoreView.as_view(),
+        name="calving_restore",
+    ),
+    path(
+        "calving/<uuid:pk>/delete/",
+        CalvingDeleteView.as_view(),
+        name="calving_delete",
+    ),
+    path(
+        "calving/<uuid:pk>/permanent-delete/",
+        CalvingPermanentDeleteView.as_view(),
+        name="calving_permanent_delete",
+    ),
     path("season/", SeasonListView.as_view(), name="season_list"),
     path("season/add/", SeasonCreateView.as_view(), name="season_add"),
     path("season/<uuid:pk>/edit/", SeasonUpdateView.as_view(), name="season_edit"),
