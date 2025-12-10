@@ -31,12 +31,6 @@ class TestSaleService:
     def test_soft_delete_and_restore(self):
         sale = baker.make(Sale)
 
-        SaleService.hard_delete_sale(sale)  # Wait, we want soft delete first usually?
-        # The service has hard_delete_sale, let's check view logic.
-        # Views use SaleService.get_deleted_sales, restore_sale, hard_delete_sale.
-        # Standard deletion is via Django's DeleteView
-        # (which calls obj.delete() -> SoftDeleteModel.delete() -> sets is_deleted=True)
-
         sale.delete()
         assert sale.is_deleted
 

@@ -137,6 +137,11 @@ class BaseModel(models.Model):
             related_name = rel.get_accessor_name()  # type: ignore[union-attr]
             if not related_name:
                 continue
+
+            # Check if this relation is in the ignore list for strict deletion
+            if related_name in getattr(self, "strict_deletion_ignore_fields", []):
+                continue
+
             if not hasattr(self, related_name):
                 continue
 

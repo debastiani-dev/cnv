@@ -37,14 +37,6 @@ class TestPurchaseService:
     def test_soft_delete_and_restore(self):
         purchase = baker.make(Purchase)
 
-        PurchaseService.hard_delete_purchase(
-            purchase
-        )  # Wait, we want soft delete first usually?
-        # The service has hard_delete_purchase, let's check view logic.
-        # Views use PurchaseService.get_deleted_purchases, restore_purchase, hard_delete_purchase.
-        # Standard deletion is via Django's DeleteView
-        # (which calls obj.delete() -> SoftDeleteModel.delete() -> sets is_deleted=True)
-
         purchase.delete()
         assert purchase.is_deleted
 

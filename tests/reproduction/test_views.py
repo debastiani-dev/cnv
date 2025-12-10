@@ -29,24 +29,22 @@ class TestReproductiveSeasonViews:
     def test_update_view(self, client, admin_user):
         client.force_login(admin_user)
         season = ReproductiveSeason.objects.create(
-            name="Old Season", start_date=timezone.now().date(), active=True
+            name="Old Season", start_date=timezone.now().date()
         )
         url = reverse("reproduction:season_edit", kwargs={"pk": season.pk})
         data = {
             "name": "Updated Season",
             "start_date": season.start_date,
-            "active": False,
         }
         response = client.post(url, data)
         assert response.status_code == 302
         season.refresh_from_db()
         assert season.name == "Updated Season"
-        assert not season.active
 
     def test_delete_view(self, client, admin_user):
         client.force_login(admin_user)
         season = ReproductiveSeason.objects.create(
-            name="Season to Delete", start_date=timezone.now().date(), active=True
+            name="Season to Delete", start_date=timezone.now().date()
         )
         url = reverse("reproduction:season_delete", kwargs={"pk": season.pk})
         response = client.post(url)

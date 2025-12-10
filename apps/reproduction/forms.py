@@ -8,7 +8,7 @@ from apps.reproduction.models import BreedingEvent, Calving, ReproductiveSeason
 class ReproductiveSeasonForm(forms.ModelForm):
     class Meta:
         model = ReproductiveSeason
-        fields = ["name", "start_date", "end_date", "active"]
+        fields = ["name", "start_date", "end_date"]
         widgets = {
             "start_date": forms.DateInput(attrs={"type": "date"}),
             "end_date": forms.DateInput(attrs={"type": "date"}),
@@ -16,15 +16,10 @@ class ReproductiveSeasonForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            if field_name == "active":
-                field.widget.attrs["class"] = (
-                    "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                )
-            else:
-                field.widget.attrs["class"] = (
-                    "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                )
+        for _field_name, field in self.fields.items():
+            field.widget.attrs["class"] = (
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            )
 
 
 class CalvingForm(forms.ModelForm):

@@ -11,7 +11,6 @@ class ReproductiveSeason(BaseModel):
     )
     start_date = models.DateField(_("Start Date"))
     end_date = models.DateField(_("End Date"), blank=True, null=True)
-    active = models.BooleanField(_("Active"), default=True)
 
     class Meta(BaseModel.Meta):
         verbose_name = _("Reproductive Season")

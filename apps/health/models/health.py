@@ -132,6 +132,9 @@ class SanitaryEvent(BaseModel):
         verbose_name = _("Sanitary Event")
         verbose_name_plural = _("Sanitary Events")
 
+    # Ignore targets for strict deletion check (they are composition pieces, cascade deleted)
+    strict_deletion_ignore_fields = ["targets"]
+
     def __str__(self):
         return f"{self.date} - {self.title}"
 

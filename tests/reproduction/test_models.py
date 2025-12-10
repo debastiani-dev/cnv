@@ -13,8 +13,7 @@ from apps.reproduction.models import (
 @pytest.mark.django_db
 class TestReproductionModels:
     def test_reproduction_season_creation(self):
-        season = baker.make(ReproductiveSeason, name="2024/2025", active=True)
-        assert season.active is True
+        season = baker.make(ReproductiveSeason, name="2024/2025")
         assert str(season) == "2024/2025"
 
     def test_breeding_event_creation(self):
