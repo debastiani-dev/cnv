@@ -42,6 +42,30 @@
         </div>
     </div>
 
+    <!-- Resting Violations Alert -->
+    {% if location_stats.resting_violations %}
+    <div class="rounded-md bg-red-50 p-4 border border-red-200">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">{% trans "Resting Status Violations" %}</h3>
+                <div class="mt-2 text-sm text-red-700">
+                    <p class="mb-2">{% trans "The following locations are set to 'Resting' but currently contain animals:" %}</p>
+                    <ul role="list" class="list-disc space-y-1 pl-5">
+                       {% for loc in location_stats.resting_violations %}
+                         <li><strong>{{ loc.name }}</strong>: {{ loc.current_head_count }} animals</li>
+                       {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- KPI Cards -->
     <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Total Cattle -->
@@ -264,38 +288,66 @@
         </div>
     </div>
 
-    <!-- Recent Health Events -->
-    <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden">
-         <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-             <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Health Events" %}</h3>
-             <a href="{% url 'health:event-list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
-         </div>
-        <ul class="divide-y divide-gray-200">
-            {% for event in recent_health_events %}
-            <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
-                <div class="flex items-center space-x-4">
-                     <div class="flex-shrink-0">
-                        <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
-                            <span class="text-sm font-medium leading-none text-blue-700">H</span>
-                        </span>
+    <!-- Operations Overview -->
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-2 items-start">
+        
+        <!-- Recent Health Events -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">
+             <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                 <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Health Events" %}</h3>
+                 <a href="{% url 'health:event-list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
+             </div>
+            <ul class="divide-y divide-gray-200">
+                {% for event in recent_health_events %}
+                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-4">
+                         <div class="flex-shrink-0">
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                                <span class="text-sm font-medium leading-none text-blue-700">H</span>
+                            </span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">{{ event.title }}</p>
+                            <p class="truncate text-xs text-gray-500">
+                                 {{ event.date|date:"d M Y" }}
+                                 {% if event.medication %} &bull; {{ event.medication.name }}{% endif %}
+                            </p>
+                        </div>
+                        <div class="text-right text-sm text-gray-500">
+                            <div class="font-medium text-gray-900">{{ event.target_count }}</div>
+                            <div class="text-xs">{% trans "Animals" %}</div>
+                        </div>
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="truncate text-sm font-medium text-gray-900">{{ event.title }}</p>
-                        <p class="truncate text-xs text-gray-500">
-                             {{ event.date|date:"d M Y" }}
-                             {% if event.medication %} &bull; {{ event.medication.name }}{% endif %}
-                        </p>
-                    </div>
-                    <div class="text-right text-sm text-gray-500">
-                        <div class="font-medium text-gray-900">{{ event.target_count }}</div>
-                        <div class="text-xs">{% trans "Animals" %}</div>
-                    </div>
-                </div>
-            </li>
-            {% empty %}
-             <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No recent health events." %}</li>
-            {% endfor %}
-        </ul>
+                </li>
+                {% empty %}
+                 <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No recent health events." %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Pasture Occupancy -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">
+            <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                 <h3 class="text-base font-semibold text-gray-900">{% trans "Pasture Occupancy" %}</h3>
+                 <a href="{% url 'locations:list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View Map" %}</a>
+            </div>
+            <ul class="divide-y divide-gray-200">
+                {% for item in location_stats.top_occupancy %}
+                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
+                     <div class="flex items-center justify-between mb-2">
+                         <span class="text-sm font-medium text-gray-900">{{ item.name }}</span>
+                         <span class="text-sm text-gray-500 font-medium">{{ item.occupancy_rate }}%</span>
+                     </div>
+                     <div class="w-full bg-gray-100 rounded-full h-2.5 mb-1">
+                          <div class="h-2.5 rounded-full {% if item.occupancy_rate > 100 %}bg-red-500{% elif item.occupancy_rate > 80 %}bg-yellow-500{% else %}bg-green-500{% endif %}" style="width: {% if item.occupancy_rate > 100 %}100{% else %}{{ item.occupancy_rate|floatformat:0 }}{% endif %}%"></div>
+                     </div>
+                     <p class="text-xs text-gray-400 text-right">{{ item.head_count }} / {{ item.capacity }} {% trans "animals" %}</p>
+                </li>
+                {% empty %}
+                <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No occupancy data available." %}</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
 

@@ -1,0 +1,230 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{{ location.name }}{% endblock %}
+
+{% block content %}
+<style>
+    .rounded-3xl {
+        border-radius: 0.5rem !important;
+    }
+    .p-10 {
+        padding: 2.5rem !important;
+    }
+    .px-10 {
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
+    }
+    .gap-10 {
+        gap: 2.5rem !important;
+    }
+    .space-y-12 > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 3rem !important;
+    }
+    .h-12 {
+        height: 3rem !important;
+    }
+    .w-12 {
+        width: 3rem !important;
+    }
+    .ml-8 {
+        margin-left: 2rem !important;
+    }
+</style>
+
+<div class="px-6 py-8 sm:px-8 lg:px-12 max-w-7xl mx-auto space-y-12">
+    <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+            <h2 class="text-3xl font-bold leading-9 text-gray-900 sm:truncate sm:tracking-tight">{{ location.name }}</h2>
+            <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
+               <div class="mt-2 flex items-center text-sm text-gray-500">
+                  <span class="font-medium mr-2">{% trans "Type" %}:</span> {{ location.get_type_display }}
+               </div>
+               <div class="mt-2 flex items-center text-sm text-gray-500">
+                  <span class="font-medium mr-2">{% trans "Status" %}:</span> {{ location.get_status_display }}
+               </div>
+               <div class="mt-2 flex items-center text-sm text-gray-500">
+                   <span class="font-medium mr-2">{% trans "Area" %}:</span> {{ location.area_hectares }} ha
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 flex md:ml-4 md:mt-0">
+            <a href="{% url 'locations:update' location.pk %}" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                {% trans "Edit" %}
+            </a>
+            <a href="{% url 'locations:delete' location.pk %}" class="ml-3 inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                {% trans "Delete" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- Head Count -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Head Count" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold text-gray-900">{{ stats.head_count }}</div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stocking Rate -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Stocking Rate" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold text-gray-900">{{ stats.au_per_ha }} <span class="text-sm font-normal text-gray-500">AU/ha</span></div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Weight -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+             <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.011.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Total Weight" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold text-gray-900">{{ stats.total_weight }} <span class="text-sm font-normal text-gray-500">kg</span></div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Occupancy -->
+        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-10">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
+                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                        </svg>
+                    </div>
+                    <div class="ml-8 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Occupancy" %}</dt>
+                            <dd>
+                                <div class="text-2xl font-bold {% if stats.occupancy_rate > 100 %}text-rose-600{% else %}text-emerald-600{% endif %}">
+                                    {{ stats.occupancy_rate }}%
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lists Section -->
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-2 items-start">
+        <!-- Inventory -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">
+            <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                 <h3 class="text-base font-semibold text-gray-900">{% trans "Current Inventory" %}</h3>
+                 <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">{{ cattle_list.count }} {% trans "Animals" %}</span>
+            </div>
+            <ul role="list" class="divide-y divide-gray-200">
+               {% for animal in cattle_list %}
+               <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
+                 <div class="flex items-center justify-between gap-x-4">
+                   <div class="min-w-0 flex items-center gap-x-3">
+                     <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100">
+                        <span class="text-sm font-medium leading-none text-indigo-700">C</span>
+                    </span>
+                     <div class="flex flex-col">
+                         <p class="text-sm font-semibold leading-none text-gray-900">
+                             <a href="{% url 'cattle:detail' animal.pk %}" class="hover:text-indigo-600">{{ animal.tag }}</a>
+                         </p>
+                         <p class="text-xs text-gray-500 mt-1">{{ animal.breed|default:"-" }} &bull; {{ animal.get_category_display|default:animal.sex }}</p>
+                     </div>
+                   </div>
+                   <div class="text-right text-sm">
+                     <p class="font-medium text-gray-900">{{ animal.current_weight|default:0 }} kg</p>
+                   </div>
+                 </div>
+               </li>
+               {% empty %}
+               <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No animals currently in this location." %}</li>
+               {% endfor %}
+            </ul>
+        </div>
+    
+        <!-- Recent Movements -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">
+            <div class="px-10 py-5 border-b border-gray-200 bg-gray-50">
+                <h3 class="text-base font-semibold text-gray-900">{% trans "Movement History" %}</h3>
+            </div>
+            <ul role="list" class="divide-y divide-gray-200">
+                {% for movement in movements %}
+                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-4">
+                         <div class="flex-shrink-0">
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full {% if movement.destination == location %}bg-emerald-100 text-emerald-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    {% if movement.destination == location %}
+                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                                    {% else %}
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" />
+                                    {% endif %}
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-gray-900">
+                                 {% if movement.destination == location %}
+                                    {% trans "Received from" %} <span class="font-bold">{{ movement.origin.name|default:"External" }}</span>
+                                {% else %}
+                                    {% trans "Sent to" %} <span class="font-bold">{{ movement.destination.name }}</span>
+                                {% endif %}
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                 {{ movement.animals.count }} {% trans "animals" %} &bull; {{ movement.reason|default:"-" }}
+                            </p>
+                        </div>
+                        <div class="text-right text-sm text-gray-500 whitespace-nowrap">
+                            <time datetime="{{ movement.date }}">{{ movement.date|date:"d M Y" }}</time>
+                        </div>
+                    </div>
+                </li>
+                {% empty %}
+                 <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No recent movements." %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

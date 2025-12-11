@@ -19,7 +19,7 @@
 
 <div x-data="{ 
     sidebarOpen: false, 
-    openCategory: '{% if 'cattle' in request.resolver_match.app_names %}animals{% elif 'weight' in request.resolver_match.app_names %}weight{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names %}transactions{% elif 'health' in request.resolver_match.app_names %}health{% elif 'partners' in request.resolver_match.app_names %}business{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}' 
+    openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'weight' in request.resolver_match.app_names %}weight{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names %}transactions{% elif 'health' in request.resolver_match.app_names %}health{% elif 'partners' in request.resolver_match.app_names %}business{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}' 
 }" class="min-h-screen relative z-0">
     
     <!-- Mobile Sidebar (Off-canvas) -->
@@ -90,6 +90,11 @@
                                     <li>
                                         <a href="{% url 'cattle:list' %}" class="{% if 'cattle' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
                                             {% trans "Cattle" %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'locations:list' %}" class="{% if 'locations' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
+                                            {% trans "Locations" %}
                                         </a>
                                     </li>
                                 </ul>
@@ -295,6 +300,11 @@
                                     <li>
                                         <a href="{% url 'cattle:list' %}" class="{% if 'cattle' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
                                             {% trans "Cattle" %}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'locations:list' %}" class="{% if 'locations' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
+                                            {% trans "Locations" %}
                                         </a>
                                     </li>
                                 </ul>

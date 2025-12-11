@@ -1,0 +1,46 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Permanently Delete Location" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Permanently Delete Location" %}</h3>
+            <div class="mt-2 max-w-xl text-sm text-gray-500">
+                <p>{% trans "Are you sure you want to PERMANENTLY delete" %} <strong>{{ location.name }}</strong>?</p>
+                
+                {% if protected_error %}
+                    <div class="mt-2 rounded-md bg-red-50 p-4">
+                        <div class="flex">
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">{% trans "Deletion Blocked" %}</h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <p>{{ protected_error }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="mt-4 rounded-md bg-red-50 p-4">
+                         <p class="text-sm text-red-700 font-medium">{% trans "This action cannot be undone." %}</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="mt-5 sm:flex sm:items-center sm:justify-end">
+                <form method="POST">
+                    {% csrf_token %}
+                    <a href="{% url 'locations:trash' %}" class="text-sm font-semibold leading-6 text-gray-900 mr-4">{% trans "Cancel" %}</a>
+                    {% if not protected_error %}
+                    <button type="submit" class="inline-flex items-center justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                        {% trans "Delete Permanently" %}
+                    </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

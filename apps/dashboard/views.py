@@ -3,6 +3,7 @@ from django.views.generic import TemplateView
 
 from apps.cattle.services.cattle_service import CattleService
 from apps.health.services import HealthService
+from apps.locations.services import LocationService
 from apps.purchases.services.purchase_service import PurchaseService
 from apps.sales.services.sale_service import SaleService
 from apps.weight.services.weight_service import WeightService
@@ -29,6 +30,9 @@ class HomeView(LoginRequiredMixin, TemplateView):
         # Weight Stats
         weight_stats = WeightService.get_herd_adg_stats()
 
+        # Location Stats
+        location_stats = LocationService.get_dashboard_stats()
+
         # Add to context
         context.update(
             {
@@ -39,6 +43,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 "active_withdrawal_count": active_withdrawal_count,
                 "recent_health_events": recent_health_events,
                 "weight_stats": weight_stats,
+                "location_stats": location_stats,
             }
         )
         return context

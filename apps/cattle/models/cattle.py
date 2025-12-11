@@ -168,6 +168,17 @@ class Cattle(BaseModel):
         default=STATUS_AVAILABLE,
     )
 
+    # Location Management
+    location = models.ForeignKey(
+        "locations.Location",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="cattle",
+        verbose_name=_("Current Location"),
+        help_text=_("Where the animal is currently located."),
+    )
+
     class Meta(BaseModel.Meta):
         verbose_name = _("Cattle")
         verbose_name_plural = _("Cattle")

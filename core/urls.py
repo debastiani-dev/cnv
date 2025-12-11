@@ -31,6 +31,7 @@ urlpatterns = [
     path("health/", include("apps.health.urls", namespace="health")),
     path("reproduction/", include("apps.reproduction.urls", namespace="reproduction")),
     path("weight/", include("apps.weight.urls", namespace="weight")),
+    path("locations/", include("apps.locations.urls", namespace="locations")),
     path("rosetta/", include("rosetta.urls")),
     path("", include("apps.website.urls", namespace="website")),
 ]

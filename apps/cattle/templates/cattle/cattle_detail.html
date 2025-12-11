@@ -73,6 +73,20 @@
                 </dd>
             </div>
 
+            <!-- Current Location (New) -->
+            <div class="border-t border-gray-100 bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">{% trans "Location" %}</dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                    {% if cattle.location %}
+                    <a href="{% url 'locations:detail' cattle.location.pk %}" class="font-medium text-indigo-600 hover:text-indigo-900">
+                        {{ cattle.location.name }}
+                    </a>
+                    {% else %}
+                    <span class="text-gray-400">{% trans "Not assigned" %}</span>
+                    {% endif %}
+                </dd>
+            </div>
+
             <!-- Reproduction Status (New) -->
             <div class="border-t border-gray-100 bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt class="text-sm font-medium text-gray-500">{% trans "Reproduction Status" %}</dt>
@@ -233,6 +247,46 @@
                     {% trans "No weight records found." %}
                 </div>
             {% endif %}
+        </div>
+    </div>
+
+    <!-- Movement History Section -->
+    <div class="mt-8 overflow-hidden rounded-lg bg-white shadow ring-1 ring-black ring-opacity-5 mb-8">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Movement History" %}</h3>
+            <p class="mt-1 text-sm text-gray-500">{% trans "Recent locations and transfers." %}</p>
+        </div>
+        <div class="border-t border-gray-200">
+             {% if cattle.movements.exists %}
+             <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Date" %}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "From" %}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "To" %}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Reason" %}</th>
+                            <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "By" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        {% for movement in cattle.movements.all|slice:":10" %}
+                        <tr>
+                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ movement.date|date:"SHORT_DATE_FORMAT" }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ movement.origin.name|default:"-" }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">{{ movement.destination.name }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ movement.get_reason_display }}</td>
+                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ movement.performed_by.get_full_name|default:movement.performed_by.username }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+             </div>
+             {% else %}
+             <div class="px-4 py-5 sm:px-6 text-sm text-gray-500 text-center">
+                 {% trans "No movement history recorded." %}
+             </div>
+             {% endif %}
         </div>
     </div>
 
