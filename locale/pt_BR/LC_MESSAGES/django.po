@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cabanha Nelore do Vale 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-10 07:16+0000\n"
-"PO-Revision-Date: 2025-12-10 07:57+0000\n"
+"POT-Creation-Date: 2025-12-11 02:24+0000\n"
+"PO-Revision-Date: 2025-12-11 02:23+0000\n"
 "Last-Translator:   <admin@example.com>\n"
 "Language-Team: Portuguese (Brazil) <pt_BR@li.org>\n"
 "Language: pt_BR\n"
@@ -104,8 +104,8 @@ msgid ""
 "Cannot delete the last active superuser. Please promote another user to "
 "superuser first."
 msgstr ""
-"Não é possível excluir o último superusuário ativo. Por favor, promova outro"
-" usuário para superusuário primeiro."
+"Não é possível excluir o último superusuário ativo. Por favor, promova outro "
+"usuário para superusuário primeiro."
 
 #: apps/authentication/templates/authentication/login.html:5
 #: apps/authentication/views/login.py:11
@@ -133,21 +133,17 @@ msgstr "Entrar"
 #: apps/authentication/templates/authentication/user_confirm_delete.html:9
 #: apps/authentication/templates/authentication/user_detail.html:90
 #: apps/authentication/views/user_crud.py:104
-#| msgid "Delete Forever"
 msgid "Delete User"
 msgstr "Deletar Usuário"
 
 #: apps/authentication/templates/authentication/user_confirm_delete.html:11
 #, python-format
-#| msgid ""
-#| "Are you sure you want to delete cattle <strong>%(tag)s</strong>? It will be "
-#| "moved to the Trash Bin."
 msgid ""
 "Are you sure you want to delete user <strong>%(name)s</strong>? It will be "
 "moved to the Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir o gado <strong>%(name)s</strong>? Ele será"
-" movido para a Lixeira."
+"Tem certeza de que deseja excluir o gado <strong>%(name)s</strong>? Ele será "
+"movido para a Lixeira."
 
 #: apps/authentication/templates/authentication/user_confirm_delete.html:20
 #: apps/authentication/templates/authentication/user_confirm_permanent_delete.html:20
@@ -155,8 +151,17 @@ msgstr ""
 #: apps/cattle/templates/cattle/cattle_confirm_permanent_delete.html:28
 #: apps/health/templates/health/event_confirm_delete.html:19
 #: apps/health/templates/health/event_confirm_permanent_delete.html:27
+#: apps/health/templates/health/medication_confirm_delete.html:18
+#: apps/health/templates/health/medication_confirm_permanent_delete.html:28
+#: apps/locations/templates/locations/location_confirm_delete.html:18
 #: apps/partners/templates/partners/partner_confirm_delete.html:19
 #: apps/partners/templates/partners/partner_confirm_permanent_delete.html:27
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_delete.html:18
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:28
+#: apps/reproduction/templates/reproduction/calving_confirm_delete.html:18
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_delete.html:18
+#: apps/reproduction/templates/reproduction/season_confirm_delete.html:18
+#: apps/weight/templates/weight/session_confirm_delete.html:24
 msgid "Error"
 msgstr "Erro"
 
@@ -172,9 +177,16 @@ msgstr "Erro"
 #: apps/health/templates/health/event_confirm_permanent_delete.html:19
 #: apps/health/templates/health/event_confirm_restore.html:18
 #: apps/health/templates/health/event_form_update.html:74
-#: apps/health/templates/health/medication_confirm_delete.html:20
+#: apps/health/templates/health/medication_confirm_delete.html:32
+#: apps/health/templates/health/medication_confirm_permanent_delete.html:19
+#: apps/health/templates/health/medication_confirm_restore.html:18
 #: apps/health/templates/health/medication_form.html:83
 #: apps/health/templates/health/sanitary_event_form.html:75
+#: apps/locations/templates/locations/location_confirm_delete.html:50
+#: apps/locations/templates/locations/location_confirm_permanent_delete.html:35
+#: apps/locations/templates/locations/location_confirm_restore.html:18
+#: apps/locations/templates/locations/location_form.html:83
+#: apps/locations/templates/locations/movement_form.html:70
 #: apps/partners/templates/partners/partner_confirm_delete.html:32
 #: apps/partners/templates/partners/partner_confirm_permanent_delete.html:19
 #: apps/partners/templates/partners/partner_confirm_restore.html:18
@@ -183,44 +195,60 @@ msgstr "Erro"
 #: apps/purchases/templates/purchases/purchase_confirm_permanent_delete.html:20
 #: apps/purchases/templates/purchases/purchase_confirm_restore.html:19
 #: apps/purchases/templates/purchases/purchase_form.html:173
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_delete.html:32
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:19
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_restore.html:18
 #: apps/reproduction/templates/reproduction/breeding_event_form.html:103
+#: apps/reproduction/templates/reproduction/calving_confirm_delete.html:32
+#: apps/reproduction/templates/reproduction/calving_confirm_permanent_delete.html:31
+#: apps/reproduction/templates/reproduction/calving_confirm_restore.html:19
 #: apps/reproduction/templates/reproduction/calving_form.html:131
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_delete.html:32
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_permanent_delete.html:31
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_restore.html:19
 #: apps/reproduction/templates/reproduction/pregnancy_check_form.html:76
-#: apps/reproduction/templates/reproduction/season_confirm_delete.html:18
+#: apps/reproduction/templates/reproduction/season_confirm_delete.html:32
+#: apps/reproduction/templates/reproduction/season_confirm_permanent_delete.html:31
+#: apps/reproduction/templates/reproduction/season_confirm_restore.html:19
 #: apps/reproduction/templates/reproduction/season_form.html:52
 #: apps/sales/templates/sales/sale_confirm_delete.html:23
 #: apps/sales/templates/sales/sale_confirm_permanent_delete.html:20
 #: apps/sales/templates/sales/sale_confirm_restore.html:19
 #: apps/sales/templates/sales/sale_form.html:173
+#: apps/weight/templates/weight/batch_entry.html:56
+#: apps/weight/templates/weight/record_confirm_delete.html:18
+#: apps/weight/templates/weight/record_form.html:64
+#: apps/weight/templates/weight/session_confirm_delete.html:36
+#: apps/weight/templates/weight/session_confirm_permanent_delete.html:58
+#: apps/weight/templates/weight/session_form.html:56
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: apps/authentication/templates/authentication/user_confirm_delete.html:34
 #: apps/cattle/templates/cattle/cattle_confirm_delete.html:33
 #: apps/health/templates/health/event_confirm_delete.html:33
+#: apps/health/templates/health/medication_confirm_delete.html:33
+#: apps/locations/templates/locations/location_confirm_delete.html:51
 #: apps/partners/templates/partners/partner_confirm_delete.html:33
 #: apps/purchases/templates/purchases/purchase_confirm_delete.html:24
-#: apps/reproduction/templates/reproduction/season_confirm_delete.html:4
-#: apps/reproduction/templates/reproduction/season_confirm_delete.html:17
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_delete.html:33
+#: apps/reproduction/templates/reproduction/calving_confirm_delete.html:33
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_delete.html:33
+#: apps/reproduction/templates/reproduction/season_confirm_delete.html:33
 #: apps/sales/templates/sales/sale_confirm_delete.html:24
 msgid "Confirm Delete"
 msgstr "Confirmar Exclusão"
 
 #: apps/authentication/templates/authentication/user_confirm_permanent_delete.html:4
-#| msgid "Delete Forever"
 msgid "Delete User Forever"
 msgstr "Excluir Usuário Para Sempre"
 
 #: apps/authentication/templates/authentication/user_confirm_permanent_delete.html:10
-#| msgid "Permanently Delete Cattle"
 msgid "Permanently Delete User"
 msgstr "Excluir Usuário Permanentemente"
 
 #: apps/authentication/templates/authentication/user_confirm_permanent_delete.html:12
 #, python-format
-#| msgid ""
-#| "Are you sure you want to <strong>permanently delete</strong> the cattle "
-#| "<strong>%(tag)s</strong> (%(name)s)?"
 msgid ""
 "Are you sure you want to <strong>permanently delete</strong> the user "
 "<strong>%(username)s</strong> (%(name)s)?"
@@ -231,8 +259,10 @@ msgstr ""
 #: apps/authentication/templates/authentication/user_confirm_permanent_delete.html:13
 #: apps/cattle/templates/cattle/cattle_confirm_permanent_delete.html:13
 #: apps/health/templates/health/event_confirm_permanent_delete.html:13
+#: apps/health/templates/health/medication_confirm_permanent_delete.html:13
 #: apps/partners/templates/partners/partner_confirm_permanent_delete.html:13
 #: apps/purchases/templates/purchases/purchase_confirm_permanent_delete.html:13
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:13
 #: apps/sales/templates/sales/sale_confirm_permanent_delete.html:13
 msgid "This action CANNOT be undone."
 msgstr "Esta ação NÃO pode ser desfeita."
@@ -243,26 +273,35 @@ msgstr "Esta ação NÃO pode ser desfeita."
 #: apps/cattle/templates/cattle/cattle_trash_list.html:53
 #: apps/health/templates/health/event_confirm_permanent_delete.html:18
 #: apps/health/templates/health/event_trash_list.html:42
+#: apps/health/templates/health/medication_confirm_permanent_delete.html:18
+#: apps/health/templates/health/medication_trash_list.html:43
+#: apps/locations/templates/locations/location_trash.html:41
 #: apps/partners/templates/partners/partner_confirm_permanent_delete.html:18
 #: apps/partners/templates/partners/partner_trash_list.html:42
 #: apps/purchases/templates/purchases/purchase_confirm_permanent_delete.html:18
 #: apps/purchases/templates/purchases/purchase_trash_list.html:46
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:18
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:65
+#: apps/reproduction/templates/reproduction/calving_confirm_permanent_delete.html:32
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:44
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_permanent_delete.html:32
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:44
+#: apps/reproduction/templates/reproduction/season_confirm_permanent_delete.html:32
+#: apps/reproduction/templates/reproduction/season_trash_list.html:44
 #: apps/sales/templates/sales/sale_confirm_permanent_delete.html:18
 #: apps/sales/templates/sales/sale_trash_list.html:46
+#: apps/weight/templates/weight/session_confirm_permanent_delete.html:53
+#: apps/weight/templates/weight/session_trash.html:44
 msgid "Delete Forever"
 msgstr "Excluir Para Sempre"
 
 #: apps/authentication/templates/authentication/user_confirm_restore.html:4
 #: apps/authentication/templates/authentication/user_confirm_restore.html:10
-#| msgid "Restore"
 msgid "Restore User"
 msgstr "Restaurar Usuário"
 
 #: apps/authentication/templates/authentication/user_confirm_restore.html:12
 #, python-format
-#| msgid ""
-#| "Are you sure you want to restore the cattle <strong>%(tag)s</strong> "
-#| "(%(name)s)?"
 msgid ""
 "Are you sure you want to restore the user <strong>%(username)s</strong> "
 "(%(name)s)?"
@@ -273,8 +312,13 @@ msgstr ""
 #: apps/authentication/templates/authentication/user_confirm_restore.html:17
 #: apps/cattle/templates/cattle/cattle_confirm_restore.html:17
 #: apps/health/templates/health/event_confirm_restore.html:17
+#: apps/health/templates/health/medication_confirm_restore.html:17
 #: apps/partners/templates/partners/partner_confirm_restore.html:17
 #: apps/purchases/templates/purchases/purchase_confirm_restore.html:17
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_restore.html:17
+#: apps/reproduction/templates/reproduction/calving_confirm_restore.html:20
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_restore.html:20
+#: apps/reproduction/templates/reproduction/season_confirm_restore.html:20
 #: apps/sales/templates/sales/sale_confirm_restore.html:17
 msgid "Confirm Restore"
 msgstr "Confirmar Restauração"
@@ -284,12 +328,10 @@ msgid "User Profile"
 msgstr "Perfil de Usuário"
 
 #: apps/authentication/templates/authentication/user_detail.html:15
-#| msgid "Back to List"
 msgid "Back to Users"
 msgstr "Voltar para Usuários"
 
 #: apps/authentication/templates/authentication/user_detail.html:45
-#| msgid "email address"
 msgid "Email Address"
 msgstr "endereço de email"
 
@@ -299,19 +341,16 @@ msgid "Role"
 msgstr "Função"
 
 #: apps/authentication/templates/authentication/user_detail.html:61
-#| msgid "Status"
 msgid "Account Status"
 msgstr "Status da Conta"
 
 #: apps/authentication/templates/authentication/user_detail.html:64
 #: apps/authentication/templates/authentication/user_list.html:49
-#: apps/reproduction/models/reproduction.py:14
-#: apps/reproduction/templates/reproduction/season_list.html:43
+#: apps/locations/models/location.py:21 apps/locations/models/location.py:49
 msgid "Active"
 msgstr "Ativo"
 
 #: apps/authentication/templates/authentication/user_detail.html:66
-#: apps/reproduction/templates/reproduction/season_list.html:45
 msgid "Inactive"
 msgstr "Inativo"
 
@@ -334,12 +373,15 @@ msgstr "Gerenciamento de Usuários"
 #: apps/authentication/templates/authentication/user_form.html:22
 #: apps/cattle/templates/cattle/cattle_form.html:22
 #: apps/health/templates/health/event_form_update.html:22
+#: apps/locations/templates/locations/movement_form.html:29
 #: apps/partners/templates/partners/partner_form.html:22
 #: apps/purchases/templates/purchases/purchase_form.html:28
 #: apps/reproduction/templates/reproduction/breeding_event_form.html:25
 #: apps/reproduction/templates/reproduction/calving_form.html:25
 #: apps/reproduction/templates/reproduction/pregnancy_check_form.html:25
 #: apps/sales/templates/sales/sale_form.html:28
+#: apps/weight/templates/weight/record_form.html:35
+#: apps/weight/templates/weight/session_form.html:27
 msgid "Please correct the errors below"
 msgstr "Por favor, corrija os erros abaixo"
 
@@ -350,8 +392,8 @@ msgstr "Salvar Detalhes"
 #: apps/authentication/templates/authentication/user_list.html:4
 #: apps/authentication/templates/authentication/user_list.html:12
 #: apps/authentication/views/user_crud.py:36
-#: apps/base/templates/layouts/base_dashboard.html:223
-#: apps/base/templates/layouts/base_dashboard.html:385
+#: apps/base/templates/layouts/base_dashboard.html:248
+#: apps/base/templates/layouts/base_dashboard.html:435
 msgid "Users"
 msgstr "Usuários"
 
@@ -367,8 +409,15 @@ msgstr "Pesquisar usuários..."
 #: apps/authentication/templates/authentication/user_list.html:28
 #: apps/cattle/templates/cattle/cattle_list.html:46
 #: apps/health/templates/health/event_list.html:17
+#: apps/health/templates/health/medication_list.html:14
+#: apps/locations/templates/locations/location_list.html:48
+#: apps/locations/templates/locations/location_trash.html:10
 #: apps/partners/templates/partners/partner_list.html:28
 #: apps/purchases/templates/purchases/purchase_list.html:37
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:14
+#: apps/reproduction/templates/reproduction/calving_list.html:16
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:14
+#: apps/reproduction/templates/reproduction/season_list.html:16
 #: apps/sales/templates/sales/sale_list.html:37
 msgid "Trash Bin"
 msgstr "Lixeira"
@@ -397,21 +446,30 @@ msgstr "Superusuário"
 
 #: apps/authentication/templates/authentication/user_list.html:51
 #: apps/authentication/templates/authentication/user_trash_list.html:29
-#: apps/cattle/templates/cattle/cattle_list.html:73
+#: apps/cattle/templates/cattle/cattle_list.html:75
 #: apps/cattle/templates/cattle/cattle_trash_list.html:29
 #: apps/health/templates/health/event_list.html:37
 #: apps/health/templates/health/event_trash_list.html:28
-#: apps/health/templates/health/medication_list.html:30
+#: apps/health/templates/health/medication_list.html:31
+#: apps/health/templates/health/medication_trash_list.html:28
+#: apps/locations/templates/locations/location_trash.html:29
 #: apps/partners/templates/partners/partner_list.html:48
 #: apps/partners/templates/partners/partner_trash_list.html:28
 #: apps/purchases/templates/purchases/purchase_list.html:57
 #: apps/purchases/templates/purchases/purchase_trash_list.html:29
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:32
-#: apps/reproduction/templates/reproduction/calving_list.html:32
-#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:32
-#: apps/reproduction/templates/reproduction/season_list.html:31
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:33
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:29
+#: apps/reproduction/templates/reproduction/calving_list.html:37
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:31
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:33
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:31
+#: apps/reproduction/templates/reproduction/season_list.html:35
+#: apps/reproduction/templates/reproduction/season_trash_list.html:31
 #: apps/sales/templates/sales/sale_list.html:57
 #: apps/sales/templates/sales/sale_trash_list.html:29
+#: apps/weight/templates/weight/session_detail.html:59
+#: apps/weight/templates/weight/session_list.html:52
+#: apps/weight/templates/weight/session_trash.html:29
 msgid "Actions"
 msgstr "Ações"
 
@@ -428,25 +486,35 @@ msgid "No"
 msgstr "Não"
 
 #: apps/authentication/templates/authentication/user_list.html:138
-#: apps/cattle/templates/cattle/cattle_list.html:142
+#: apps/cattle/templates/cattle/cattle_list.html:151
 #: apps/health/templates/health/event_list.html:61
-#: apps/health/templates/health/medication_list.html:55
+#: apps/health/templates/health/medication_list.html:56
+#: apps/locations/templates/locations/location_detail.html:54
 #: apps/partners/templates/partners/partner_list.html:75
 #: apps/purchases/templates/purchases/purchase_list.html:77
-#: apps/reproduction/templates/reproduction/season_list.html:49
+#: apps/reproduction/templates/reproduction/season_list.html:46
 #: apps/sales/templates/sales/sale_list.html:77
+#: apps/weight/templates/weight/session_detail.html:85
+#: apps/weight/templates/weight/session_list.html:65
 msgid "Edit"
 msgstr "Editar"
 
 #: apps/authentication/templates/authentication/user_list.html:139
-#: apps/cattle/templates/cattle/cattle_list.html:143
+#: apps/cattle/templates/cattle/cattle_list.html:152
 #: apps/health/templates/health/event_list.html:62
-#: apps/health/templates/health/medication_confirm_delete.html:18
-#: apps/health/templates/health/medication_list.html:56
+#: apps/health/templates/health/medication_list.html:57
+#: apps/locations/templates/locations/location_detail.html:57
 #: apps/partners/templates/partners/partner_list.html:76
 #: apps/purchases/templates/purchases/purchase_list.html:78
-#: apps/reproduction/templates/reproduction/season_list.html:50
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:52
+#: apps/reproduction/templates/reproduction/calving_list.html:62
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:50
+#: apps/reproduction/templates/reproduction/season_list.html:47
 #: apps/sales/templates/sales/sale_list.html:78
+#: apps/weight/templates/weight/record_confirm_delete.html:17
+#: apps/weight/templates/weight/session_confirm_delete.html:35
+#: apps/weight/templates/weight/session_detail.html:86
+#: apps/weight/templates/weight/session_list.html:66
 msgid "Delete"
 msgstr "Excluir"
 
@@ -462,11 +530,18 @@ msgstr "Uma lista de todos os usuários excluídos."
 #: apps/authentication/templates/authentication/user_trash_list.html:14
 #: apps/cattle/templates/cattle/cattle_trash_list.html:14
 #: apps/health/templates/health/event_trash_list.html:14
+#: apps/health/templates/health/medication_trash_list.html:14
+#: apps/locations/templates/locations/location_trash.html:14
 #: apps/partners/templates/partners/partner_trash_list.html:14
 #: apps/purchases/templates/purchases/purchase_detail.html:15
 #: apps/purchases/templates/purchases/purchase_trash_list.html:14
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:14
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:15
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:15
+#: apps/reproduction/templates/reproduction/season_trash_list.html:15
 #: apps/sales/templates/sales/sale_detail.html:15
 #: apps/sales/templates/sales/sale_trash_list.html:14
+#: apps/weight/templates/weight/session_trash.html:14
 msgid "Back to List"
 msgstr "Voltar para a Lista"
 
@@ -479,25 +554,38 @@ msgstr "E-mail"
 #: apps/authentication/templates/authentication/user_trash_list.html:27
 #: apps/cattle/templates/cattle/cattle_trash_list.html:27
 #: apps/health/templates/health/event_trash_list.html:26
+#: apps/health/templates/health/medication_trash_list.html:26
 #: apps/partners/templates/partners/partner_trash_list.html:26
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:27
 msgid "Deleted Date"
 msgstr "Data de Exclusão"
 
 #: apps/authentication/templates/authentication/user_trash_list.html:66
 #: apps/cattle/templates/cattle/cattle_trash_list.html:52
 #: apps/health/templates/health/event_trash_list.html:41
+#: apps/health/templates/health/medication_trash_list.html:42
+#: apps/locations/templates/locations/location_confirm_restore.html:20
+#: apps/locations/templates/locations/location_trash.html:40
 #: apps/partners/templates/partners/partner_trash_list.html:41
 #: apps/purchases/templates/purchases/purchase_trash_list.html:45
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:64
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:43
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:43
+#: apps/reproduction/templates/reproduction/season_trash_list.html:43
 #: apps/sales/templates/sales/sale_trash_list.html:45
+#: apps/weight/templates/weight/session_trash.html:41
 msgid "Restore"
 msgstr "Restaurar"
 
 #: apps/authentication/templates/authentication/user_trash_list.html:73
 #: apps/cattle/templates/cattle/cattle_trash_list.html:58
 #: apps/health/templates/health/event_trash_list.html:47
+#: apps/health/templates/health/medication_trash_list.html:48
 #: apps/partners/templates/partners/partner_trash_list.html:47
 #: apps/purchases/templates/purchases/purchase_trash_list.html:51
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:70
 #: apps/sales/templates/sales/sale_trash_list.html:51
+#: apps/weight/templates/weight/session_trash.html:51
 msgid "Trash is empty."
 msgstr "A lixeira está vazia."
 
@@ -530,161 +618,198 @@ msgstr "Usuário excluído permanentemente."
 msgid "Base"
 msgstr "Base"
 
-#: apps/base/models/base_model.py:61 apps/base/models/base_model.py:73
+#: apps/base/models/base_model.py:62 apps/base/models/base_model.py:74
 msgid "Created at"
 msgstr "Criado em"
 
-#: apps/base/models/base_model.py:62 apps/base/models/base_model.py:74
+#: apps/base/models/base_model.py:63 apps/base/models/base_model.py:75
 msgid "Modified at"
 msgstr "Modificado em"
 
-#: apps/base/models/base_model.py:80
+#: apps/base/models/base_model.py:81
 msgid "uuid"
 msgstr "uuid"
+
+#: apps/base/models/base_model.py:164 apps/base/views/mixins.py:21
+msgid "Cannot delete this object because it is referenced by other objects."
+msgstr ""
+"Não é possível excluir este objeto porque ele é referenciado por outros "
+"objetos."
+
+#: apps/base/models/mixins.py:18
+#: apps/health/templates/health/event_detail.html:48
+#: apps/health/templates/health/event_list.html:35
+msgid "Performed By"
+msgstr "Realizado Por"
 
 #: apps/base/templates/layouts/base_dashboard.html:48
 msgid "Close sidebar"
 msgstr "Fechar barra lateral"
 
 #: apps/base/templates/layouts/base_dashboard.html:70
-#: apps/base/templates/layouts/base_dashboard.html:255
-#: apps/dashboard/apps.py:9 apps/dashboard/templates/dashboard/home.html:5
+#: apps/base/templates/layouts/base_dashboard.html:280 apps/dashboard/apps.py:9
+#: apps/dashboard/templates/dashboard/home.html:5
 #: apps/dashboard/templates/dashboard/home.html:40
 msgid "Dashboard"
 msgstr "Painel"
 
 #: apps/base/templates/layouts/base_dashboard.html:83
-#: apps/base/templates/layouts/base_dashboard.html:268
-#: apps/dashboard/templates/dashboard/home.html:268
+#: apps/base/templates/layouts/base_dashboard.html:293
+#: apps/dashboard/templates/dashboard/home.html:318
 #: apps/health/templates/health/event_list.html:33
+#: apps/locations/models/movement.py:49
+#: apps/locations/templates/locations/location_detail.html:158
+#: apps/weight/templates/weight/session_list.html:50
 msgid "Animals"
 msgstr "Animais"
 
 #: apps/base/templates/layouts/base_dashboard.html:92
-#: apps/base/templates/layouts/base_dashboard.html:277
-#: apps/cattle/models/cattle.py:160 apps/cattle/models/cattle.py:161
+#: apps/base/templates/layouts/base_dashboard.html:302
+#: apps/cattle/models/cattle.py:183 apps/cattle/models/cattle.py:184
 #: apps/cattle/templates/cattle/cattle_list.html:4
 #: apps/cattle/templates/cattle/cattle_list.html:11
-#: apps/cattle/templates/cattle/cattle_list.html:65
+#: apps/cattle/templates/cattle/cattle_list.html:67
 msgid "Cattle"
 msgstr "Gado"
 
-#: apps/base/templates/layouts/base_dashboard.html:107
-#: apps/base/templates/layouts/base_dashboard.html:292
+#: apps/base/templates/layouts/base_dashboard.html:97
+#: apps/base/templates/layouts/base_dashboard.html:307
+#: apps/locations/models/location.py:65
+#: apps/locations/templates/locations/location_list.html:42
+msgid "Locations"
+msgstr "Locais"
+
+#: apps/base/templates/layouts/base_dashboard.html:112
+#: apps/base/templates/layouts/base_dashboard.html:322
+#: apps/cattle/templates/cattle/cattle_detail.html:106
+#: apps/cattle/templates/cattle/cattle_detail.html:222
+#: apps/cattle/templates/cattle/cattle_list.html:71
+msgid "Weight"
+msgstr "Peso"
+
+#: apps/base/templates/layouts/base_dashboard.html:119
+#: apps/base/templates/layouts/base_dashboard.html:329
+#: apps/weight/models/session.py:35
+#: apps/weight/templates/weight/session_list.html:4
+#: apps/weight/templates/weight/session_list.html:9
+msgid "Weighing Sessions"
+msgstr "Sessões de Pesagem"
+
+#: apps/base/templates/layouts/base_dashboard.html:132
+#: apps/base/templates/layouts/base_dashboard.html:342
 #: apps/purchases/models/purchase.py:40 apps/sales/models/sale.py:38
 msgid "Transactions"
 msgstr "Transações"
 
-#: apps/base/templates/layouts/base_dashboard.html:116
-#: apps/base/templates/layouts/base_dashboard.html:299
-#: apps/dashboard/templates/dashboard/home.html:111 apps/sales/apps.py:8
+#: apps/base/templates/layouts/base_dashboard.html:141
+#: apps/base/templates/layouts/base_dashboard.html:349
+#: apps/dashboard/templates/dashboard/home.html:135 apps/sales/apps.py:8
 #: apps/sales/templates/sales/sale_list.html:4
 #: apps/sales/templates/sales/sale_list.html:10
 msgid "Sales"
 msgstr "Vendas"
 
-#: apps/base/templates/layouts/base_dashboard.html:121
-#: apps/base/templates/layouts/base_dashboard.html:300
-#: apps/dashboard/templates/dashboard/home.html:132 apps/purchases/apps.py:8
+#: apps/base/templates/layouts/base_dashboard.html:146
+#: apps/base/templates/layouts/base_dashboard.html:350
+#: apps/dashboard/templates/dashboard/home.html:156 apps/purchases/apps.py:8
 #: apps/purchases/templates/purchases/purchase_list.html:4
 #: apps/purchases/templates/purchases/purchase_list.html:10
 msgid "Purchases"
 msgstr "Compras"
 
-#: apps/base/templates/layouts/base_dashboard.html:136
-#: apps/base/templates/layouts/base_dashboard.html:313
+#: apps/base/templates/layouts/base_dashboard.html:161
+#: apps/base/templates/layouts/base_dashboard.html:363
 msgid "Health"
 msgstr "Saúde"
 
-#: apps/base/templates/layouts/base_dashboard.html:145
-#: apps/base/templates/layouts/base_dashboard.html:320
-#: apps/health/models/health.py:133
+#: apps/base/templates/layouts/base_dashboard.html:170
+#: apps/base/templates/layouts/base_dashboard.html:370
+#: apps/health/models/health.py:123
 #: apps/health/templates/health/event_list.html:4
 #: apps/health/templates/health/event_list.html:11
 msgid "Sanitary Events"
 msgstr "Eventos Sanitários"
 
-#: apps/base/templates/layouts/base_dashboard.html:150
-#: apps/base/templates/layouts/base_dashboard.html:321
+#: apps/base/templates/layouts/base_dashboard.html:175
+#: apps/base/templates/layouts/base_dashboard.html:371
 #: apps/health/models/health.py:76
 #: apps/health/templates/health/medication_list.html:4
 #: apps/health/templates/health/medication_list.html:10
 msgid "Medications"
 msgstr "Medicações"
 
-#: apps/base/templates/layouts/base_dashboard.html:164
-#: apps/base/templates/layouts/base_dashboard.html:333
-#: apps/cattle/templates/cattle/cattle_list.html:71
-#: apps/reproduction/apps.py:8
+#: apps/base/templates/layouts/base_dashboard.html:189
+#: apps/base/templates/layouts/base_dashboard.html:383
+#: apps/cattle/templates/cattle/cattle_list.html:73 apps/reproduction/apps.py:8
 msgid "Reproduction"
 msgstr "Reprodução"
 
-#: apps/base/templates/layouts/base_dashboard.html:171
-#: apps/base/templates/layouts/base_dashboard.html:340
+#: apps/base/templates/layouts/base_dashboard.html:196
+#: apps/base/templates/layouts/base_dashboard.html:390
 msgid "Overview"
 msgstr "Visão Geral"
 
-#: apps/base/templates/layouts/base_dashboard.html:172
-#: apps/base/templates/layouts/base_dashboard.html:341
-#: apps/reproduction/models/reproduction.py:76
+#: apps/base/templates/layouts/base_dashboard.html:197
+#: apps/base/templates/layouts/base_dashboard.html:391
+#: apps/reproduction/models/reproduction.py:75
 #: apps/reproduction/templates/reproduction/breeding_event_list.html:4
 #: apps/reproduction/templates/reproduction/breeding_event_list.html:10
 msgid "Breeding Events"
 msgstr "Eventos de Reprodução"
 
-#: apps/base/templates/layouts/base_dashboard.html:173
-#: apps/base/templates/layouts/base_dashboard.html:342
-#: apps/reproduction/models/reproduction.py:112
+#: apps/base/templates/layouts/base_dashboard.html:198
+#: apps/base/templates/layouts/base_dashboard.html:392
+#: apps/reproduction/models/reproduction.py:111
 #: apps/reproduction/templates/reproduction/pregnancy_check_list.html:4
 msgid "Pregnancy Checks"
 msgstr "Diagnósticos de Gestação"
 
-#: apps/base/templates/layouts/base_dashboard.html:174
-#: apps/base/templates/layouts/base_dashboard.html:343
+#: apps/base/templates/layouts/base_dashboard.html:199
+#: apps/base/templates/layouts/base_dashboard.html:393
 #: apps/reproduction/templates/reproduction/calving_list.html:4
 #: apps/reproduction/templates/reproduction/calving_list.html:10
 msgid "Calving Records"
 msgstr "Registros de Parto"
 
-#: apps/base/templates/layouts/base_dashboard.html:175
-#: apps/base/templates/layouts/base_dashboard.html:344
-#: apps/reproduction/models/reproduction.py:18
+#: apps/base/templates/layouts/base_dashboard.html:200
+#: apps/base/templates/layouts/base_dashboard.html:394
+#: apps/reproduction/models/reproduction.py:17
 #: apps/reproduction/templates/reproduction/season_list.html:4
 #: apps/reproduction/templates/reproduction/season_list.html:10
 msgid "Reproductive Seasons"
 msgstr "Estações Reprodutivas"
 
-#: apps/base/templates/layouts/base_dashboard.html:188
-#: apps/base/templates/layouts/base_dashboard.html:357
+#: apps/base/templates/layouts/base_dashboard.html:213
+#: apps/base/templates/layouts/base_dashboard.html:407
 msgid "Business"
 msgstr "Negócios"
 
-#: apps/base/templates/layouts/base_dashboard.html:197
-#: apps/base/templates/layouts/base_dashboard.html:364 apps/partners/apps.py:8
+#: apps/base/templates/layouts/base_dashboard.html:222
+#: apps/base/templates/layouts/base_dashboard.html:414 apps/partners/apps.py:8
 #: apps/partners/models/partner.py:24
 #: apps/partners/templates/partners/partner_list.html:4
 #: apps/partners/templates/partners/partner_list.html:11
 msgid "Partners"
 msgstr "Parceiros"
 
-#: apps/base/templates/layouts/base_dashboard.html:214
-#: apps/base/templates/layouts/base_dashboard.html:378
+#: apps/base/templates/layouts/base_dashboard.html:239
+#: apps/base/templates/layouts/base_dashboard.html:428
 msgid "Administration"
 msgstr "Administração"
 
-#: apps/base/templates/layouts/base_dashboard.html:399
+#: apps/base/templates/layouts/base_dashboard.html:451
 msgid "Open sidebar"
 msgstr "Abrir barra lateral"
 
-#: apps/base/templates/layouts/base_dashboard.html:432
+#: apps/base/templates/layouts/base_dashboard.html:484
 msgid "Open user menu"
 msgstr "Abrir menu de usuário"
 
-#: apps/base/templates/layouts/base_dashboard.html:459
+#: apps/base/templates/layouts/base_dashboard.html:511
 msgid "Your profile"
 msgstr "Seu perfil"
 
-#: apps/base/templates/layouts/base_dashboard.html:462
+#: apps/base/templates/layouts/base_dashboard.html:514
 msgid "Sign out"
 msgstr "Sair"
 
@@ -726,6 +851,7 @@ msgid "Wagyu"
 msgstr "Wagyu"
 
 #: apps/cattle/models/cattle.py:34 apps/health/models/health.py:17
+#: apps/locations/models/movement.py:16
 msgid "Other"
 msgstr "Outros"
 
@@ -759,16 +885,18 @@ msgstr "Prenhe"
 msgid "Lactating"
 msgstr "Lactante"
 
-#: apps/cattle/models/cattle.py:64 apps/reproduction/forms.py:36
+#: apps/cattle/models/cattle.py:64 apps/reproduction/forms.py:31
 msgid "Male"
 msgstr "Macho"
 
-#: apps/cattle/models/cattle.py:65 apps/reproduction/forms.py:36
+#: apps/cattle/models/cattle.py:65 apps/reproduction/forms.py:31
 msgid "Female"
 msgstr "Fêmea"
 
 #: apps/cattle/models/cattle.py:68
 #: apps/cattle/templates/cattle/cattle_trash_list.html:24
+#: apps/weight/templates/weight/batch_entry.html:19
+#: apps/weight/templates/weight/session_detail.html:54
 msgid "Tag"
 msgstr "Marca/Brinco"
 
@@ -780,12 +908,18 @@ msgstr "Brinco ou ID"
 #: apps/cattle/templates/cattle/cattle_detail.html:52
 #: apps/cattle/templates/cattle/cattle_trash_list.html:25
 #: apps/health/models/health.py:34
-#: apps/health/templates/health/medication_list.html:24
+#: apps/health/templates/health/medication_list.html:25
+#: apps/health/templates/health/medication_trash_list.html:23
+#: apps/locations/models/location.py:31
+#: apps/locations/templates/locations/location_trash.html:25
 #: apps/partners/models/partner.py:9
 #: apps/partners/templates/partners/partner_list.html:41
 #: apps/partners/templates/partners/partner_trash_list.html:24
 #: apps/reproduction/models/reproduction.py:10
-#: apps/reproduction/templates/reproduction/season_list.html:26
+#: apps/reproduction/templates/reproduction/season_list.html:31
+#: apps/reproduction/templates/reproduction/season_trash_list.html:26
+#: apps/weight/templates/weight/session_list.html:48
+#: apps/weight/templates/weight/session_trash.html:27
 msgid "Name"
 msgstr "Nome"
 
@@ -794,7 +928,7 @@ msgid "Name/Nickname of the animal"
 msgstr "Nome/Apelido do animal"
 
 #: apps/cattle/models/cattle.py:76
-#: apps/cattle/templates/cattle/cattle_detail.html:108
+#: apps/cattle/templates/cattle/cattle_detail.html:122
 msgid "Electronic ID"
 msgstr "ID Eletrônico"
 
@@ -803,29 +937,32 @@ msgid "RFID or EID tag number"
 msgstr "Número da etiqueta RFID ou EID"
 
 #: apps/cattle/models/cattle.py:82
-#: apps/cattle/templates/cattle/cattle_detail.html:104
-#: apps/cattle/templates/cattle/cattle_list.html:67
+#: apps/cattle/templates/cattle/cattle_detail.html:118
+#: apps/cattle/templates/cattle/cattle_list.html:69
 msgid "Sex"
 msgstr "Sexo"
 
 #: apps/cattle/models/cattle.py:88
 #: apps/cattle/templates/cattle/cattle_detail.html:58
-#: apps/cattle/templates/cattle/cattle_list.html:66
+#: apps/cattle/templates/cattle/cattle_list.html:68
 #: apps/cattle/templates/cattle/cattle_trash_list.html:26
 msgid "Breed"
 msgstr "Raça"
 
 #: apps/cattle/models/cattle.py:94
-#: apps/cattle/templates/cattle/cattle_detail.html:138
+#: apps/cattle/templates/cattle/cattle_detail.html:152
 msgid "Birth Date"
 msgstr "Data de Nascimento"
 
 #: apps/cattle/models/cattle.py:96
+#: apps/cattle/templates/cattle/cattle_detail.html:194
+#: apps/weight/models/record.py:27
+#: apps/weight/templates/weight/session_detail.html:55
 msgid "Weight (kg)"
 msgstr "Peso (kg)"
 
 #: apps/cattle/models/cattle.py:104
-#: apps/cattle/templates/cattle/cattle_detail.html:78
+#: apps/cattle/templates/cattle/cattle_detail.html:92
 msgid "Reproduction Status"
 msgstr "Status Reprodutivo"
 
@@ -833,8 +970,7 @@ msgstr "Status Reprodutivo"
 msgid "Biological status of the female."
 msgstr "Status biológico da fêmea."
 
-#: apps/cattle/models/cattle.py:119
-#: apps/reproduction/models/reproduction.py:55
+#: apps/cattle/models/cattle.py:119 apps/reproduction/models/reproduction.py:54
 msgid "Sire (Internal)"
 msgstr "Touro (Interno)"
 
@@ -867,37 +1003,56 @@ msgid "Mother's Name/ID if not in the herd."
 msgstr "Nome/ID da mãe se não estiver no rebanho."
 
 #: apps/cattle/models/cattle.py:144
-#: apps/cattle/templates/cattle/cattle_detail.html:144
-#: apps/cattle/templates/cattle/cattle_detail.html:180
+#: apps/cattle/templates/cattle/cattle_detail.html:158
+#: apps/cattle/templates/cattle/cattle_detail.html:309
 #: apps/health/models/health.py:63
 #: apps/health/templates/health/event_detail.html:60
-#: apps/partners/models/partner.py:20 apps/purchases/models/purchase.py:36
+#: apps/locations/models/movement.py:51 apps/partners/models/partner.py:20
+#: apps/purchases/models/purchase.py:36
 #: apps/purchases/templates/purchases/purchase_list.html:54
-#: apps/reproduction/models/reproduction.py:153 apps/sales/models/sale.py:34
+#: apps/reproduction/models/reproduction.py:152 apps/sales/models/sale.py:34
 #: apps/sales/templates/sales/sale_list.html:54
+#: apps/weight/models/session.py:25
 msgid "Notes"
 msgstr "Notas"
 
-#: apps/cattle/models/cattle.py:147
+#: apps/cattle/models/cattle.py:148
+msgid "Current Weight (kg)"
+msgstr "Peso Atual (kg)"
+
+#: apps/cattle/models/cattle.py:155
+msgid "Last Weighing Date"
+msgstr "Data da Última Pesagem"
+
+#: apps/cattle/models/cattle.py:159
 msgid "Profile Image"
 msgstr "Imagem de Perfil"
 
-#: apps/cattle/models/cattle.py:153
+#: apps/cattle/models/cattle.py:165
 #: apps/cattle/templates/cattle/cattle_detail.html:64
-#: apps/cattle/templates/cattle/cattle_list.html:70
-#: apps/reproduction/templates/reproduction/season_list.html:29
+#: apps/cattle/templates/cattle/cattle_list.html:72
+#: apps/locations/models/location.py:54
+#: apps/locations/templates/locations/location_detail.html:45
 msgid "Status"
 msgstr "Status"
 
-#: apps/cattle/models/cattle.py:180
+#: apps/cattle/models/cattle.py:178
+msgid "Current Location"
+msgstr "Local Atual"
+
+#: apps/cattle/models/cattle.py:179
+msgid "Where the animal is currently located."
+msgstr "Onde o animal está localizado no momento."
+
+#: apps/cattle/models/cattle.py:203
 msgid ""
-"Cannot delete cattle because it is part of a Sale transaction. Please delete"
-" the transaction item first."
+"Cannot delete cattle because it is part of a Sale transaction. Please delete "
+"the transaction item first."
 msgstr ""
 "Não é possível excluir o gado porque ele faz parte de uma transação de "
 "Venda. Por favor, exclua o item da transação primeiro."
 
-#: apps/cattle/models/cattle.py:188
+#: apps/cattle/models/cattle.py:211
 msgid ""
 "Cannot delete cattle because it is part of a Purchase transaction. Please "
 "delete the transaction item first."
@@ -905,7 +1060,7 @@ msgstr ""
 "Não é possível excluir o gado porque ele faz parte de uma transação de "
 "Compra. Por favor, exclua o item da transação primeiro."
 
-#: apps/cattle/models/cattle.py:200
+#: apps/cattle/models/cattle.py:223
 msgid ""
 "You cannot specify both an internal Sire and an external Sire ID. Please "
 "choose one."
@@ -913,7 +1068,7 @@ msgstr ""
 "Você não pode especificar um Touro interno e um ID de Touro externo. Por "
 "favor, escolha um."
 
-#: apps/cattle/models/cattle.py:207
+#: apps/cattle/models/cattle.py:230
 msgid ""
 "You cannot specify both an internal Dam and an external Dam ID. Please "
 "choose one."
@@ -921,17 +1076,17 @@ msgstr ""
 "Você não pode especificar uma Matriz interna e um ID de Matriz externa. Por "
 "favor, escolha um."
 
-#: apps/cattle/models/cattle.py:213
+#: apps/cattle/models/cattle.py:236
 msgid "A cattle cannot be its own sire."
 msgstr "Um gado não pode ser seu próprio pai."
 
-#: apps/cattle/models/cattle.py:215
+#: apps/cattle/models/cattle.py:238
 msgid "A cattle cannot be its own dam."
 msgstr "Um gado não pode ser sua própria mãe."
 
 #: apps/cattle/templates/cattle/cattle_confirm_delete.html:4
 #: apps/cattle/templates/cattle/cattle_confirm_delete.html:9
-#: apps/cattle/templates/cattle/cattle_detail.html:159
+#: apps/cattle/templates/cattle/cattle_detail.html:173
 msgid "Delete Cattle"
 msgstr "Excluir Gado"
 
@@ -980,72 +1135,142 @@ msgstr "Voltar para Lista de Gado"
 msgid "Tag / ID"
 msgstr "Marca / ID"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:92
-#: apps/cattle/templates/cattle/cattle_list.html:69
-msgid "Weight"
-msgstr "Peso"
+#: apps/cattle/templates/cattle/cattle_detail.html:78
+#: apps/locations/models/location.py:64
+msgid "Location"
+msgstr "Local"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:114
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:29
+#: apps/cattle/templates/cattle/cattle_detail.html:85
+msgid "Not assigned"
+msgstr "Não atribuído"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:128
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:30
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:26
 msgid "Sire"
 msgstr "Touro"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:126
-#: apps/reproduction/models/reproduction.py:41
-#: apps/reproduction/models/reproduction.py:131
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:27
-#: apps/reproduction/templates/reproduction/calving_list.html:27
-#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:27
+#: apps/cattle/templates/cattle/cattle_detail.html:140
+#: apps/reproduction/models/reproduction.py:40
+#: apps/reproduction/models/reproduction.py:130
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:28
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:23
+#: apps/reproduction/templates/reproduction/calving_list.html:32
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:26
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:28
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:26
 msgid "Dam"
 msgstr "Matriz"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:156 apps/cattle/views.py:82
+#: apps/cattle/templates/cattle/cattle_detail.html:170 apps/cattle/views.py:86
 msgid "Edit Cattle"
 msgstr "Editar Gado"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:167
-msgid "Health History"
-msgstr "Histórico Sanitário"
+#: apps/cattle/templates/cattle/cattle_detail.html:181
+msgid "Performance History"
+msgstr "Histórico de Desempenho"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:168
-msgid "Record of sanitary events, vaccinations, and checks."
-msgstr "Registro de eventos sanitários, vacinações e verificações."
+#: apps/cattle/templates/cattle/cattle_detail.html:182
+msgid "Weight records and growth performance."
+msgstr "Registros de peso e performance de crescimento."
 
-#: apps/cattle/templates/cattle/cattle_detail.html:176
+#: apps/cattle/templates/cattle/cattle_detail.html:193
+#: apps/cattle/templates/cattle/cattle_detail.html:265
+#: apps/cattle/templates/cattle/cattle_detail.html:305
 #: apps/health/templates/health/event_list.html:30
 #: apps/health/templates/health/event_trash_list.html:24
-#: apps/purchases/models/purchase.py:27
+#: apps/locations/models/movement.py:24 apps/purchases/models/purchase.py:27
 #: apps/purchases/templates/purchases/purchase_detail.html:26
-#: apps/reproduction/models/reproduction.py:44
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:26
-#: apps/reproduction/templates/reproduction/calving_list.html:26
+#: apps/reproduction/models/reproduction.py:43
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:27
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:24
+#: apps/reproduction/templates/reproduction/calving_list.html:31
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:27
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:27
 #: apps/sales/models/sale.py:25 apps/sales/templates/sales/sale_detail.html:26
+#: apps/weight/models/session.py:23
+#: apps/weight/templates/weight/session_list.html:47
+#: apps/weight/templates/weight/session_trash.html:26
 msgid "Date"
 msgstr "Data"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:177
-#: apps/health/models/health.py:148
+#: apps/cattle/templates/cattle/cattle_detail.html:195
+msgid "ADG (kg/d)"
+msgstr "GMD (kg/dia)"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:196
+#: apps/weight/models/record.py:18
+#: apps/weight/templates/weight/record_form.html:20
+msgid "Session"
+msgstr "Sessão"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:247
+msgid "No weight records found."
+msgstr "Nenhum registro de peso encontrado."
+
+#: apps/cattle/templates/cattle/cattle_detail.html:256
+#: apps/locations/templates/locations/location_detail.html:189
+msgid "Movement History"
+msgstr "Histórico de Movimentação"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:257
+msgid "Recent locations and transfers."
+msgstr "Locais recentes e transferências."
+
+#: apps/cattle/templates/cattle/cattle_detail.html:266
+msgid "From"
+msgstr "De"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:267
+msgid "To"
+msgstr "Para"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:268
+#: apps/locations/models/movement.py:41
+msgid "Reason"
+msgstr "Motivo"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:269
+msgid "By"
+msgstr "Por"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:287
+msgid "No movement history recorded."
+msgstr "Nenhum histórico de movimentação registrado."
+
+#: apps/cattle/templates/cattle/cattle_detail.html:296
+msgid "Health History"
+msgstr "Histórico Sanitário"
+
+#: apps/cattle/templates/cattle/cattle_detail.html:297
+msgid "Record of sanitary events, vaccinations, and checks."
+msgstr "Registro de eventos sanitários, vacinações e verificações."
+
+#: apps/cattle/templates/cattle/cattle_detail.html:306
+#: apps/health/models/health.py:141
 msgid "Event"
 msgstr "Evento"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:178
+#: apps/cattle/templates/cattle/cattle_detail.html:307
 #: apps/health/models/health.py:75
 #: apps/health/templates/health/event_list.html:32
 msgid "Medication"
 msgstr "Medicação"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:179
+#: apps/cattle/templates/cattle/cattle_detail.html:308
 msgid "Cost"
 msgstr "Custo"
 
-#: apps/cattle/templates/cattle/cattle_detail.html:198
+#: apps/cattle/templates/cattle/cattle_detail.html:327
 msgid "No health events recorded."
 msgstr "Nenhum evento sanitário registrado."
 
 #: apps/cattle/templates/cattle/cattle_form.html:52
 #: apps/health/templates/health/medication_form.html:84
+#: apps/locations/templates/locations/location_form.html:85
 #: apps/partners/templates/partners/partner_form.html:63
 #: apps/reproduction/templates/reproduction/season_form.html:49
+#: apps/weight/templates/weight/record_form.html:66
 msgid "Save"
 msgstr "Salvar"
 
@@ -1070,16 +1295,27 @@ msgid "All Statuses"
 msgstr "Todos os Status"
 
 #: apps/cattle/templates/cattle/cattle_list.html:47
+#: apps/weight/templates/weight/session_form.html:4
+msgid "New Weighing Session"
+msgstr "Nova Sessão de Pesagem"
+
+#: apps/cattle/templates/cattle/cattle_list.html:48
+#: apps/locations/templates/locations/movement_form.html:4
+#: apps/locations/templates/locations/movement_form.html:10
+msgid "Move Cattle"
+msgstr "Mover Gado"
+
+#: apps/cattle/templates/cattle/cattle_list.html:49
 #: apps/health/templates/health/sanitary_event_form.html:4
 #: apps/health/templates/health/sanitary_event_form.html:10
 msgid "New Sanitary Event"
 msgstr "Novo Evento Sanitário"
 
-#: apps/cattle/templates/cattle/cattle_list.html:48 apps/cattle/views.py:66
+#: apps/cattle/templates/cattle/cattle_list.html:50 apps/cattle/views.py:70
 msgid "Add Cattle"
 msgstr "Adicionar Gado"
 
-#: apps/cattle/templates/cattle/cattle_list.html:68
+#: apps/cattle/templates/cattle/cattle_list.html:70
 msgid "Age"
 msgstr "Idade"
 
@@ -1096,79 +1332,112 @@ msgstr "Uma lista de todo o gado excluído."
 msgid "Image"
 msgstr "Imagem"
 
-#: apps/cattle/views.py:128
+#: apps/cattle/views.py:125
 msgid "Cattle restored successfully."
 msgstr "Gado restaurado com sucesso."
 
-#: apps/cattle/views.py:132 apps/cattle/views.py:143 apps/cattle/views.py:153
-#: apps/cattle/views.py:177
+#: apps/cattle/views.py:129 apps/cattle/views.py:140 apps/cattle/views.py:150
+#: apps/cattle/views.py:174
 msgid "Cattle not found."
 msgstr "Gado não encontrado."
 
-#: apps/cattle/views.py:151
+#: apps/cattle/views.py:148
 msgid "Cattle permanently deleted."
 msgstr "Gado excluído permanentemente."
 
-#: apps/dashboard/templates/dashboard/home.html:58
+#: apps/dashboard/templates/dashboard/home.html:55
+msgid "Resting Status Violations"
+msgstr "Violações de Status de Descanso"
+
+#: apps/dashboard/templates/dashboard/home.html:57
+msgid ""
+"The following locations are set to 'Resting' but currently contain animals:"
+msgstr ""
+"Os seguintes locais estão definidos como 'Descanso', mas atualmente contêm "
+"animais:"
+
+#: apps/dashboard/templates/dashboard/home.html:82
 msgid "Total Cattle"
 msgstr "Total de Gado"
 
-#: apps/dashboard/templates/dashboard/home.html:81
-#: apps/dashboard/templates/dashboard/home.html:89
+#: apps/dashboard/templates/dashboard/home.html:105
+#: apps/dashboard/templates/dashboard/home.html:113
 msgid "Withdrawal Status"
 msgstr "Status de Carência"
 
-#: apps/dashboard/templates/dashboard/home.html:83
+#: apps/dashboard/templates/dashboard/home.html:107
 msgid "Blocked"
 msgstr "Bloqueado"
 
-#: apps/dashboard/templates/dashboard/home.html:91
+#: apps/dashboard/templates/dashboard/home.html:115
 msgid "Compliant"
 msgstr "Regular"
 
-#: apps/dashboard/templates/dashboard/home.html:153
+#: apps/dashboard/templates/dashboard/home.html:177
 msgid "Net Profit"
 msgstr "Lucro Líquido"
 
-#: apps/dashboard/templates/dashboard/home.html:170
+#: apps/dashboard/templates/dashboard/home.html:200
+msgid "Herd GMD (90d)"
+msgstr "GMD do Rebanho (90d)"
+
+#: apps/dashboard/templates/dashboard/home.html:217
 msgid "Herd Composition"
 msgstr "Composição do Rebanho"
 
-#: apps/dashboard/templates/dashboard/home.html:176
+#: apps/dashboard/templates/dashboard/home.html:223
 msgid "Financial Overview"
 msgstr "Visão Geral Financeira"
 
-#: apps/dashboard/templates/dashboard/home.html:186
+#: apps/dashboard/templates/dashboard/home.html:233
 msgid "Recent Sales"
 msgstr "Vendas Recentes"
 
-#: apps/dashboard/templates/dashboard/home.html:187
-#: apps/dashboard/templates/dashboard/home.html:217
-#: apps/dashboard/templates/dashboard/home.html:248
+#: apps/dashboard/templates/dashboard/home.html:234
+#: apps/dashboard/templates/dashboard/home.html:264
+#: apps/dashboard/templates/dashboard/home.html:298
 #: apps/reproduction/templates/reproduction/overview.html:155
 #: apps/reproduction/templates/reproduction/overview.html:190
 msgid "View all"
 msgstr "Ver tudo"
 
-#: apps/dashboard/templates/dashboard/home.html:208
+#: apps/dashboard/templates/dashboard/home.html:255
 msgid "No recent sales."
 msgstr "Nenhuma venda recente."
 
-#: apps/dashboard/templates/dashboard/home.html:216
+#: apps/dashboard/templates/dashboard/home.html:263
 msgid "Recent Purchases"
 msgstr "Compras Recentes"
 
-#: apps/dashboard/templates/dashboard/home.html:238
+#: apps/dashboard/templates/dashboard/home.html:285
 msgid "No recent purchases."
 msgstr "Nenhuma compra recente."
 
-#: apps/dashboard/templates/dashboard/home.html:247
+#: apps/dashboard/templates/dashboard/home.html:297
 msgid "Recent Health Events"
 msgstr "Eventos Sanitários Recentes"
 
-#: apps/dashboard/templates/dashboard/home.html:273
+#: apps/dashboard/templates/dashboard/home.html:323
 msgid "No recent health events."
 msgstr "Nenhum evento sanitário recente."
+
+#: apps/dashboard/templates/dashboard/home.html:331
+msgid "Pasture Occupancy"
+msgstr "Ocupação de Pasto"
+
+#: apps/dashboard/templates/dashboard/home.html:332
+msgid "View Map"
+msgstr "Ver Mapa"
+
+#: apps/dashboard/templates/dashboard/home.html:344
+#: apps/locations/templates/locations/location_detail.html:215
+#: apps/locations/templates/locations/movement_form.html:13
+msgid "animals"
+msgstr "animais"
+
+#: apps/dashboard/templates/dashboard/home.html:347
+msgid "No occupancy data available."
+msgstr "Nenhum dado de ocupação disponível."
 
 #: apps/health/models/health.py:11
 msgid "Vaccine"
@@ -1223,6 +1492,10 @@ msgid "Description"
 msgstr "Descrição"
 
 #: apps/health/models/health.py:37
+#: apps/health/templates/health/medication_trash_list.html:24
+#: apps/locations/models/location.py:33
+#: apps/locations/templates/locations/location_detail.html:42
+#: apps/locations/templates/locations/location_trash.html:26
 #: apps/partners/templates/partners/partner_list.html:43
 #: apps/purchases/models/purchase.py:29
 #: apps/purchases/templates/purchases/purchase_detail.html:34
@@ -1231,15 +1504,18 @@ msgstr "Descrição"
 #: apps/sales/models/sale.py:27 apps/sales/templates/sales/sale_detail.html:34
 #: apps/sales/templates/sales/sale_list.html:52
 #: apps/sales/templates/sales/sale_trash_list.html:26
+#: apps/weight/models/session.py:27
+#: apps/weight/templates/weight/session_list.html:49
 msgid "Type"
 msgstr "Tipo"
 
 #: apps/health/models/health.py:43
+#: apps/health/templates/health/medication_trash_list.html:25
 msgid "Unit"
 msgstr "Unidade"
 
 #: apps/health/models/health.py:48
-#: apps/health/templates/health/medication_list.html:25
+#: apps/health/templates/health/medication_list.html:26
 msgid "Manufacturer"
 msgstr "Fabricante"
 
@@ -1256,7 +1532,7 @@ msgid "Active Ingredient"
 msgstr "Princípio Ativo"
 
 #: apps/health/models/health.py:57
-#: apps/health/templates/health/medication_list.html:26
+#: apps/health/templates/health/medication_list.html:27
 msgid "Withdrawal (Meat)"
 msgstr "Carência (Carne)"
 
@@ -1266,7 +1542,7 @@ msgid "Days until safe for slaughter."
 msgstr "Dias até o abate seguro."
 
 #: apps/health/models/health.py:60
-#: apps/health/templates/health/medication_list.html:27
+#: apps/health/templates/health/medication_list.html:28
 msgid "Withdrawal (Milk)"
 msgstr "Carência (Leite)"
 
@@ -1283,65 +1559,60 @@ msgstr "Dose Padrão"
 msgid "Standard dose amount per animal"
 msgstr "Quantidade de dose padrão por animal"
 
-#: apps/health/models/health.py:90 apps/health/views/medication_views.py:57
+#: apps/health/models/health.py:89
 msgid ""
-"Cannot delete this medication because it is linked to existing sanitary "
-"events."
+"Cannot delete this medication because it has been used in sanitary events "
+"(active or archived)."
 msgstr ""
-"Não é possível excluir esta medicação porque ela está vinculada a eventos "
-"sanitários existentes."
+"Não é possível excluir esta medicação porque ela foi utilizada em eventos "
+"sanitários (ativos ou arquivados)."
 
-#: apps/health/models/health.py:103
+#: apps/health/models/health.py:102
 msgid "Date of Event"
 msgstr "Data do Evento"
 
-#: apps/health/models/health.py:104
+#: apps/health/models/health.py:103
 msgid "Event Title"
 msgstr "Título do Evento"
 
-#: apps/health/models/health.py:105
+#: apps/health/models/health.py:104
 msgid "Notes/Observation"
 msgstr "Notas/Observação"
 
 #: apps/health/models/health.py:113
-#: apps/health/templates/health/event_detail.html:48
-#: apps/health/templates/health/event_list.html:35
-msgid "Performed By"
-msgstr "Realizado Por"
-
-#: apps/health/models/health.py:123
 msgid "Medication/Product"
 msgstr "Medicação/Produto"
 
-#: apps/health/models/health.py:127
+#: apps/health/models/health.py:117
 msgid "Total Event Cost"
 msgstr "Custo Total do Evento"
 
-#: apps/health/models/health.py:132
+#: apps/health/models/health.py:122
 msgid "Sanitary Event"
 msgstr "Evento Sanitário"
 
-#: apps/health/models/health.py:154
+#: apps/health/models/health.py:147 apps/weight/models/record.py:24
+#: apps/weight/templates/weight/record_form.html:16
 msgid "Animal"
 msgstr "Animal"
 
-#: apps/health/models/health.py:158
+#: apps/health/models/health.py:151
 msgid "Applied Dose"
 msgstr "Dose Aplicada"
 
-#: apps/health/models/health.py:161
+#: apps/health/models/health.py:154
 msgid "Cost per Head"
 msgstr "Custo por Cabeça"
 
-#: apps/health/models/health.py:164
+#: apps/health/models/health.py:157
 msgid "Observation"
 msgstr "Observação"
 
-#: apps/health/models/health.py:167
+#: apps/health/models/health.py:160
 msgid "Sanitary Event Target"
 msgstr "Alvo do Evento Sanitário"
 
-#: apps/health/models/health.py:168
+#: apps/health/models/health.py:161
 msgid "Sanitary Event Targets"
 msgstr "Alvos do Evento Sanitário"
 
@@ -1418,6 +1689,7 @@ msgid "Affected Animals"
 msgstr "Animais Afetados"
 
 #: apps/health/templates/health/event_detail.html:102
+#: apps/weight/templates/weight/session_list.html:64
 msgid "View"
 msgstr "Visualizar"
 
@@ -1431,8 +1703,7 @@ msgstr "Gerenciar Alvos"
 
 #: apps/health/templates/health/event_form_update.html:50
 msgid ""
-"Select animals to remove from this event. Cost per head will be "
-"recalculated."
+"Select animals to remove from this event. Cost per head will be recalculated."
 msgstr ""
 "Selecione animais para remover deste evento. O custo por cabeça será "
 "recalculado."
@@ -1489,22 +1760,22 @@ msgid "Next"
 msgstr "Próximo"
 
 #: apps/health/templates/health/event_list.html:91
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:80
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:81
 msgid "Showing"
 msgstr "Mostrando"
 
 #: apps/health/templates/health/event_list.html:93
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:80
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:81
 msgid "to"
 msgstr "a"
 
 #: apps/health/templates/health/event_list.html:95
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:80
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:81
 msgid "of"
 msgstr "de"
 
 #: apps/health/templates/health/event_list.html:97
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:80
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:81
 msgid "results"
 msgstr "resultados"
 
@@ -1518,18 +1789,44 @@ msgid "A list of all deleted sanitary events."
 msgstr "Uma lista de todos os eventos sanitários excluídos."
 
 #: apps/health/templates/health/medication_confirm_delete.html:4
-#: apps/health/templates/health/medication_confirm_delete.html:11
+#: apps/health/templates/health/medication_confirm_delete.html:9
 msgid "Delete Medication"
 msgstr "Excluir Medicação"
 
-#: apps/health/templates/health/medication_confirm_delete.html:13
+#: apps/health/templates/health/medication_confirm_delete.html:11
 #, python-format
 msgid ""
-"Are you sure you want to delete the medication \"%(name)s\"? This action "
-"cannot be undone."
+"Are you sure you want to delete medication <strong>%(name)s</strong>? It "
+"will be moved to the Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir a medicação \"%(name)s\"? Esta ação não "
-"pode ser desfeita."
+"Tem certeza de que deseja excluir a medicação <strong>%(name)s</strong>? Ela "
+"será movida para a Lixeira."
+
+#: apps/health/templates/health/medication_confirm_permanent_delete.html:4
+#: apps/health/templates/health/medication_confirm_permanent_delete.html:10
+msgid "Permanently Delete Medication"
+msgstr "Excluir Medicação Permanentemente"
+
+#: apps/health/templates/health/medication_confirm_permanent_delete.html:12
+#, python-format
+msgid ""
+"Are you sure you want to <strong>permanently delete</strong> the medication "
+"<strong>%(name)s</strong>?"
+msgstr ""
+"Tem certeza de que deseja <strong>excluir permanentemente</strong> a "
+"medicação <strong>%(name)s</strong>?"
+
+#: apps/health/templates/health/medication_confirm_restore.html:4
+#: apps/health/templates/health/medication_confirm_restore.html:10
+msgid "Restore Medication"
+msgstr "Restaurar Medicação"
+
+#: apps/health/templates/health/medication_confirm_restore.html:12
+#, python-format
+msgid ""
+"Are you sure you want to restore the medication <strong>%(name)s</strong>?"
+msgstr ""
+"Tem certeza de que deseja restaurar a medicação <strong>%(name)s</strong>?"
 
 #: apps/health/templates/health/medication_list.html:11
 msgid "A list of all medications and treatments available for your herd."
@@ -1537,28 +1834,37 @@ msgstr ""
 "Uma lista de todas as medicações e tratamentos disponíveis para o seu "
 "rebanho."
 
-#: apps/health/templates/health/medication_list.html:14
-#: apps/health/views/medication_views.py:28
+#: apps/health/templates/health/medication_list.html:15
+#: apps/health/views/medication_views.py:30
 msgid "Add Medication"
 msgstr "Adicionar Medicação"
 
-#: apps/health/templates/health/medication_list.html:28
+#: apps/health/templates/health/medication_list.html:29
 msgid "Expiry"
 msgstr "Validade"
 
-#: apps/health/templates/health/medication_list.html:41
-#: apps/health/templates/health/medication_list.html:48
+#: apps/health/templates/health/medication_list.html:42
+#: apps/health/templates/health/medication_list.html:49
 msgid "days"
 msgstr "dias"
 
-#: apps/health/templates/health/medication_list.html:43
-#: apps/health/templates/health/medication_list.html:50
+#: apps/health/templates/health/medication_list.html:44
+#: apps/health/templates/health/medication_list.html:51
 msgid "None"
 msgstr "Nenhum"
 
-#: apps/health/templates/health/medication_list.html:61
+#: apps/health/templates/health/medication_list.html:62
 msgid "No medications found."
 msgstr "Nenhuma medicação encontrada."
+
+#: apps/health/templates/health/medication_trash_list.html:4
+#: apps/health/templates/health/medication_trash_list.html:10
+msgid "Medication Trash Bin"
+msgstr "Lixeira de Medicações"
+
+#: apps/health/templates/health/medication_trash_list.html:11
+msgid "A list of all deleted medications."
+msgstr "Uma lista de todas as medicações excluídas."
 
 #: apps/health/templates/health/sanitary_event_form.html:12
 msgid "Record a health event for the selected animals."
@@ -1611,9 +1917,310 @@ msgstr "Evento restaurado com sucesso."
 msgid "Event permanently deleted."
 msgstr "Evento excluído permanentemente."
 
-#: apps/health/views/medication_views.py:40
+#: apps/health/views/medication_views.py:42
 msgid "Edit Medication"
 msgstr "Editar Medicação"
+
+#: apps/health/views/medication_views.py:59
+msgid ""
+"Cannot delete this medication because it is linked to existing sanitary "
+"events."
+msgstr ""
+"Não é possível excluir esta medicação porque ela está vinculada a eventos "
+"sanitários existentes."
+
+#: apps/health/views/medication_views.py:78
+msgid "Medication restored successfully."
+msgstr "Medicação restaurada com sucesso."
+
+#: apps/health/views/medication_views.py:82
+#: apps/health/views/medication_views.py:95
+#: apps/health/views/medication_views.py:105
+#: apps/health/views/medication_views.py:134
+msgid "Medication not found."
+msgstr "Medicação não encontrada."
+
+#: apps/health/views/medication_views.py:103
+msgid "Medication permanently deleted."
+msgstr "Medicação excluída permanentemente."
+
+#: apps/health/views/medication_views.py:116
+msgid ""
+"Cannot permanently delete this medication because it is still linked to "
+"historical/archived events."
+msgstr ""
+"Não é possível excluir permanentemente esta medicação porque ela ainda está "
+"vinculada a eventos históricos/arquivados."
+
+#: apps/locations/models/location.py:13
+msgid "Pasture"
+msgstr "Pasto"
+
+#: apps/locations/models/location.py:14
+msgid "Feedlot"
+msgstr "Confinamento"
+
+#: apps/locations/models/location.py:15
+msgid "Corral"
+msgstr "Curral"
+
+#: apps/locations/models/location.py:16
+msgid "Hospital"
+msgstr "Enfermaria"
+
+#: apps/locations/models/location.py:17
+msgid "Maternity"
+msgstr "Maternidade"
+
+#: apps/locations/models/location.py:22
+msgid "Resting"
+msgstr "Descanso"
+
+#: apps/locations/models/location.py:23
+msgid "Maintenance"
+msgstr "Manutenção"
+
+#: apps/locations/models/location.py:39
+msgid "Area (ha)"
+msgstr "Área (ha)"
+
+#: apps/locations/models/location.py:42
+msgid "Size of the area in hectares"
+msgstr "Tamanho da área em hectares"
+
+#: apps/locations/models/location.py:45
+msgid "Capacity (Head)"
+msgstr "Capacidade (Cabeças)"
+
+#: apps/locations/models/location.py:46
+msgid "Maximum recommended animals"
+msgstr "Máximo de animais recomendado"
+
+#: apps/locations/models/location.py:51
+msgid "If unchecked, the location is retired or fenced off."
+msgstr "Se desmarcado, o local está aposentado ou cercado."
+
+#: apps/locations/models/movement.py:11
+msgid "Rotation"
+msgstr "Rotação"
+
+#: apps/locations/models/movement.py:12 apps/weight/models/session.py:13
+msgid "Weaning"
+msgstr "Desmame"
+
+#: apps/locations/models/movement.py:13
+msgid "Medical Treatment"
+msgstr "Tratamento Médico"
+
+#: apps/locations/models/movement.py:14 apps/purchases/models/purchase.py:17
+#: apps/sales/models/sale.py:15 apps/weight/models/session.py:11
+msgid "Sale"
+msgstr "Venda"
+
+#: apps/locations/models/movement.py:15
+msgid "Weight Check"
+msgstr "Checagem de Peso"
+
+#: apps/locations/models/movement.py:31
+msgid "Origin"
+msgstr "Origem"
+
+#: apps/locations/models/movement.py:32
+msgid "Source location. Null if purchase/entry."
+msgstr "Local de origem. Nulo se compra/entrada."
+
+#: apps/locations/models/movement.py:38
+msgid "Destination"
+msgstr "Destino"
+
+#: apps/locations/models/movement.py:54
+msgid "Movement"
+msgstr "Movimentação"
+
+#: apps/locations/models/movement.py:55
+msgid "Movements"
+msgstr "Movimentações"
+
+#: apps/locations/services/movement_service.py:52
+msgid "Cannot move cattle to an inactive location."
+msgstr "Não é possível mover gado para um local inativo."
+
+#: apps/locations/templates/locations/location_confirm_delete.html:4
+#: apps/locations/templates/locations/location_confirm_delete.html:9
+msgid "Delete Location"
+msgstr "Excluir Local"
+
+#: apps/locations/templates/locations/location_confirm_delete.html:11
+#, python-format
+msgid ""
+"Are you sure you want to delete location <strong>%(name)s</strong>? It will "
+"be moved to the Trash Bin."
+msgstr ""
+"Tem certeza de que deseja excluir o local <strong>%(name)s</strong>? Ele "
+"será movido para a Lixeira."
+
+#: apps/locations/templates/locations/location_confirm_delete.html:36
+msgid "Warning"
+msgstr "Aviso"
+
+#: apps/locations/templates/locations/location_confirm_delete.html:38
+msgid "This location currently has cattle assigned to it."
+msgstr "Este local atualmente possui gado atribuído a ele."
+
+#: apps/locations/templates/locations/location_confirm_permanent_delete.html:4
+#: apps/locations/templates/locations/location_confirm_permanent_delete.html:10
+msgid "Permanently Delete Location"
+msgstr "Excluir Local Permanentemente"
+
+#: apps/locations/templates/locations/location_confirm_permanent_delete.html:12
+msgid "Are you sure you want to PERMANENTLY delete"
+msgstr "Tem certeza de que deseja excluir PERMANENTEMENTE"
+
+#: apps/locations/templates/locations/location_confirm_permanent_delete.html:18
+msgid "Deletion Blocked"
+msgstr "Exclusão Bloqueada"
+
+#: apps/locations/templates/locations/location_confirm_permanent_delete.html:27
+#: apps/weight/templates/weight/record_confirm_delete.html:12
+msgid "This action cannot be undone."
+msgstr "Esta ação não pode ser desfeita."
+
+#: apps/locations/templates/locations/location_confirm_permanent_delete.html:38
+msgid "Delete Permanently"
+msgstr "Excluir Permanentemente"
+
+#: apps/locations/templates/locations/location_confirm_restore.html:4
+#: apps/locations/templates/locations/location_confirm_restore.html:10
+msgid "Restore Location"
+msgstr "Restaurar Local"
+
+#: apps/locations/templates/locations/location_confirm_restore.html:12
+msgid "Are you sure you want to restore"
+msgstr "Tem certeza que deseja restaurar"
+
+#: apps/locations/templates/locations/location_confirm_restore.html:13
+msgid "It will appear in the main list again."
+msgstr "Ele aparecerá na lista principal novamente."
+
+#: apps/locations/templates/locations/location_detail.html:48
+msgid "Area"
+msgstr "Área"
+
+#: apps/locations/templates/locations/location_detail.html:75
+#: apps/locations/templates/locations/location_list.html:83
+msgid "Head Count"
+msgstr "Contagem de Cabeças"
+
+#: apps/locations/templates/locations/location_detail.html:96
+msgid "Stocking Rate"
+msgstr "Taxa de Lotação"
+
+#: apps/locations/templates/locations/location_detail.html:117
+msgid "Total Weight"
+msgstr "Peso Total"
+
+#: apps/locations/templates/locations/location_detail.html:139
+#: apps/locations/templates/locations/location_list.html:87
+msgid "Occupancy"
+msgstr "Ocupação"
+
+#: apps/locations/templates/locations/location_detail.html:157
+msgid "Current Inventory"
+msgstr "Inventário Atual"
+
+#: apps/locations/templates/locations/location_detail.html:181
+msgid "No animals currently in this location."
+msgstr "Nenhum animal atualmente neste local."
+
+#: apps/locations/templates/locations/location_detail.html:209
+msgid "Received from"
+msgstr "Recebido de"
+
+#: apps/locations/templates/locations/location_detail.html:211
+msgid "Sent to"
+msgstr "Enviado para"
+
+#: apps/locations/templates/locations/location_detail.html:224
+msgid "No recent movements."
+msgstr "Nenhuma movimentação recente."
+
+#: apps/locations/templates/locations/location_form.html:4
+#: apps/locations/templates/locations/location_form.html:11
+msgid "Update Location"
+msgstr "Atualizar Local"
+
+#: apps/locations/templates/locations/location_form.html:4
+#: apps/locations/templates/locations/location_form.html:11
+msgid "Create Location"
+msgstr "Criar Local"
+
+#: apps/locations/templates/locations/location_list.html:6
+msgid "Farm Map & Locations"
+msgstr "Mapa da Fazenda & Locais"
+
+#: apps/locations/templates/locations/location_list.html:44
+msgid "Overview of all pastures and facilities."
+msgstr "Visão geral de todos os pastos e instalações."
+
+#: apps/locations/templates/locations/location_list.html:51
+msgid "Add Location"
+msgstr "Adicionar Local"
+
+#: apps/locations/templates/locations/location_trash.html:4
+msgid "Trash Bin - Locations"
+msgstr "Lixeira - Locais"
+
+#: apps/locations/templates/locations/location_trash.html:11
+msgid "View and restore deleted locations."
+msgstr "Visualizar e restaurar locais excluídos."
+
+#: apps/locations/templates/locations/location_trash.html:27
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:29
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:29
+#: apps/reproduction/templates/reproduction/season_trash_list.html:29
+msgid "Deleted At"
+msgstr "Data da Exclusão"
+
+#: apps/locations/templates/locations/location_trash.html:46
+msgid "Trash bin is empty."
+msgstr "A lixeira está vazia."
+
+#: apps/locations/templates/locations/movement_form.html:13
+msgid "Moving"
+msgstr "Movimentando"
+
+#: apps/locations/templates/locations/movement_form.html:59
+msgid "Animals being moved"
+msgstr "Animais sendo movidos"
+
+#: apps/locations/templates/locations/movement_form.html:72
+msgid "Confirm Movement"
+msgstr "Confirmar Movimentação"
+
+#: apps/locations/views/location_views.py:24
+msgid "Location not found."
+msgstr "Local não encontrado."
+
+#: apps/locations/views/location_views.py:143
+msgid "Location restored successfully."
+msgstr "Local restaurado com sucesso."
+
+#: apps/locations/views/location_views.py:166
+msgid "Location permanently deleted."
+msgstr "Local excluído permanentemente."
+
+#: apps/locations/views/movement_views.py:40
+#: apps/locations/views/movement_views.py:73
+msgid "No cattle selected."
+msgstr "Nenhum gado selecionado."
+
+#: apps/locations/views/movement_views.py:47
+msgid "Invalid cattle selection."
+msgstr "Seleção de gado inválida."
+
+#: apps/locations/views/movement_views.py:59
+msgid "Cattle moved successfully."
+msgstr "Gado movido com sucesso."
 
 #: apps/partners/models/partner.py:11
 #: apps/partners/templates/partners/partner_list.html:42
@@ -1654,8 +2261,7 @@ msgstr "Parceiro"
 
 #: apps/partners/models/partner.py:36
 msgid "Cannot delete partner because they have associated Sales."
-msgstr ""
-"Não é possível excluir o parceiro porque ele possui Vendas associadas."
+msgstr "Não é possível excluir o parceiro porque ele possui Vendas associadas."
 
 #: apps/partners/models/partner.py:41
 msgid "Cannot delete partner because they have associated Purchases."
@@ -1664,10 +2270,12 @@ msgstr ""
 
 #: apps/partners/templates/partners/partner_confirm_delete.html:4
 #: apps/partners/templates/partners/partner_confirm_delete.html:9
+#: apps/partners/templates/partners/partner_detail.html:89
 msgid "Delete Partner"
 msgstr "Excluir Parceiro"
 
 #: apps/partners/templates/partners/partner_confirm_delete.html:11
+#, python-format
 msgid ""
 "Are you sure you want to delete partner <strong>%(name)s</strong>? It will "
 "be moved to the Trash Bin."
@@ -1681,6 +2289,7 @@ msgid "Permanently Delete Partner"
 msgstr "Excluir Parceiro Permanentemente"
 
 #: apps/partners/templates/partners/partner_confirm_permanent_delete.html:12
+#, python-format
 msgid ""
 "Are you sure you want to <strong>permanently delete</strong> the partner "
 "<strong>%(name)s</strong>?"
@@ -1694,8 +2303,8 @@ msgid "Restore Partner"
 msgstr "Restaurar Parceiro"
 
 #: apps/partners/templates/partners/partner_confirm_restore.html:12
-msgid ""
-"Are you sure you want to restore the partner <strong>%(name)s</strong>?"
+#, python-format
+msgid "Are you sure you want to restore the partner <strong>%(name)s</strong>?"
 msgstr ""
 "Tem certeza de que deseja restaurar o parceiro <strong>%(name)s</strong>?"
 
@@ -1762,11 +2371,8 @@ msgstr "Tipo de Item"
 msgid "Selected item does not exist."
 msgstr "O item selecionado não existe."
 
-#: apps/purchases/models/purchase.py:17 apps/sales/models/sale.py:15
-msgid "Sale"
-msgstr "Venda"
-
 #: apps/purchases/models/purchase.py:18 apps/sales/models/sale.py:16
+#: apps/weight/models/session.py:12
 msgid "Purchase"
 msgstr "Compra"
 
@@ -1836,6 +2442,7 @@ msgid "Permanently Delete Purchase"
 msgstr "Excluir Compra Permanentemente"
 
 #: apps/purchases/templates/purchases/purchase_confirm_permanent_delete.html:12
+#, python-format
 msgid ""
 "Are you sure you want to <strong>permanently delete</strong> the purchase "
 "from <strong>%(date)s</strong> with %(partner)s (%(total)s)?"
@@ -1849,6 +2456,7 @@ msgid "Restore Purchase"
 msgstr "Restaurar Compra"
 
 #: apps/purchases/templates/purchases/purchase_confirm_restore.html:12
+#, python-format
 msgid "Are you sure you want to restore the purchase \"%(object.pk)s\"?"
 msgstr "Tem certeza de que deseja restaurar a compra \"%(object.pk)s\"?"
 
@@ -1970,27 +2578,27 @@ msgstr "Lixeira - Compras"
 msgid "View and manage deleted purchases."
 msgstr "Visualize e gerencie compras excluídas."
 
-#: apps/reproduction/forms.py:32
+#: apps/reproduction/forms.py:27
 msgid "Calf Tag"
 msgstr "Marca/Brinco do Bezerro"
 
-#: apps/reproduction/forms.py:33
+#: apps/reproduction/forms.py:28
 msgid "Calf Name"
 msgstr "Nome do Bezerro"
 
-#: apps/reproduction/forms.py:35
+#: apps/reproduction/forms.py:30
 msgid "Calf Sex"
 msgstr "Sexo do Bezerro"
 
-#: apps/reproduction/forms.py:39
+#: apps/reproduction/forms.py:34
 msgid "Birth Weight (kg)"
 msgstr "Peso ao Nascer (kg)"
 
-#: apps/reproduction/forms.py:56
+#: apps/reproduction/forms.py:51
 msgid "Select the breeding event to link lineage (Sire)."
 msgstr "Selecione o evento de reprodução para vincular a linhagem (Pai)."
 
-#: apps/reproduction/forms.py:84
+#: apps/reproduction/forms.py:79
 msgid "Only Open or Lactating females are eligible."
 msgstr "Apenas fêmeas Abertas ou Lactantes são elegíveis."
 
@@ -1999,131 +2607,178 @@ msgid "e.g. Breeding Season 2024/2025"
 msgstr "ex. Estação Reprodutiva 2024/2025"
 
 #: apps/reproduction/models/reproduction.py:12
-#: apps/reproduction/templates/reproduction/season_list.html:27
+#: apps/reproduction/templates/reproduction/season_list.html:32
+#: apps/reproduction/templates/reproduction/season_trash_list.html:27
 msgid "Start Date"
 msgstr "Data de Início"
 
 #: apps/reproduction/models/reproduction.py:13
-#: apps/reproduction/templates/reproduction/season_list.html:28
+#: apps/reproduction/templates/reproduction/season_list.html:33
+#: apps/reproduction/templates/reproduction/season_trash_list.html:28
 msgid "End Date"
 msgstr "Data de Término"
 
-#: apps/reproduction/models/reproduction.py:17
+#: apps/reproduction/models/reproduction.py:16
 msgid "Reproductive Season"
 msgstr "Estação Reprodutiva"
 
-#: apps/reproduction/models/reproduction.py:31
+#: apps/reproduction/models/reproduction.py:30
 msgid "Artificial Insemination"
 msgstr "Inseminação Artificial"
 
-#: apps/reproduction/models/reproduction.py:32
+#: apps/reproduction/models/reproduction.py:31
 msgid "Fixed-Time AI"
 msgstr "IATF"
 
-#: apps/reproduction/models/reproduction.py:33
+#: apps/reproduction/models/reproduction.py:32
 msgid "Natural Mating"
 msgstr "Monta Natural"
 
-#: apps/reproduction/models/reproduction.py:34
+#: apps/reproduction/models/reproduction.py:33
 msgid "Embryo Transfer"
 msgstr "Transferência de Embrião"
 
-#: apps/reproduction/models/reproduction.py:46
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:28
+#: apps/reproduction/models/reproduction.py:45
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:29
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:25
 msgid "Method"
 msgstr "Método"
 
-#: apps/reproduction/models/reproduction.py:59
+#: apps/reproduction/models/reproduction.py:58
 msgid "Sire Name (External)"
 msgstr "Nome do Touro (Externo)"
 
-#: apps/reproduction/models/reproduction.py:62
+#: apps/reproduction/models/reproduction.py:61
 msgid "If sire is not in inventory"
 msgstr "Se o touro não estiver no inventário"
 
-#: apps/reproduction/models/reproduction.py:71
+#: apps/reproduction/models/reproduction.py:70
 msgid "Season/Batch"
 msgstr "Estação/Lote"
 
-#: apps/reproduction/models/reproduction.py:75
-#: apps/reproduction/models/reproduction.py:96
+#: apps/reproduction/models/reproduction.py:74
+#: apps/reproduction/models/reproduction.py:95
 msgid "Breeding Event"
 msgstr "Evento de Reprodução"
 
-#: apps/reproduction/models/reproduction.py:88
+#: apps/reproduction/models/reproduction.py:87
 msgid "Positive"
 msgstr "Positivo"
 
-#: apps/reproduction/models/reproduction.py:89
+#: apps/reproduction/models/reproduction.py:88
 msgid "Negative"
 msgstr "Negativo"
 
-#: apps/reproduction/models/reproduction.py:98
-#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:26
+#: apps/reproduction/models/reproduction.py:97
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:27
 msgid "Check Date"
 msgstr "Data do Diagnóstico"
 
-#: apps/reproduction/models/reproduction.py:99
-#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:28
+#: apps/reproduction/models/reproduction.py:98
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:29
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:28
 msgid "Result"
 msgstr "Resultado"
 
-#: apps/reproduction/models/reproduction.py:101
+#: apps/reproduction/models/reproduction.py:100
 msgid "Fetus Days"
 msgstr "Dias do Feto"
 
-#: apps/reproduction/models/reproduction.py:104
+#: apps/reproduction/models/reproduction.py:103
 msgid "Estimated age of fetus in days"
 msgstr "Idade estimada do feto em dias"
 
-#: apps/reproduction/models/reproduction.py:107
+#: apps/reproduction/models/reproduction.py:106
 msgid "Expected Calving Date"
 msgstr "Data Prevista do Parto"
 
-#: apps/reproduction/models/reproduction.py:111
+#: apps/reproduction/models/reproduction.py:110
 msgid "Pregnancy Check"
 msgstr "Diagnóstico de Gestação"
 
-#: apps/reproduction/models/reproduction.py:125
+#: apps/reproduction/models/reproduction.py:124
 msgid "Easy/Unassisted"
 msgstr "Fácil/Não assistido"
 
-#: apps/reproduction/models/reproduction.py:126
+#: apps/reproduction/models/reproduction.py:125
 msgid "Assisted"
 msgstr "Assistido"
 
-#: apps/reproduction/models/reproduction.py:127
+#: apps/reproduction/models/reproduction.py:126
 msgid "C-Section"
 msgstr "Cesariana"
 
-#: apps/reproduction/models/reproduction.py:139
+#: apps/reproduction/models/reproduction.py:138
 msgid "Linked Breeding Event"
 msgstr "Evento de Reprodução Vinculado"
 
-#: apps/reproduction/models/reproduction.py:141
+#: apps/reproduction/models/reproduction.py:140
 msgid "Calving Date"
 msgstr "Data do Parto"
 
-#: apps/reproduction/models/reproduction.py:148
-#: apps/reproduction/templates/reproduction/calving_list.html:28
+#: apps/reproduction/models/reproduction.py:147
+#: apps/reproduction/templates/reproduction/calving_list.html:33
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:28
 msgid "Calf"
 msgstr "Bezerro"
 
-#: apps/reproduction/models/reproduction.py:151
+#: apps/reproduction/models/reproduction.py:150
 msgid "Ease of Birth"
 msgstr "Facilidade do Parto"
 
-#: apps/reproduction/models/reproduction.py:156
+#: apps/reproduction/models/reproduction.py:155
 msgid "Calving"
 msgstr "Parto"
 
-#: apps/reproduction/models/reproduction.py:157
+#: apps/reproduction/models/reproduction.py:156
 msgid "Calvings"
 msgstr "Partos"
 
-#: apps/reproduction/services/reproduction_service.py:27
+#: apps/reproduction/services/reproduction_service.py:32
 msgid "Only female cattle can be bred."
 msgstr "Apenas fêmeas podem ser reproduzidas."
+
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_delete.html:4
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_delete.html:9
+msgid "Delete Breeding Event"
+msgstr "Excluir Evento de Reprodução"
+
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_delete.html:11
+#, python-format
+msgid ""
+"Are you sure you want to delete the breeding event for <strong>%(tag)s</"
+"strong> on <strong>%(date)s</strong>? It will be moved to the Trash Bin."
+msgstr ""
+"Tem certeza de que deseja excluir o evento de reprodução de <strong>%(tag)s</"
+"strong> em <strong>%(date)s</strong>? Ele será movido para a Lixeira."
+
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:4
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:10
+msgid "Permanently Delete Breeding Event"
+msgstr "Excluir Evento de Reprodução Permanentemente"
+
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:12
+#, python-format
+msgid ""
+"Are you sure you want to <strong>permanently delete</strong> the breeding "
+"event for <strong>%(tag)s</strong> on <strong>%(date)s</strong>?"
+msgstr ""
+"Tem certeza de que deseja <strong>excluir permanentemente</strong> o evento "
+"de reprodução de <strong>%(tag)s</strong> em <strong>%(date)s</strong>?"
+
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_restore.html:4
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_restore.html:10
+msgid "Restore Breeding Event"
+msgstr "Restaurar Evento de Reprodução"
+
+#: apps/reproduction/templates/reproduction/breeding_event_confirm_restore.html:12
+#, python-format
+msgid ""
+"Are you sure you want to restore the breeding event for <strong>%(tag)s</"
+"strong> on <strong>%(date)s</strong>?"
+msgstr ""
+"Tem certeza de que deseja restaurar o evento de reprodução de "
+"<strong>%(tag)s</strong> em <strong>%(date)s</strong>?"
 
 #: apps/reproduction/templates/reproduction/breeding_event_form.html:4
 #: apps/reproduction/templates/reproduction/breeding_event_form.html:10
@@ -2147,7 +2802,7 @@ msgid "Enter name for external bull (e.g. AI straw)."
 msgstr "Digite o nome para touro externo (ex. palheta de IA)."
 
 #: apps/reproduction/templates/reproduction/breeding_event_form.html:104
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:15
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:16
 msgid "Record Breeding"
 msgstr "Registrar Reprodução"
 
@@ -2155,20 +2810,79 @@ msgstr "Registrar Reprodução"
 msgid "A list of all breeding events recorded."
 msgstr "Uma lista de todos os eventos de reprodução registrados."
 
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:30
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:31
 msgid "Batch"
 msgstr "Lote"
 
-#: apps/reproduction/templates/reproduction/breeding_event_list.html:56
+#: apps/reproduction/templates/reproduction/breeding_event_list.html:57
 msgid "No breeding events found."
 msgstr "Nenhum evento de reprodução encontrado."
+
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:4
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:10
+msgid "Breeding Event Trash Bin"
+msgstr "Lixeira de Eventos de Reprodução"
+
+#: apps/reproduction/templates/reproduction/breeding_event_trash_list.html:11
+msgid "A list of all deleted breeding events."
+msgstr "Uma lista de todos os eventos de reprodução excluídos."
+
+#: apps/reproduction/templates/reproduction/calving_confirm_delete.html:4
+#: apps/reproduction/templates/reproduction/calving_confirm_delete.html:9
+msgid "Delete Calving Record"
+msgstr "Excluir Registro de Parto"
+
+#: apps/reproduction/templates/reproduction/calving_confirm_delete.html:11
+#, python-format
+msgid ""
+"Are you sure you want to delete the calving record for <strong>%(tag)s</"
+"strong> on <strong>%(date)s</strong>? It will be moved to the Trash Bin."
+msgstr ""
+"Tem certeza de que deseja excluir o registro de parto de <strong>%(tag)s</"
+"strong> em <strong>%(date)s</strong>? Ele será movido para a Lixeira."
+
+#: apps/reproduction/templates/reproduction/calving_confirm_permanent_delete.html:4
+#: apps/reproduction/templates/reproduction/calving_confirm_permanent_delete.html:9
+msgid "Permanently Delete Calving Record"
+msgstr "Excluir Registro de Parto Permanentemente"
+
+#: apps/reproduction/templates/reproduction/calving_confirm_permanent_delete.html:18
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_permanent_delete.html:18
+#: apps/reproduction/templates/reproduction/season_confirm_permanent_delete.html:18
+msgid "Warning: This action is irreversible"
+msgstr "Aviso: Esta ação é irreversível"
+
+#: apps/reproduction/templates/reproduction/calving_confirm_permanent_delete.html:20
+#, python-format
+msgid ""
+"Are you sure you want to <strong>permanently delete</strong> the calving "
+"record for <strong>%(tag)s</strong> on <strong>%(date)s</strong>? This "
+"action cannot be undone."
+msgstr ""
+"Tem certeza de que deseja <strong>excluir permanentemente</strong> o "
+"registro de parto de <strong>%(tag)s</strong> em <strong>%(date)s</strong>? "
+"Esta ação não pode ser desfeita."
+
+#: apps/reproduction/templates/reproduction/calving_confirm_restore.html:4
+#: apps/reproduction/templates/reproduction/calving_confirm_restore.html:9
+msgid "Restore Calving Record"
+msgstr "Restaurar Registro de Parto"
+
+#: apps/reproduction/templates/reproduction/calving_confirm_restore.html:11
+#, python-format
+msgid ""
+"Are you sure you want to restore the calving record for <strong>%(tag)s</"
+"strong> on <strong>%(date)s</strong>?"
+msgstr ""
+"Tem certeza de que deseja restaurar o registro de parto de <strong>%(tag)s</"
+"strong> em <strong>%(date)s</strong>?"
 
 #: apps/reproduction/templates/reproduction/calving_form.html:4
 msgid "Record Calving & New Calf"
 msgstr "Registrar Parto & Novo Bezerro"
 
 #: apps/reproduction/templates/reproduction/calving_form.html:10
-#: apps/reproduction/templates/reproduction/calving_list.html:15
+#: apps/reproduction/templates/reproduction/calving_list.html:19
 msgid "Record Calving"
 msgstr "Registrar Parto"
 
@@ -2196,17 +2910,34 @@ msgstr "Registrar Nascimento"
 msgid "History of calving events and new calves."
 msgstr "Histórico de eventos de parto e novos bezerros."
 
-#: apps/reproduction/templates/reproduction/calving_list.html:29
+#: apps/reproduction/templates/reproduction/calving_list.html:34
 msgid "Ease"
 msgstr "Facilidade"
 
-#: apps/reproduction/templates/reproduction/calving_list.html:30
+#: apps/reproduction/templates/reproduction/calving_list.html:35
 msgid "Linked Breeding"
 msgstr "Reprodução Vinculada"
 
-#: apps/reproduction/templates/reproduction/calving_list.html:62
+#: apps/reproduction/templates/reproduction/calving_list.html:67
 msgid "No calving records found."
 msgstr "Nenhum registro de parto encontrado."
+
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:4
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:10
+msgid "Trash Bin - Calving Records"
+msgstr "Lixeira - Registros de Parto"
+
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:11
+msgid ""
+"A list of deleted calving records. You can restore them or permanently "
+"delete them."
+msgstr ""
+"Uma lista de registros de parto excluídos. Você pode restaurá-los ou excluí-"
+"los permanentemente."
+
+#: apps/reproduction/templates/reproduction/calving_trash_list.html:49
+msgid "No deleted calving records found."
+msgstr "Nenhum registro de parto excluído encontrado."
 
 #: apps/reproduction/templates/reproduction/overview.html:4
 #: apps/reproduction/templates/reproduction/overview.html:40
@@ -2249,6 +2980,51 @@ msgstr "Partos Recentes"
 msgid "No recent calvings."
 msgstr "Nenhum parto recente."
 
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_delete.html:4
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_delete.html:9
+msgid "Delete Pregnancy Check"
+msgstr "Excluir Diagnóstico de Gestação"
+
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_delete.html:11
+#, python-format
+msgid ""
+"Are you sure you want to delete the pregnancy check for <strong>%(tag)s</"
+"strong> on <strong>%(date)s</strong>? It will be moved to the Trash Bin."
+msgstr ""
+"Tem certeza de que deseja excluir o diagnóstico de gestação de "
+"<strong>%(tag)s</strong> em <strong>%(date)s</strong>? Ele será movido para "
+"a Lixeira."
+
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_permanent_delete.html:4
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_permanent_delete.html:9
+msgid "Permanently Delete Pregnancy Check"
+msgstr "Excluir Diagnóstico de Gestação Permanentemente"
+
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_permanent_delete.html:20
+#, python-format
+msgid ""
+"Are you sure you want to <strong>permanently delete</strong> the pregnancy "
+"check for <strong>%(tag)s</strong> on <strong>%(date)s</strong>? This action "
+"cannot be undone."
+msgstr ""
+"Tem certeza de que deseja <strong>excluir permanentemente</strong> o "
+"diagnóstico de gestação de <strong>%(tag)s</strong> em <strong>%(date)s</"
+"strong>? Esta ação não pode ser desfeita."
+
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_restore.html:4
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_restore.html:9
+msgid "Restore Pregnancy Check"
+msgstr "Restaurar Diagnóstico de Gestação"
+
+#: apps/reproduction/templates/reproduction/pregnancy_check_confirm_restore.html:11
+#, python-format
+msgid ""
+"Are you sure you want to restore the pregnancy check for <strong>%(tag)s</"
+"strong> on <strong>%(date)s</strong>?"
+msgstr ""
+"Tem certeza de que deseja restaurar o diagnóstico de gestação de "
+"<strong>%(tag)s</strong> em <strong>%(date)s</strong>?"
+
 #: apps/reproduction/templates/reproduction/pregnancy_check_form.html:4
 #: apps/reproduction/templates/reproduction/pregnancy_check_form.html:10
 msgid "Record Pregnancy Diagnosis"
@@ -2257,7 +3033,8 @@ msgstr "Registrar Diagnóstico de Gestação"
 #: apps/reproduction/templates/reproduction/pregnancy_check_form.html:13
 msgid "Select a bred cow and record the diagnosis result."
 msgstr ""
-"Selecione uma vaca coberta/inseminada e registre o resultado do diagnóstico."
+"Selecione uma vaca coberta e registre o resultado do diagnóstico.Selecione "
+"uma vaca coberta/inseminada e registre o resultado do diagnóstico."
 
 #: apps/reproduction/templates/reproduction/pregnancy_check_form.html:46
 msgid "Only showing cows currently marked as BRED."
@@ -2268,7 +3045,7 @@ msgid "Estimated age of fetus in days (optional)."
 msgstr "Idade estimada do feto em dias (opcional)."
 
 #: apps/reproduction/templates/reproduction/pregnancy_check_form.html:77
-#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:15
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:16
 msgid "Record Diagnosis"
 msgstr "Registrar Diagnóstico"
 
@@ -2280,60 +3057,206 @@ msgstr "Diagnóstico de Gestação"
 msgid "History of pregnancy checks performed."
 msgstr "Histórico de diagnósticos de gestação realizados."
 
-#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:29
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:30
 msgid "Breeding Date"
 msgstr "Data da Cobertura"
 
-#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:30
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:31
 msgid "Expected Calving"
 msgstr "Previsão de Parto"
 
-#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:54
+#: apps/reproduction/templates/reproduction/pregnancy_check_list.html:55
 msgid "No diagnosis records found."
 msgstr "Nenhum registro de diagnóstico encontrado."
 
-#: apps/reproduction/templates/reproduction/season_confirm_delete.html:10
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:4
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:10
+msgid "Trash Bin - Pregnancy Checks"
+msgstr "Lixeira - Diagnósticos de Gestação"
+
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:11
+msgid ""
+"A list of deleted pregnancy checks. You can restore them or permanently "
+"delete them."
+msgstr ""
+"Uma lista de diagnósticos de gestação excluídos. Você pode restaurá-los ou "
+"excluí-los permanentemente."
+
+#: apps/reproduction/templates/reproduction/pregnancy_check_trash_list.html:49
+msgid "No deleted diagnosis found."
+msgstr "Nenhum diagnóstico excluído encontrado."
+
+#: apps/reproduction/templates/reproduction/season_confirm_delete.html:4
+#: apps/reproduction/templates/reproduction/season_confirm_delete.html:9
 msgid "Delete Reproductive Season"
 msgstr "Excluir Estação Reprodutiva"
 
-#: apps/reproduction/templates/reproduction/season_confirm_delete.html:12
+#: apps/reproduction/templates/reproduction/season_confirm_delete.html:11
+#, python-format
 msgid ""
-"Are you sure you want to delete current season: <strong>%(name)s</strong>?"
+"Are you sure you want to delete the reproductive season <strong>%(name)s</"
+"strong>? It will be moved to the Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir a estação atual: "
-"<strong>%(name)s</strong>?"
+"Tem certeza de que deseja excluir a estação reprodutiva <strong>%(name)s</"
+"strong>? Ela será movida para a Lixeira."
+
+#: apps/reproduction/templates/reproduction/season_confirm_permanent_delete.html:4
+#: apps/reproduction/templates/reproduction/season_confirm_permanent_delete.html:9
+msgid "Permanently Delete Reproductive Season"
+msgstr "Excluir Estação Reprodutiva Permanentemente"
+
+#: apps/reproduction/templates/reproduction/season_confirm_permanent_delete.html:20
+#, python-format
+msgid ""
+"Are you sure you want to <strong>permanently delete</strong> the "
+"reproductive season <strong>%(name)s</strong>? This action cannot be undone."
+msgstr ""
+"Tem certeza de que deseja <strong>excluir permanentemente</strong> a estação "
+"reprodutiva <strong>%(name)s</strong>? Esta ação não pode ser desfeita."
+
+#: apps/reproduction/templates/reproduction/season_confirm_restore.html:4
+#: apps/reproduction/templates/reproduction/season_confirm_restore.html:9
+msgid "Restore Reproductive Season"
+msgstr "Restaurar Estação Reprodutiva"
+
+#: apps/reproduction/templates/reproduction/season_confirm_restore.html:11
+#, python-format
+msgid ""
+"Are you sure you want to restore the reproductive season <strong>%(name)s</"
+"strong>?"
+msgstr ""
+"Tem certeza de que deseja restaurar a estação reprodutiva <strong>%(name)s</"
+"strong>?"
 
 #: apps/reproduction/templates/reproduction/season_list.html:11
 msgid "Manage breeding seasons for your herd."
 msgstr "Gerencie as estações de reprodução do seu rebanho."
 
-#: apps/reproduction/templates/reproduction/season_list.html:15
+#: apps/reproduction/templates/reproduction/season_list.html:19
 msgid "Add Season"
 msgstr "Adicionar Estação"
 
-#: apps/reproduction/templates/reproduction/season_list.html:55
+#: apps/reproduction/templates/reproduction/season_list.html:52
 msgid "No reproductive seasons found."
 msgstr "Nenhuma estação reprodutiva encontrada."
 
-#: apps/reproduction/views/breeding.py:40
+#: apps/reproduction/templates/reproduction/season_trash_list.html:4
+#: apps/reproduction/templates/reproduction/season_trash_list.html:10
+msgid "Trash Bin - Reproductive Seasons"
+msgstr "Lixeira - Estações Reprodutivas"
+
+#: apps/reproduction/templates/reproduction/season_trash_list.html:11
+msgid ""
+"A list of deleted reproductive seasons. You can restore them or permanently "
+"delete them."
+msgstr ""
+"Uma lista de estações reprodutivas excluídas. Você pode restaurá-las ou "
+"excluí-las permanentemente."
+
+#: apps/reproduction/templates/reproduction/season_trash_list.html:49
+msgid "No deleted seasons found."
+msgstr "Nenhuma estação excluída encontrada."
+
+#: apps/reproduction/views/breeding.py:42
 msgid "Breeding recorded successfully."
 msgstr "Reprodução registrada com sucesso."
 
-#: apps/reproduction/views/calving.py:47
+#: apps/reproduction/views/breeding.py:62
+msgid "Breeding event restored successfully."
+msgstr "Evento de reprodução restaurado com sucesso."
+
+#: apps/reproduction/views/breeding.py:66
+#: apps/reproduction/views/breeding.py:79
+#: apps/reproduction/views/breeding.py:89
+#: apps/reproduction/views/breeding.py:102
+#: apps/reproduction/views/breeding.py:113
+#: apps/reproduction/views/breeding.py:126
+msgid "Breeding event not found."
+msgstr "Evento de reprodução não encontrado."
+
+#: apps/reproduction/views/breeding.py:87
+msgid "Breeding event permanently deleted."
+msgstr "Evento de reprodução excluído permanentemente."
+
+#: apps/reproduction/views/breeding.py:111
+msgid "Breeding event deleted."
+msgstr "Evento de reprodução excluído."
+
+#: apps/reproduction/views/calving.py:50
 msgid "Calving recorded and new Calf registered."
 msgstr "Parto registrado e novo Bezerro cadastrado."
 
-#: apps/reproduction/views/diagnosis.py:53
+#: apps/reproduction/views/calving.py:69
+msgid "Calving record deleted."
+msgstr "Registro de parto excluído."
+
+#: apps/reproduction/views/calving.py:75
+msgid ""
+"Cannot delete this calving record because it is referenced by other objects."
+msgstr ""
+"Não é possível excluir este registro de parto porque ele é referenciado por "
+"outros objetos."
+
+#: apps/reproduction/views/calving.py:102
+msgid "Calving record restored."
+msgstr "Registro de parto restaurado."
+
+#: apps/reproduction/views/calving.py:117
+msgid "Calving record permanently deleted."
+msgstr "Registro de parto excluído permanentemente."
+
+#: apps/reproduction/views/diagnosis.py:56
 msgid "Diagnosis recorded successfully."
 msgstr "Diagnóstico registrado com sucesso."
 
-#: apps/reproduction/views/season.py:25
+#: apps/reproduction/views/diagnosis.py:68
+msgid "Pregnancy Check deleted."
+msgstr "Diagnóstico de Gestação excluído."
+
+#: apps/reproduction/views/diagnosis.py:72
+#: apps/reproduction/views/diagnosis.py:85
+#: apps/reproduction/views/diagnosis.py:106
+#: apps/reproduction/views/diagnosis.py:119
+#: apps/reproduction/views/diagnosis.py:129
+#: apps/reproduction/views/diagnosis.py:142
+msgid "Pregnancy Check not found."
+msgstr "Diagnóstico de Gestação não encontrado."
+
+#: apps/reproduction/views/diagnosis.py:102
+msgid "Pregnancy Check restored successfully."
+msgstr "Diagnóstico de Gestação restaurado com sucesso."
+
+#: apps/reproduction/views/diagnosis.py:127
+msgid "Pregnancy Check permanently deleted."
+msgstr "Diagnóstico de Gestação excluído permanentemente."
+
+#: apps/reproduction/views/season.py:30
 msgid "Add Reproductive Season"
 msgstr "Adicionar Estação Reprodutiva"
 
-#: apps/reproduction/views/season.py:37
+#: apps/reproduction/views/season.py:42
 msgid "Edit Reproductive Season"
 msgstr "Editar Estação Reprodutiva"
+
+#: apps/reproduction/views/season.py:57
+msgid "Reproductive Season deleted."
+msgstr "Estação Reprodutiva excluída."
+
+#: apps/reproduction/views/season.py:63
+msgid ""
+"Cannot delete this Reproductive Season because it is referenced by other "
+"objects."
+msgstr ""
+"Não é possível excluir esta Estação Reprodutiva porque ela é referenciada "
+"por outros objetos."
+
+#: apps/reproduction/views/season.py:90
+msgid "Reproductive Season restored."
+msgstr "Estação Reprodutiva restaurada."
+
+#: apps/reproduction/views/season.py:105
+msgid "Reproductive Season permanently deleted."
+msgstr "Estação Reprodutiva excluída permanentemente."
 
 #: apps/sales/services/sale_service.py:61
 msgid "This item is not active/available for sale."
@@ -2365,9 +3288,10 @@ msgid "Permanently Delete Transaction"
 msgstr "Excluir Transação Permanentemente"
 
 #: apps/sales/templates/sales/sale_confirm_permanent_delete.html:12
+#, python-format
 msgid ""
-"Are you sure you want to <strong>permanently delete</strong> the transaction"
-" from <strong>%(date)s</strong> with %(partner)s (%(total)s)?"
+"Are you sure you want to <strong>permanently delete</strong> the transaction "
+"from <strong>%(date)s</strong> with %(partner)s (%(total)s)?"
 msgstr ""
 "Tem certeza de que deseja <strong>excluir permanentemente</strong> a "
 "transação de <strong>%(date)s</strong> com %(partner)s (%(total)s)?"
@@ -2381,6 +3305,7 @@ msgid "Restore Transaction"
 msgstr "Restaurar Transação"
 
 #: apps/sales/templates/sales/sale_confirm_restore.html:12
+#, python-format
 msgid "Are you sure you want to restore the sale \"%(object.pk)s\"?"
 msgstr "Tem certeza de que deseja restaurar a venda \"%(object.pk)s\"?"
 
@@ -2466,13 +3391,259 @@ msgstr "Acessar Sistema"
 msgid "Learn more"
 msgstr "Saiba mais"
 
-#: core/settings.py:140
+#: apps/weight/apps.py:8
+msgid "Weight & Performance"
+msgstr "Peso & Desempenho"
+
+#: apps/weight/models/record.py:31
+msgid "Average Daily Gain (kg/day)"
+msgstr "Ganho Médio Diário (kg/dia)"
+
+#: apps/weight/models/record.py:36
+msgid "Gain per day since last weighing"
+msgstr "Ganho por dia desde a última pesagem"
+
+#: apps/weight/models/record.py:39
+msgid "Days since last weight"
+msgstr "Dias desde a última pesagem"
+
+#: apps/weight/models/record.py:43
+msgid "Weight Record"
+msgstr "Registro de Peso"
+
+#: apps/weight/models/record.py:44
+msgid "Weight Records"
+msgstr "Registros de Peso"
+
+#: apps/weight/models/session.py:10
+msgid "Routine"
+msgstr "Rotina"
+
+#: apps/weight/models/session.py:14
+msgid "Birth"
+msgstr "Nascimento"
+
+#: apps/weight/models/session.py:24
+msgid "Session Name"
+msgstr "Nome da Sessão"
+
+#: apps/weight/models/session.py:34
+msgid "Weighing Session"
+msgstr "Sessão de Pesagem"
+
+#: apps/weight/templates/weight/batch_entry.html:4
+#: apps/weight/templates/weight/batch_entry.html:8
+msgid "Batch Weighing"
+msgstr "Pesagem em Lote"
+
+#: apps/weight/templates/weight/batch_entry.html:9
+msgid "Session:"
+msgstr "Sessão:"
+
+#: apps/weight/templates/weight/batch_entry.html:20
+msgid "Last Weight"
+msgstr "Último Peso"
+
+#: apps/weight/templates/weight/batch_entry.html:21
+msgid "New Weight (kg)"
+msgstr "Novo Peso (kg)"
+
+#: apps/weight/templates/weight/batch_entry.html:58
+msgid "Save Weights"
+msgstr "Salvar Pesos"
+
+#: apps/weight/templates/weight/record_confirm_delete.html:4
+#: apps/weight/templates/weight/record_confirm_delete.html:9
+msgid "Delete Weight Record"
+msgstr "Excluir Registro de Peso"
+
+#: apps/weight/templates/weight/record_confirm_delete.html:11
+msgid "Are you sure you want to delete the weight record for"
+msgstr "Tem certeza de que deseja excluir o registro de peso de"
+
+#: apps/weight/templates/weight/record_confirm_delete.html:11
+msgid "value"
+msgstr "valor"
+
+#: apps/weight/templates/weight/record_form.html:4
+#: apps/weight/templates/weight/record_form.html:10
+#: apps/weight/views/record_views.py:24
+msgid "Edit Weight Record"
+msgstr "Editar Registro de Peso"
+
+#: apps/weight/templates/weight/session_confirm_delete.html:4
+msgid "Delete Session"
+msgstr "Excluir Sessão"
+
+#: apps/weight/templates/weight/session_confirm_delete.html:9
+msgid "Delete Weighing Session"
+msgstr "Excluir Sessão de Pesagem"
+
+#: apps/weight/templates/weight/session_confirm_delete.html:11
+msgid "Are you sure you want to delete the session"
+msgstr "Tem certeza de que deseja excluir a sessão"
+
+#: apps/weight/templates/weight/session_confirm_delete.html:12
+msgid ""
+"This will move the session and all its associated weight records to the "
+"trash."
+msgstr ""
+"Isso moverá a sessão e todos os seus registros de peso associados para a "
+"lixeira."
+
+#: apps/weight/templates/weight/session_confirm_permanent_delete.html:4
+msgid "Confirm Permanent Deletion"
+msgstr "Confirmar Exclusão Permanente"
+
+#: apps/weight/templates/weight/session_confirm_permanent_delete.html:9
+msgid "Permanently Delete Session?"
+msgstr "Excluir Sessão Permanentemente?"
+
+#: apps/weight/templates/weight/session_confirm_permanent_delete.html:26
+msgid "Warning: This action cannot be undone."
+msgstr "Aviso: Esta ação não pode ser desfeita."
+
+#: apps/weight/templates/weight/session_confirm_permanent_delete.html:28
+msgid ""
+"Are you sure you want to permanently delete this weighing session and all "
+"its associated records?"
+msgstr ""
+"Tem certeza de que deseja excluir permanentemente esta sessão de pesagem e "
+"todos os seus registros associados?"
+
+#: apps/weight/templates/weight/session_detail.html:39
+msgid "Total Animals"
+msgstr "Total de Animais"
+
+#: apps/weight/templates/weight/session_detail.html:56
+msgid "ADG"
+msgstr "GMD"
+
+#: apps/weight/templates/weight/session_detail.html:57
+msgid "Days Info"
+msgstr "Info de Dias"
+
+#: apps/weight/templates/weight/session_detail.html:92
+msgid "No records in this session."
+msgstr "Nenhum registro nesta sessão."
+
+#: apps/weight/templates/weight/session_form.html:10
+msgid "Create Weighing Session"
+msgstr "Criar Sessão de Pesagem"
+
+#: apps/weight/templates/weight/session_form.html:59
+msgid "Create & Start Weighing"
+msgstr "Criar & Iniciar Pesagem"
+
+#: apps/weight/templates/weight/session_form.html:61
+msgid "Create Session"
+msgstr "Criar Sessão"
+
+#: apps/weight/templates/weight/session_list.html:10
+msgid "Manage weighing events and track herd performance."
+msgstr "Gerencie eventos de pesagem e acompanhe o desempenho do rebanho."
+
+#: apps/weight/templates/weight/session_list.html:22
+msgid "Search sessions..."
+msgstr "Pesquisar sessões..."
+
+#: apps/weight/templates/weight/session_list.html:27
+msgid "All Types"
+msgstr "Todos os Tipos"
+
+#: apps/weight/templates/weight/session_list.html:35
+msgid "Trash"
+msgstr "Lixeira"
+
+#: apps/weight/templates/weight/session_list.html:72
+msgid "No weighing sessions found."
+msgstr "Nenhuma sessão de pesagem encontrada."
+
+#: apps/weight/templates/weight/session_trash.html:4
+msgid "Trash - Weighing Sessions"
+msgstr "Lixeira - Sessões de Pesagem"
+
+#: apps/weight/templates/weight/session_trash.html:9
+msgid "Trash: Weighing Sessions"
+msgstr "Lixeira: Sessões de Pesagem"
+
+#: apps/weight/templates/weight/session_trash.html:10
+msgid "Restore deleted sessions or permanently remove them."
+msgstr "Restaure sessões excluídas ou remova-as permanentemente."
+
+#: apps/weight/views/batch_views.py:32
+msgid "No cattle selected for weighing."
+msgstr "Nenhum gado selecionado para pesagem."
+
+#: apps/weight/views/batch_views.py:63
+msgid "Negative weight"
+msgstr "Peso negativo"
+
+#: apps/weight/views/batch_views.py:78
+msgid "Some records had errors: "
+msgstr "Alguns registros tiveram erros: "
+
+#: apps/weight/views/batch_views.py:86
+msgid "No weights were recorded."
+msgstr "Nenhum peso foi registrado."
+
+#: apps/weight/views/record_views.py:41
+msgid "Weight record updated."
+msgstr "Registro de peso atualizado."
+
+#: apps/weight/views/record_views.py:64
+msgid "Cannot delete the last record in a weighing session."
+msgstr "Não é possível excluir o último registro em uma sessão de pesagem."
+
+#: apps/weight/views/record_views.py:69
+msgid "Weight record deleted."
+msgstr "Registro de peso excluído."
+
+#: apps/weight/views/session_crud_views.py:16
+msgid "Session not found."
+msgstr "Sessão não encontrada."
+
+#: apps/weight/views/session_crud_views.py:27
+msgid "Edit Weighing Session"
+msgstr "Editar Sessão de Pesagem"
+
+#: apps/weight/views/session_crud_views.py:31
+msgid "Session updated successfully."
+msgstr "Sessão atualizada com sucesso."
+
+#: apps/weight/views/session_crud_views.py:50
+msgid "Session moved to trash."
+msgstr "Sessão movida para a lixeira."
+
+#: apps/weight/views/session_crud_views.py:70
+msgid "Session restored successfully."
+msgstr "Sessão restaurada com sucesso."
+
+#: apps/weight/views/session_crud_views.py:84
+msgid "Session permanently deleted."
+msgstr "Sessão excluída permanentemente."
+
+#: core/settings.py:142
 msgid "English"
 msgstr "Inglês"
 
-#: core/settings.py:141
+#: core/settings.py:143
 msgid "Portuguese (Brazil)"
 msgstr "Português (Brasil)"
+
+#, python-format
+#~ msgid ""
+#~ "Are you sure you want to delete the medication \"%(name)s\"? This action "
+#~ "cannot be undone."
+#~ msgstr ""
+#~ "Tem certeza de que deseja excluir a medicação \"%(name)s\"? Esta ação não "
+#~ "pode ser desfeita."
+
+#~ msgid ""
+#~ "Are you sure you want to delete current season: <strong>%(name)s</strong>?"
+#~ msgstr ""
+#~ "Tem certeza de que deseja excluir a estação atual: <strong>%(name)s</"
+#~ "strong>?"
 
 #~ msgid "Buyer"
 #~ msgstr "Comprador"
