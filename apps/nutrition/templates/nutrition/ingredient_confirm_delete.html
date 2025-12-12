@@ -1,0 +1,26 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Delete Ingredient" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Delete Ingredient" %}</h3>
+            <div class="mt-2 text-sm text-gray-500">
+                <p>{% blocktrans with name=object.name %}Are you sure you want to delete the ingredient "{{ name }}"? This action will move it to the trash bin.{% endblocktrans %}</p>
+            </div>
+            <form method="POST" class="mt-5 sm:flex sm:items-center">
+                {% csrf_token %}
+                <button type="submit" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto">
+                    {% trans "Delete" %}
+                </button>
+                <a href="{% url 'nutrition:ingredient-list' %}" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto">
+                    {% trans "Cancel" %}
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

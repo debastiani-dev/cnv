@@ -15,7 +15,7 @@ from django.views.generic import (
     View,
 )
 
-from apps.base.views.mixins import HandleProtectedErrorMixin
+from apps.base.views.mixins import HandleProtectedErrorMixin, SafeDeleteMixin
 from apps.locations.forms import LocationForm
 from apps.locations.models import Location, LocationStatus
 from apps.locations.services import LocationService
@@ -109,22 +109,10 @@ class LocationUpdateView(LoginRequiredMixin, UpdateView):
         return reverse_lazy("locations:detail", kwargs={"pk": self.object.pk})
 
 
-class LocationDeleteView(LoginRequiredMixin, HandleProtectedErrorMixin, DeleteView):
+class LocationDeleteView(LoginRequiredMixin, SafeDeleteMixin, DeleteView):
     model = Location
     template_name = "locations/location_confirm_delete.html"
     success_url = reverse_lazy(LOCATION_LIST_URL)
-
-    def delete(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        try:
-            # Standard delete calls model.delete() which does soft delete by default
-            self.object.delete()
-        except (ValidationError, ProtectedError) as e:
-            return self.handle_delete_error(request, e)
-        return HttpResponseRedirect(self.get_success_url())
 
 
 class LocationTrashListView(LoginRequiredMixin, ListView):
