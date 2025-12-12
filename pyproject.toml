@@ -14,7 +14,8 @@ dependencies = [
     "whitenoise (>=6.6.0,<7.0.0)",
     "django-rosetta (>=0.10.3,<0.11.0)",
     "django-widget-tweaks (>=1.5.0,<2.0.0)",
-    "Pillow (>=10.0.0,<11.0.0)"
+    "Pillow (>=10.0.0,<11.0.0)",
+    "djhtml (>=3.0.10,<4.0.0)"
 ]
 
 [tool.poetry]
@@ -53,6 +54,7 @@ pylint = "<4.0.0"
 autoflake8 = "^0.4.1"
 pylint-django = "^2.6.1"
 djangorestframework-stubs = "^3.16.6"
+djhtml = "^3.0.10"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "core.settings"

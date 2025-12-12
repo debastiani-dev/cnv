@@ -1,0 +1,26 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Restore Diet" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Restore Diet" %}</h3>
+            <div class="mt-2 text-sm text-gray-500">
+                <p>{% blocktrans with name=diet.name %}Are you sure you want to restore the diet "{{ name }}"?{% endblocktrans %}</p>
+            </div>
+            <form method="POST" class="mt-5 sm:flex sm:items-center">
+                {% csrf_token %}
+                <button type="submit" class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:w-auto">
+                    {% trans "Restore" %}
+                </button>
+                <a href="{% url 'nutrition:diet-trash' %}" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto">
+                    {% trans "Cancel" %}
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -101,7 +101,31 @@ class PurchaseService:
         instances = formset.save(commit=False)
         for instance in instances:
             instance.purchase = purchase
+            instance.purchase = purchase
             instance.save()
+
+            # Integration Hook: Update Feed Ingredient Inventory
+            ingredient = instance.content_object
+
+            # Calculate Weighted Average Cost
+            # current_total_value = ingredient.stock_quantity * ingredient.unit_cost
+            # new_total_value = current_total_value + (instance.quantity * instance.unit_price)
+            # new_total_qty = ingredient.stock_quantity + instance.quantity
+
+            # Use Decimals for calculation
+            current_qty = ingredient.stock_quantity
+            current_cost = ingredient.unit_cost
+            new_qty = instance.quantity
+            new_cost = instance.unit_price
+
+            if (current_qty + new_qty) > 0:
+                avg_cost = ((current_qty * current_cost) + (new_qty * new_cost)) / (
+                    current_qty + new_qty
+                )
+                ingredient.unit_cost = avg_cost
+
+            ingredient.stock_quantity += new_qty
+            ingredient.save()
 
         # Handle deletions
         for obj in formset.deleted_objects:

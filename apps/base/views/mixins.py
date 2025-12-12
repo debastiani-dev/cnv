@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.db.models import ProtectedError
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
@@ -31,3 +33,24 @@ class HandleProtectedErrorMixin:
 
         target_template = template_name or self.template_name
         return render(request, target_template, context)
+
+
+class SafeDeleteMixin(HandleProtectedErrorMixin):
+    """
+    Mixin to safely delete objects, handling ProtectedError/ValidationError
+    and redirecting on success.
+    Requires:
+        - get_object() method (from SingleObjectMixin/DeleteView)
+        - get_success_url() method (from DeletionMixin/DeleteView)
+    """
+
+    def delete(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            self.object.delete()
+        except (ValidationError, ProtectedError) as e:
+            return self.handle_delete_error(request, e)
+        return HttpResponseRedirect(self.get_success_url())

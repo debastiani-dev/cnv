@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "apps.weight",
     "apps.health",
     "apps.locations",
+    "apps.nutrition",
     "apps.website",
     "apps.dashboard",
 ]

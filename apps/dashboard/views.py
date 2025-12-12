@@ -1,9 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import F
 from django.views.generic import TemplateView
 
 from apps.cattle.services.cattle_service import CattleService
 from apps.health.services import HealthService
 from apps.locations.services import LocationService
+from apps.nutrition.models.ingredient import FeedIngredient
 from apps.purchases.services.purchase_service import PurchaseService
 from apps.sales.services.sale_service import SaleService
 from apps.weight.services.weight_service import WeightService
@@ -33,6 +35,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
         # Location Stats
         location_stats = LocationService.get_dashboard_stats()
 
+        # Nutrition Stats (Low Stock)
+        low_stock_ingredients = FeedIngredient.objects.filter(
+            stock_quantity__lte=F("min_stock_alert")
+        )[:5]
+
         # Add to context
         context.update(
             {
@@ -44,6 +51,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 "recent_health_events": recent_health_events,
                 "weight_stats": weight_stats,
                 "location_stats": location_stats,
+                "low_stock_ingredients": low_stock_ingredients,
             }
         )
         return context

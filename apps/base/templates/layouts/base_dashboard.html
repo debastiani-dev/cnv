@@ -9,149 +9,163 @@
     - Inactive Sub-item: bg-stone-200 text-stone-700
     - Active/Hover: bg-stone-400 text-stone-900
 -->
-<style>
+    <style>
     /* Force Desktop Layout fallback */
-    @media (min-width: 1024px) {
-        #static-sidebar { display: flex !important; }
-        #main-content { padding-left: 18rem !important; }
-    }
-</style>
+        @media (min-width: 1024px) {
+            #static-sidebar { display: flex !important; }
+            #main-content { padding-left: 18rem !important; }
+        }
+    </style>
 
-<div x-data="{ 
-    sidebarOpen: false, 
-    openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'weight' in request.resolver_match.app_names %}weight{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names %}transactions{% elif 'health' in request.resolver_match.app_names %}health{% elif 'partners' in request.resolver_match.app_names %}business{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}' 
-}" class="min-h-screen relative z-0">
-    
+    <div x-data="{
+                 sidebarOpen: false,
+                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names %}financials{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
+                 }" class="min-h-screen relative z-0">
+
     <!-- Mobile Sidebar (Off-canvas) -->
-    <div class="relative z-50 lg:hidden" role="dialog" aria-modal="true" x-show="sidebarOpen" x-cloak>
-        <div class="fixed inset-0 bg-gray-900/80" 
-             x-show="sidebarOpen" 
-             x-transition:enter="transition-opacity ease-linear duration-300"
-             x-transition:enter-start="opacity-0" 
-             x-transition:enter-end="opacity-100" 
-             x-transition:leave="transition-opacity ease-linear duration-300"
-             x-transition:leave-start="opacity-100" 
-             x-transition:leave-end="opacity-0"></div>
-
-        <div class="fixed inset-0 flex">
-            <div class="relative mr-16 flex w-full max-w-xs flex-1 transform transition ease-in-out duration-300"
+        <div class="relative z-50 lg:hidden" role="dialog" aria-modal="true" x-show="sidebarOpen" x-cloak>
+            <div class="fixed inset-0 bg-gray-900/80"
                  x-show="sidebarOpen"
-                 x-transition:enter="transition ease-in-out duration-300 transform"
-                 x-transition:enter-start="-translate-x-full" 
-                 x-transition:enter-end="translate-x-0" 
-                 x-transition:leave="transition ease-in-out duration-300 transform"
-                 x-transition:leave-start="translate-x-0" 
-                 x-transition:leave-end="-translate-x-full">
-                
-                <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
-                    <button type="button" class="-m-2.5 p-2.5" @click="sidebarOpen = false">
-                        <span class="sr-only">{% trans "Close sidebar" %}</span>
-                        <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
+                 x-transition:enter="transition-opacity ease-linear duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition-opacity ease-linear duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"></div>
+
+            <div class="fixed inset-0 flex">
+                <div class="relative mr-16 flex w-full max-w-xs flex-1 transform transition ease-in-out duration-300"
+                     x-show="sidebarOpen"
+                     x-transition:enter="transition ease-in-out duration-300 transform"
+                     x-transition:enter-start="-translate-x-full"
+                     x-transition:enter-end="translate-x-0"
+                     x-transition:leave="transition ease-in-out duration-300 transform"
+                     x-transition:leave-start="translate-x-0"
+                     x-transition:leave-end="-translate-x-full">
+
+                    <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
+                        <button type="button" class="-m-2.5 p-2.5" @click="sidebarOpen = false">
+                            <span class="sr-only">{% trans "Close sidebar" %}</span>
+                            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
 
                 <!-- Sidebar Content -->
-                <div class="flex grow flex-col overflow-y-auto bg-stone-300 pb-4">
-                    <div class="flex h-16 shrink-0 items-center justify-center">
-                        <a href="{% url 'dashboard:home' %}">
-                            <img class="h-8 w-auto" src="{% static 'img/logo.png' %}" alt="CNV">
-                        </a>
-                    </div>
-                    <nav class="flex flex-1 flex-col">
-                        <ul role="list" class="flex flex-1 flex-col gap-y-0">
-                            <!-- Dashboard: Squares 2x2 -->
+                    <div class="flex grow flex-col overflow-y-auto bg-stone-300 pb-4">
+                        <div class="flex h-16 shrink-0 items-center justify-center">
+                            <a href="{% url 'dashboard:home' %}">
+                                <img class="h-8 w-auto" src="{% static 'img/logo.png' %}" alt="CNV">
+                            </a>
+                        </div>
+                        <nav class="flex flex-1 flex-col" aria-label="Mobile Sidebar">
+                            <ul role="list" class="flex flex-1 flex-col gap-y-0">
+    <!-- Dashboard -->
+                                <li>
+                                    <a href="{% url 'dashboard:home' %}"
+                                       class="{% if request.resolver_match.url_name == 'home' %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:bg-stone-400 hover:text-stone-900{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6">
+                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                  d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                                        </svg>
+                                        {% trans "Dashboard" %}
+                                    </a>
+                                </li>
+
+    <!-- Animals (Herd & Land) -->
                             <li>
-                                <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:bg-stone-400 hover:text-stone-900{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6">
-                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-                                    </svg>
-                                    {% trans "Dashboard" %}
-                                </a>
-                            </li>
-                            
-                            <!-- Animals: Identification (Ear Tag) -->
-                            <li>
-                                <button type="button" @click="openCategory === 'animals' ? openCategory = null : openCategory = 'animals'" 
+                                <button type="button" @click="openCategory === 'animals' ? openCategory = null : openCategory = 'animals'"
                                         class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
                                         :class="openCategory === 'animals' ? 'text-stone-900' : ''">
                                     <span class="flex gap-x-3 items-center">
                                         <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                  d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
                                         </svg>
                                         {% trans "Animals" %}
                                     </span>
-                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'animals' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                    <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                         :class="openCategory === 'animals' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                              clip-rule="evenodd" />
                                     </svg>
                                 </button>
                                 <ul x-show="openCategory === 'animals'" x-cloak>
-                                    <li>
-                                        <a href="{% url 'cattle:list' %}" class="{% if 'cattle' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Cattle" %}
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'locations:list' %}" class="{% if 'locations' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Locations" %}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            
-                            <!-- Weight: Scale -->
-                            <li>
-                                <button type="button" @click="openCategory === 'weight' ? openCategory = null : openCategory = 'weight'" 
-                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                        :class="openCategory === 'weight' ? 'text-stone-900' : ''">
-                                    <span class="flex gap-x-3 items-center">
-                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.011.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
-                                        </svg>
-                                        {% trans "Weight" %}
-                                    </span>
-                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'weight' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <ul x-show="openCategory === 'weight'" x-cloak>
-                                    <li><a href="{% url 'weight:session-list' %}" class="{% if 'weight' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Weighing Sessions" %}</a></li>
-                                </ul>
-                            </li>
-                            
-                            <!-- Transactions: Banknotes -->
-                            <li>
-                                <button type="button" @click="openCategory === 'transactions' ? openCategory = null : openCategory = 'transactions'" 
-                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                        :class="openCategory === 'transactions' ? 'text-stone-900' : ''">
-                                    <span class="flex gap-x-3 items-center">
-                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 2.025v.75c0 .414.336.75.75.75H18a.75.75 0 00-.75.75v.75m7.5-3.75h-9c-1.1 0-2 .9-2 2v2.25" />
-                                        </svg>
-                                        {% trans "Transactions" %}
-                                    </span>
-                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'transactions' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <ul x-show="openCategory === 'transactions'" x-cloak>
-                                    <li>
-                                        <a href="{% url 'sales:list' %}" class="{% if 'sales' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Sales" %}
-                                        </a>
-                                    </li>
-                                     <li>
-                                        <a href="{% url 'purchases:list' %}" class="{% if 'purchases' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Purchases" %}
-                                        </a>
-                                    </li>
+                                    <li><a href="{% url 'cattle:list' %}"
+                                           class="{% if 'cattle' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Herd Registry" %}</a></li>
+                                    <li><a href="{% url 'weight:session-list' %}"
+                                           class="{% if 'weight' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Weighing Sessions" %}</a></li>
+                                    <li><a href="{% url 'locations:list' %}"
+                                           class="{% if 'locations' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Locations" %}</a></li>
                                 </ul>
                             </li>
 
-                            <!-- Health: Heart -->
+    <!-- Reproduction (Breeding Cycle) -->
                             <li>
-                                <button type="button" @click="openCategory === 'health' ? openCategory = null : openCategory = 'health'" 
+                                <button type="button" @click="openCategory === 'reproduction' ? openCategory = null : openCategory = 'reproduction'"
+                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                        :class="openCategory === 'reproduction' ? 'text-stone-900' : ''">
+                                    <span class="flex gap-x-3 items-center">
+                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                        </svg>
+                                        {% trans "Reproduction" %}
+                                    </span>
+                                    <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                         :class="openCategory === 'reproduction' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <ul x-show="openCategory === 'reproduction'" x-cloak>
+                                    <li><a href="{% url 'reproduction:overview' %}"
+                                           class="{% if request.resolver_match.url_name == 'overview' and 'reproduction' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Overview" %}</a></li>
+                                    <li><a href="{% url 'reproduction:breeding_list' %}"
+                                           class="{% if request.resolver_match.url_name == 'breeding_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Breeding Events" %}</a></li>
+                                    <li><a href="{% url 'reproduction:calving_list' %}"
+                                           class="{% if request.resolver_match.url_name == 'calving_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Calving Records" %}</a></li>
+                                    <li><a href="{% url 'reproduction:diagnosis_list' %}"
+                                           class="{% if request.resolver_match.url_name == 'diagnosis_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Pregnancy Checks" %}</a></li>
+                                    <li><a href="{% url 'reproduction:season_list' %}"
+                                           class="{% if request.resolver_match.url_name == 'season_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Seasons" %}</a></li>
+                                </ul>
+                            </li>
+
+    <!-- Nutrition (Feed Management) -->
+                            <li>
+                                <button type="button" @click="openCategory === 'nutrition' ? openCategory = null : openCategory = 'nutrition'"
+                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                        :class="openCategory === 'nutrition' ? 'text-stone-900' : ''">
+                                    <span class="flex gap-x-3 items-center">
+                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                  d="M6 6.878V6a2.25 2.25 0 012.25-2.25h7.5A2.25 2.25 0 0118 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 004.5 9v.878m13.5-3A2.25 2.25 0 0119.5 9v.878m0 0a2.246 2.246 0 00-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0121 12v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6c0-.98.626-1.813 1.5-2.122" />
+                                        </svg>
+                                        {% trans "Nutrition" %}
+                                    </span>
+                                    <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                         :class="openCategory === 'nutrition' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <ul x-show="openCategory === 'nutrition'" x-cloak>
+                                    <li><a href="{% url 'nutrition:event-list' %}"
+                                           class="{% if request.resolver_match.url_name == 'event-list' and 'nutrition' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Feeding Log" %}</a></li>
+                                    <li><a href="{% url 'nutrition:diet-list' %}"
+                                           class="{% if request.resolver_match.url_name == 'diet-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Diets" %}</a></li>
+                                    <li><a href="{% url 'nutrition:ingredient-list' %}"
+                                           class="{% if request.resolver_match.url_name == 'ingredient-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Ingredients" %}</a></li>
+                                </ul>
+                            </li>
+
+    <!-- Health (Sanitary Management) -->
+                            <li>
+                                <button type="button" @click="openCategory === 'health' ? openCategory = null : openCategory = 'health'"
                                         class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
                                         :class="openCategory === 'health' ? 'text-stone-900' : ''">
                                     <span class="flex gap-x-3 items-center">
@@ -160,397 +174,396 @@
                                         </svg>
                                         {% trans "Health" %}
                                     </span>
-                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'health' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                    <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                         :class="openCategory === 'health' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                              clip-rule="evenodd" />
                                     </svg>
                                 </button>
                                 <ul x-show="openCategory === 'health'" x-cloak>
-                                    <li>
-                                        <a href="{% url 'health:event-list' %}" class="{% if request.resolver_match.url_name == 'event-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Sanitary Events" %}
-                                        </a>
-                                    </li>
-                                     <li>
-                                        <a href="{% url 'health:medication-list' %}" class="{% if 'medication' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Medications" %}
-                                        </a>
-                                    </li>
+                                    <li><a href="{% url 'health:event-list' %}"
+                                           class="{% if request.resolver_match.url_name == 'event-list' and 'health' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sanitary Events" %}</a></li>
+                                    <li><a href="{% url 'health:medication-list' %}"
+                                           class="{% if 'medication' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Medications" %}</a></li>
                                 </ul>
                             </li>
-                            <!-- Reproduction -->
-                            <li>
-                                <button type="button" @click="openCategory === 'reproduction' ? openCategory = null : openCategory = 'reproduction'" 
-                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                        :class="openCategory === 'reproduction' ? 'text-stone-900' : ''">
-                                    <span class="flex gap-x-3 items-center">
-                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+
+    <!-- Financials -->
+                                <li>
+                                    <button type="button" @click="openCategory === 'financials' ? openCategory = null : openCategory = 'financials'"
+                                            class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                            :class="openCategory === 'financials' ? 'text-stone-900' : ''">
+                                        <span class="flex gap-x-3 items-center">
+                                            <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 2.025v.75c0 .414.336.75.75.75H18a.75.75 0 00-.75.75v.75m7.5-3.75h-9c-1.1 0-2 .9-2 2v2.25" />
+                                            </svg>
+                                            {% trans "Financials" %}
+                                        </span>
+                                        <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                             :class="openCategory === 'financials' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                                  clip-rule="evenodd" />
                                         </svg>
-                                        {% trans "Reproduction" %}
-                                    </span>
-                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'reproduction' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <ul x-show="openCategory === 'reproduction'" x-cloak>
-                                    <li><a href="{% url 'reproduction:overview' %}" class="{% if request.resolver_match.url_name == 'overview' and 'reproduction' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Overview" %}</a></li>
-                                    <li><a href="{% url 'reproduction:breeding_list' %}" class="{% if request.resolver_match.url_name == 'breeding_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Breeding Events" %}</a></li>
-                                    <li><a href="{% url 'reproduction:diagnosis_list' %}" class="{% if request.resolver_match.url_name == 'diagnosis_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Pregnancy Checks" %}</a></li>
-                                    <li><a href="{% url 'reproduction:calving_list' %}" class="{% if request.resolver_match.url_name == 'calving_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Calving Records" %}</a></li>
-                                    <li><a href="{% url 'reproduction:season_list' %}" class="{% if request.resolver_match.url_name == 'season_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Reproductive Seasons" %}</a></li>
-                                </ul>
-                            </li>
-                            
-                            <!-- Business: Briefcase -->
-                            <li>
-                                <button type="button" @click="openCategory === 'business' ? openCategory = null : openCategory = 'business'" 
-                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                        :class="openCategory === 'business' ? 'text-stone-900' : ''">
-                                    <span class="flex gap-x-3 items-center">
-                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.111 48.111 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
-                                        </svg>
-                                        {% trans "Business" %}
-                                    </span>
-                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'business' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <ul x-show="openCategory === 'business'" x-cloak>
+                                    </button>
+                                    <ul x-show="openCategory === 'financials'" x-cloak>
+                                        <li><a href="{% url 'sales:list' %}"
+                                               class="{% if 'sales' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sales" %}</a></li>
+                                        <li><a href="{% url 'purchases:list' %}"
+                                               class="{% if 'purchases' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Purchases" %}</a></li>
+                                        <li><a href="{% url 'partners:list' %}"
+                                               class="{% if 'partners' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Partners" %}</a></li>
+                                    </ul>
+                                </li>
+
+                                {% if request.user.is_superuser %}
+    <!-- Administration -->
                                     <li>
-                                        <a href="{% url 'partners:list' %}" class="{% if 'partners' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Partners" %}
-                                        </a>
+                                        <button type="button"
+                                                @click="openCategory === 'administration' ? openCategory = null : openCategory = 'administration'"
+                                                class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                                :class="openCategory === 'administration' ? 'text-stone-900' : ''">
+                                            <span class="flex gap-x-3 items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                                     stroke="currentColor" class="h-6 w-6 shrink-0">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.581-.495.644-.869l.214-1.281z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                </svg>
+                                                {% trans "Administration" %}
+                                            </span>
+                                            <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                                 :class="openCategory === 'administration' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                      d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                                      clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        <ul x-show="openCategory === 'administration'" x-cloak>
+                                            <li><a href="{% url 'authentication:user-list' %}"
+                                                   class="{% if 'authentication' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Users" %}</a></li>
+                                        </ul>
                                     </li>
-                                </ul>
-                            </li>
-                            
-                            {% if request.user.is_superuser %}
-                            <!-- Administration: Cog/Settings -->
+                                {% endif %}
+                            </ul>                    </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Desktop Sidebar (Static) -->
+        <div id="static-sidebar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+            <div class="flex grow flex-col overflow-y-auto bg-stone-300 pb-4">
+                <div class="flex h-16 shrink-0 items-center justify-center">
+                    <a href="{% url 'dashboard:home' %}">
+                        <img class="h-8 w-auto" src="{% static 'img/logo.png' %}" alt="CNV">
+                    </a>
+                </div>
+
+                <nav class="flex flex-1 flex-col" aria-label="Sidebar">
+                    <ul role="list" class="flex flex-1 flex-col gap-y-0">
+    <!-- Dashboard -->
+                        <li>
+                            <a href="{% url 'dashboard:home' %}"
+                               class="{% if request.resolver_match.url_name == 'home' %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:bg-stone-400 hover:text-stone-900{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6">
+                                <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                                </svg>
+                                {% trans "Dashboard" %}
+                            </a>
+                        </li>
+
+    <!-- Animals (Herd & Land) -->
+                        <li>
+                            <button type="button" @click="openCategory === 'animals' ? openCategory = null : openCategory = 'animals'"
+                                    class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                    :class="openCategory === 'animals' ? 'text-stone-900' : ''">
+                                <span class="flex gap-x-3 items-center">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                    </svg>
+                                    {% trans "Animals" %}
+                                </span>
+                                <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                     :class="openCategory === 'animals' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <ul x-show="openCategory === 'animals'" x-cloak>
+                                <li><a href="{% url 'cattle:list' %}"
+                                       class="{% if 'cattle' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Herd Registry" %}</a></li>
+                                <li><a href="{% url 'weight:session-list' %}"
+                                       class="{% if 'weight' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Weighing Sessions" %}</a></li>
+                                <li><a href="{% url 'locations:list' %}"
+                                       class="{% if 'locations' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Locations" %}</a></li>
+                            </ul>
+                        </li>
+
+    <!-- Reproduction (Breeding Cycle) -->
+                        <li>
+                            <button type="button" @click="openCategory === 'reproduction' ? openCategory = null : openCategory = 'reproduction'"
+                                    class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                    :class="openCategory === 'reproduction' ? 'text-stone-900' : ''">
+                                <span class="flex gap-x-3 items-center">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+                                    {% trans "Reproduction" %}
+                                </span>
+                                <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                     :class="openCategory === 'reproduction' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <ul x-show="openCategory === 'reproduction'" x-cloak>
+                                <li><a href="{% url 'reproduction:overview' %}"
+                                       class="{% if request.resolver_match.url_name == 'overview' and 'reproduction' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Overview" %}</a></li>
+                                <li><a href="{% url 'reproduction:breeding_list' %}"
+                                       class="{% if request.resolver_match.url_name == 'breeding_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Breeding Events" %}</a></li>
+                                <li><a href="{% url 'reproduction:calving_list' %}"
+                                       class="{% if request.resolver_match.url_name == 'calving_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Calving Records" %}</a></li>
+                                <li><a href="{% url 'reproduction:diagnosis_list' %}"
+                                       class="{% if request.resolver_match.url_name == 'diagnosis_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Pregnancy Checks" %}</a></li>
+                                <li><a href="{% url 'reproduction:season_list' %}"
+                                       class="{% if request.resolver_match.url_name == 'season_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Seasons" %}</a></li>
+                            </ul>
+                        </li>
+
+    <!-- Nutrition (Feed Management) -->
+                        <li>
+                            <button type="button" @click="openCategory === 'nutrition' ? openCategory = null : openCategory = 'nutrition'"
+                                    class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                    :class="openCategory === 'nutrition' ? 'text-stone-900' : ''">
+                                <span class="flex gap-x-3 items-center">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M6 6.878V6a2.25 2.25 0 012.25-2.25h7.5A2.25 2.25 0 0118 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 004.5 9v.878m13.5-3A2.25 2.25 0 0119.5 9v.878m0 0a2.246 2.246 0 00-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0121 12v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6c0-.98.626-1.813 1.5-2.122" />
+                                    </svg>
+                                    {% trans "Nutrition" %}
+                                </span>
+                                <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                     :class="openCategory === 'nutrition' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <ul x-show="openCategory === 'nutrition'" x-cloak>
+                                <li><a href="{% url 'nutrition:event-list' %}"
+                                       class="{% if request.resolver_match.url_name == 'event-list' and 'nutrition' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Feeding Log" %}</a></li>
+                                <li><a href="{% url 'nutrition:diet-list' %}"
+                                       class="{% if request.resolver_match.url_name == 'diet-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Diets" %}</a></li>
+                                <li><a href="{% url 'nutrition:ingredient-list' %}"
+                                       class="{% if request.resolver_match.url_name == 'ingredient-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Ingredients" %}</a></li>
+                            </ul>
+                        </li>
+
+    <!-- Health (Sanitary Management) -->
+                        <li>
+                            <button type="button" @click="openCategory === 'health' ? openCategory = null : openCategory = 'health'"
+                                    class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                    :class="openCategory === 'health' ? 'text-stone-900' : ''">
+                                <span class="flex gap-x-3 items-center">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                    </svg>
+                                    {% trans "Health" %}
+                                </span>
+                                <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                     :class="openCategory === 'health' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <ul x-show="openCategory === 'health'" x-cloak>
+                                <li><a href="{% url 'health:event-list' %}"
+                                       class="{% if request.resolver_match.url_name == 'event-list' and 'health' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sanitary Events" %}</a></li>
+                                <li><a href="{% url 'health:medication-list' %}"
+                                       class="{% if 'medication' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Medications" %}</a></li>
+                            </ul>
+                        </li>
+
+    <!-- Financials -->
+                        <li>
+                            <button type="button" @click="openCategory === 'financials' ? openCategory = null : openCategory = 'financials'"
+                                    class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                    :class="openCategory === 'financials' ? 'text-stone-900' : ''">
+                                <span class="flex gap-x-3 items-center">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 2.025v.75c0 .414.336.75.75.75H18a.75.75 0 00-.75.75v.75m7.5-3.75h-9c-1.1 0-2 .9-2 2v2.25" />
+                                    </svg>
+                                    {% trans "Financials" %}
+                                </span>
+                                <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                     :class="openCategory === 'financials' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <ul x-show="openCategory === 'financials'" x-cloak>
+                                <li><a href="{% url 'sales:list' %}"
+                                       class="{% if 'sales' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sales" %}</a></li>
+                                <li><a href="{% url 'purchases:list' %}"
+                                       class="{% if 'purchases' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Purchases" %}</a></li>
+                                <li><a href="{% url 'partners:list' %}"
+                                       class="{% if 'partners' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Partners" %}</a></li>
+                            </ul>
+                        </li>
+
+                        {% if request.user.is_superuser %}
+    <!-- Administration -->
                             <li>
-                                <button type="button" @click="openCategory === 'administration' ? openCategory = null : openCategory = 'administration'" 
+                                <button type="button"
+                                        @click="openCategory === 'administration' ? openCategory = null : openCategory = 'administration'"
                                         class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
                                         :class="openCategory === 'administration' ? 'text-stone-900' : ''">
                                     <span class="flex gap-x-3 items-center">
-                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107-1.204l-.527-.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                             stroke="currentColor" class="h-6 w-6 shrink-0">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                  d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.581-.495.644-.869l.214-1.281z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 0 1 6 0z" />
                                         </svg>
                                         {% trans "Administration" %}
                                     </span>
-                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'administration' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                                    <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                         :class="openCategory === 'administration' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                              clip-rule="evenodd" />
                                     </svg>
                                 </button>
                                 <ul x-show="openCategory === 'administration'" x-cloak>
-                                    <li>
-                                        <a href="{% url 'authentication:user-list' %}" class="{% if 'authentication' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Users" %}
-                                        </a>
-                                    </li>
+                                    <li><a href="{% url 'authentication:user-list' %}"
+                                           class="{% if 'authentication' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Users" %}</a></li>
                                 </ul>
                             </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                </div>
+                        {% endif %}
+                    </ul>            </nav>
             </div>
-        </div>
-    </div>
-
-    <!-- Desktop Sidebar (Static) -->
-    <div id="static-sidebar" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div class="flex grow flex-col overflow-y-auto bg-stone-300 pb-4">
-            <div class="flex h-16 shrink-0 items-center justify-center">
-                <a href="{% url 'dashboard:home' %}">
-                    <img class="h-8 w-auto" src="{% static 'img/logo.png' %}" alt="CNV">
-                </a>
-            </div>
-            
-            <nav class="flex flex-1 flex-col">
-                <ul role="list" class="flex flex-1 flex-col gap-y-0">
-                    
-                    <!-- Dashboard: Squares 2x2 -->
-                    <li>
-                        <a href="{% url 'dashboard:home' %}" 
-                           class="{% if request.resolver_match.url_name == 'home' %}bg-stone-400 text-stone-900{% else %}text-stone-700 hover:bg-stone-400 hover:text-stone-900{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6">
-                            <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-                            </svg>
-                            {% trans "Dashboard" %}
-                        </a>
-                    </li>
-
-                            <!-- Animals -->
-                            <li>
-                                <button type="button" @click="openCategory === 'animals' ? openCategory = null : openCategory = 'animals'" 
-                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                        :class="openCategory === 'animals' ? 'text-stone-900' : ''">
-                                    <span class="flex gap-x-3 items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 shrink-0">
-                                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
-                                        </svg>
-                                        {% trans "Animals" %}
-                                    </span>
-                                     <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'animals' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <ul x-show="openCategory === 'animals'" x-cloak>
-                                    <li>
-                                        <a href="{% url 'cattle:list' %}" class="{% if 'cattle' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Cattle" %}
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'locations:list' %}" class="{% if 'locations' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">
-                                            {% trans "Locations" %}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-
-                    <!-- Weight: Scale -->
-                    <li>
-                        <button type="button" @click="openCategory === 'weight' ? openCategory = null : openCategory = 'weight'" 
-                                class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                :class="openCategory === 'weight' ? 'text-stone-900' : ''">
-                            <span class="flex gap-x-3 items-center">
-                                <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.011.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
-                                </svg>
-                                {% trans "Weight" %}
-                            </span>
-                             <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'weight' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        <ul x-show="openCategory === 'weight'" x-cloak>
-                            <li><a href="{% url 'weight:session-list' %}" class="{% if 'weight' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Weighing Sessions" %}</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Transactions: Banknotes -->
-                    <li>
-                        <button type="button" @click="openCategory === 'transactions' ? openCategory = null : openCategory = 'transactions'" 
-                                class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                :class="openCategory === 'transactions' ? 'text-stone-900' : ''">
-                            <span class="flex gap-x-3 items-center">
-                                <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 2.025v.75c0 .414.336.75.75.75H18a.75.75 0 00-.75.75v.75m7.5-3.75h-9c-1.1 0-2 .9-2 2v2.25" />
-                                </svg>
-                                {% trans "Transactions" %}
-                            </span>
-                             <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'transactions' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        <ul x-show="openCategory === 'transactions'" x-cloak>
-                            <li><a href="{% url 'sales:list' %}" class="{% if 'sales' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sales" %}</a></li>
-                            <li><a href="{% url 'purchases:list' %}" class="{% if 'purchases' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Purchases" %}</a></li>
-                        </ul>
-                    </li>
-
-                    <!-- Health: Heart -->
-                    <li>
-                        <button type="button" @click="openCategory === 'health' ? openCategory = null : openCategory = 'health'" 
-                                class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                :class="openCategory === 'health' ? 'text-stone-900' : ''">
-                            <span class="flex gap-x-3 items-center">
-                                <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                                </svg>
-                                {% trans "Health" %}
-                            </span>
-                             <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'health' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        <ul x-show="openCategory === 'health'" x-cloak>
-                            <li><a href="{% url 'health:event-list' %}" class="{% if request.resolver_match.url_name == 'event-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sanitary Events" %}</a></li>
-                            <li><a href="{% url 'health:medication-list' %}" class="{% if 'medication' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Medications" %}</a></li>
-                        </ul>
-                    </li>
-                    <!-- Reproduction -->
-                    <li>
-                        <button type="button" @click="openCategory === 'reproduction' ? openCategory = null : openCategory = 'reproduction'" 
-                                class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                :class="openCategory === 'reproduction' ? 'text-stone-900' : ''">
-                            <span class="flex gap-x-3 items-center">
-                                <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                </svg>
-                                {% trans "Reproduction" %}
-                            </span>
-                             <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'reproduction' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        <ul x-show="openCategory === 'reproduction'" x-cloak>
-                            <li><a href="{% url 'reproduction:overview' %}" class="{% if request.resolver_match.url_name == 'overview' and 'reproduction' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Overview" %}</a></li>
-                            <li><a href="{% url 'reproduction:breeding_list' %}" class="{% if request.resolver_match.url_name == 'breeding_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Breeding Events" %}</a></li>
-                            <li><a href="{% url 'reproduction:diagnosis_list' %}" class="{% if request.resolver_match.url_name == 'diagnosis_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Pregnancy Checks" %}</a></li>
-                            <li><a href="{% url 'reproduction:calving_list' %}" class="{% if request.resolver_match.url_name == 'calving_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Calving Records" %}</a></li>
-                            <li><a href="{% url 'reproduction:season_list' %}" class="{% if request.resolver_match.url_name == 'season_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Reproductive Seasons" %}</a></li>
-                        </ul>
-                    </li>
-                    
-                    <!-- Business: Briefcase -->
-                    <li>
-                        <button type="button" @click="openCategory === 'business' ? openCategory = null : openCategory = 'business'" 
-                                class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                :class="openCategory === 'business' ? 'text-stone-900' : ''">
-                            <span class="flex gap-x-3 items-center">
-                                <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.111 48.111 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
-                                </svg>
-                                {% trans "Business" %}
-                            </span>
-                             <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'business' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        <ul x-show="openCategory === 'business'" x-cloak>
-                            <li><a href="{% url 'partners:list' %}" class="{% if 'partners' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Partners" %}</a></li>
-                        </ul>
-                    </li>
-
-                    {% if request.user.is_superuser %}
-                    <!-- Administration -->
-                    <li>
-                        <button type="button" @click="openCategory === 'administration' ? openCategory = null : openCategory = 'administration'" 
-                                class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
-                                :class="openCategory === 'administration' ? 'text-stone-900' : ''">
-                            <span class="flex gap-x-3 items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 shrink-0">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                                </svg>
-                                {% trans "Administration" %}
-                            </span>
-                             <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200" :class="openCategory === 'administration' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        <ul x-show="openCategory === 'administration'" x-cloak>
-                            <li><a href="{% url 'authentication:user-list' %}" class="{% if 'authentication' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Users" %}</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
         <!-- Sidebar Shadow (Overlay on top of content, starting below top bar) -->
-        <div class="absolute top-16 bottom-0 left-0 right-0 pointer-events-none shadow-[4px_0_24px_rgba(0,0,0,0.15)] clip-right" style="position: absolute; right: 0; width: 100%; top: 4rem; bottom: 0; pointer-events: none; box-shadow: 5px 0 15px -3px rgba(0, 0, 0, 0.25); z-index: 100; clip-path: inset(0px -50px 0px 0px);"></div>
-    </div>
+            <div class="absolute top-16 bottom-0 left-0 right-0 pointer-events-none shadow-[4px_0_24px_rgba(0,0,0,0.15)] clip-right" style="position: absolute; right: 0; width: 100%; top: 4rem; bottom: 0; pointer-events: none; box-shadow: 5px 0 15px -3px rgba(0, 0, 0, 0.25); z-index: 100; clip-path: inset(0px -50px 0px 0px);"></div>
+        </div>
 
     <!-- Main Content Area -->
-    <div id="main-content" class="lg:pl-72">
+        <div id="main-content" class="lg:pl-72">
         <!-- Top Bar -->
-        <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 bg-stone-300 px-4 sm:gap-x-6 sm:px-6 lg:px-8" style="box-shadow: 0 5px 15px -3px rgba(0, 0, 0, 0.25);">
-            <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" @click="sidebarOpen = true">
-                <span class="sr-only">{% trans "Open sidebar" %}</span>
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m16.5 5.25H12" />
-                </svg>
-            </button>
-            
-            <div class="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true"></div>
+            <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 bg-stone-300 px-4 sm:gap-x-6 sm:px-6 lg:px-8" style="box-shadow: 0 5px 15px -3px rgba(0, 0, 0, 0.25);">
+                <button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" @click="sidebarOpen = true">
+                    <span class="sr-only">{% trans "Open sidebar" %}</span>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m16.5 5.25H12" />
+                    </svg>
+                </button>
 
-            <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+                <div class="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true"></div>
+
+                <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
                 <!-- Spacer (Push to right) -->
-                <div class="flex flex-1"></div>
-                
+                    <div class="flex flex-1"></div>
+
                 <!-- Profile Dropdown -->
-                <div class="flex items-center lg:items-stretch gap-x-4 lg:gap-x-6 h-full"> 
+                    <div class="flex items-center lg:items-stretch gap-x-4 lg:gap-x-6 h-full">
                     <!-- Note: Removed items-center from LG to allow stretch, kept h-full -->
-                    <div class="relative h-full" x-data="{ open: false }">
-                        <button type="button" 
-                                class="flex h-full items-center gap-x-3 -mr-4 lg:-mr-8 px-4 lg:px-8 text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900 transition-colors duration-200" 
-                                id="user-menu-button" 
-                                aria-expanded="false" 
-                                aria-haspopup="true" 
-                                @click="open = !open" 
-                                @click.outside="open = false">
-                            
+                        <div class="relative h-full" x-data="{ open: false }">
+                            <button type="button"
+                                    class="flex h-full items-center gap-x-3 -mr-4 lg:-mr-8 px-4 lg:px-8 text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900 transition-colors duration-200"
+                                    id="user-menu-button"
+                                    aria-expanded="false"
+                                    aria-haspopup="true"
+                                    @click="open = !open"
+                                    @click.outside="open = false">
+
                             <!-- Profile Image -->
-                            {% if user.profile_image %}
-                                <img class="h-8 w-8 rounded-full bg-stone-50 object-cover" src="{{ user.profile_image.url }}" alt="{{ user.get_full_name }}">
-                            {% else %}
-                                <img class="h-8 w-8 rounded-full bg-stone-50 object-cover" src="{% static 'img/default_profile.png' %}" alt="{{ user.get_full_name }}">
-                            {% endif %}
-                            
+                                {% if user.profile_image %}
+                                    <img class="h-8 w-8 rounded-full bg-stone-50 object-cover" src="{{ user.profile_image.url }}" alt="{{ user.get_full_name }}">
+                                {% else %}
+                                    <img class="h-8 w-8 rounded-full bg-stone-50 object-cover" src="{% static 'img/default_profile.png' %}" alt="{{ user.get_full_name }}">
+                                {% endif %}
+
                             <!-- Name -->
-                            <span class="hidden lg:flex lg:items-center">
-                                <span class="sr-only">{% trans "Open user menu" %}</span>
-                                <span class="" aria-hidden="true">{{ user.get_full_name|default:user.username }}</span>
-                            </span>
+                                <span class="hidden lg:flex lg:items-center">
+                                    <span class="sr-only">{% trans "Open user menu" %}</span>
+                                    <span class="" aria-hidden="true">{{ user.get_full_name|default:user.username }}</span>
+                                </span>
 
                             <!-- Chevron -->
-                            <svg class="h-5 w-5 text-stone-500 group-hover:text-stone-900 transition-transform duration-200" 
-                                 :class="open ? 'rotate-180' : ''" 
-                                 viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        
+                                <svg class="h-5 w-5 text-stone-500 group-hover:text-stone-900 transition-transform duration-200"
+                                     :class="open ? 'rotate-180' : ''"
+                                     viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+
                         <!-- Dropdown Menu -->
-                        <div class="absolute right-0 top-full z-10 w-48 origin-top-right -mr-4 lg:-mr-8 bg-stone-200 py-0 shadow-lg ring-1 ring-stone-900/5 focus:outline-none" 
-                             role="menu" 
-                             aria-orientation="vertical" 
-                             aria-labelledby="user-menu-button" 
-                             tabindex="-1" 
-                             x-show="open" 
-                             x-transition:enter="transition ease-out duration-100" 
-                             x-transition:enter-start="transform opacity-0 scale-95" 
-                             x-transition:enter-end="transform opacity-100 scale-100" 
-                             x-transition:leave="transition ease-in duration-75" 
-                             x-transition:leave-start="transform opacity-100 scale-100" 
-                             x-transition:leave-end="transform opacity-0 scale-95" 
-                             x-cloak>
-                             
-                            <a href="{% url 'authentication:user-detail' request.user.pk %}" class="block px-3 py-2 text-sm leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900" role="menuitem" tabindex="-1">{% trans "Your profile" %}</a>
-                            <form method="post" action="{% url 'authentication:logout' %}">
-                                {% csrf_token %}
-                                <button type="submit" class="block w-full text-left px-3 py-2 text-sm leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900" role="menuitem" tabindex="-1">{% trans "Sign out" %}</button>
-                            </form>
+                            <div class="absolute right-0 top-full z-10 w-48 origin-top-right -mr-4 lg:-mr-8 bg-stone-200 py-0 shadow-lg ring-1 ring-stone-900/5 focus:outline-none"
+                                 role="menu"
+                                 aria-orientation="vertical"
+                                 aria-labelledby="user-menu-button"
+                                 tabindex="-1"
+                                 x-show="open"
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 x-cloak>
+
+                                <a href="{% url 'authentication:user-detail' request.user.pk %}" class="block px-3 py-2 text-sm leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900" role="menuitem" tabindex="-1">{% trans "Your profile" %}</a>
+                                <form method="post" action="{% url 'authentication:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="block w-full text-left px-3 py-2 text-sm leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900" role="menuitem" tabindex="-1">{% trans "Sign out" %}</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
         <!-- Main Body -->
-        <main class="py-10">
-            <div class="px-4 sm:px-6 lg:px-8">
+            <main class="py-10">
+                <div class="px-4 sm:px-6 lg:px-8">
                 <!-- Messages -->
-                {% if messages %}
-                <div class="mb-4">
-                    {% for message in messages %}
-                    <div class="rounded-md p-4 mb-2 {% if message.tags == 'error' %}bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/10{% elif message.tags == 'success' %}bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/10{% else %}bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10{% endif %}">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                {% if message.tags == 'error' %}
-                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
-                                </svg>
-                                {% elif message.tags == 'success' %}
-                                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
-                                </svg>
-                                {% endif %}
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm font-medium">{{ message }}</p>
-                            </div>
+                    {% if messages %}
+                        <div class="mb-4">
+                            {% for message in messages %}
+                                <div class="rounded-md p-4 mb-2 {% if message.tags == 'error' %}bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/10{% elif message.tags == 'success' %}bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/10{% else %}bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-700/10{% endif %}">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            {% if message.tags == 'error' %}
+                                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                                                </svg>
+                                            {% elif message.tags == 'success' %}
+                                                <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                                                </svg>
+                                            {% endif %}
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium">{{ message }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
-                    </div>
-                    {% endfor %}
+                    {% endif %}
+
+                    {% block content %}{% endblock %}
                 </div>
-                {% endif %}
-                
-                {% block content %}{% endblock %}
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
-</div>
 {% endblock %}
