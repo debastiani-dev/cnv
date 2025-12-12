@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView, View
 
+from apps.base.views.list_mixins import StandardizedListMixin
 from apps.base.views.mixins import HandleProtectedErrorMixin, SafeDeleteMixin
 from apps.nutrition.forms import DietForm, DietItemFormSet
 from apps.nutrition.models import Diet
@@ -18,14 +19,20 @@ DIET_LIST_URL = "nutrition:diet-list"
 DIET_NOT_FOUND_MSG = _("Diet not found.")
 
 
-class DietListView(ListView):
+class DietListView(StandardizedListMixin, ListView):
     model = Diet
     template_name = "nutrition/diet_list.html"
     context_object_name = "diets"
     paginate_by = 20
 
     def get_queryset(self):
-        return Diet.objects.prefetch_related("items__ingredient").all()
+        queryset = Diet.objects.prefetch_related("items__ingredient").order_by("name")
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+
+        return queryset
 
 
 class DietCreateView(CreateView):

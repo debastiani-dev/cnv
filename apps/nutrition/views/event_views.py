@@ -1,21 +1,43 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, ListView
 
+from apps.base.views.list_mixins import StandardizedListMixin
 from apps.nutrition.forms import FeedingEventForm
 from apps.nutrition.models.event import FeedingEvent
 from apps.nutrition.services.feeding_service import FeedingService
 
 
-class FeedingEventListView(ListView):
+class FeedingEventListView(LoginRequiredMixin, StandardizedListMixin, ListView):
     model = FeedingEvent
     template_name = "nutrition/event_list.html"
     context_object_name = "events"
     paginate_by = 20
     ordering = ["-date", "-created_at"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(
+                Q(location__name__icontains=search_query)
+                | Q(diet__name__icontains=search_query)
+            )
+
+        queryset = self.filter_by_date(queryset)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # date params and search_query are handled by mixin
+        return context
 
 
 class FeedingEventCreateView(CreateView):

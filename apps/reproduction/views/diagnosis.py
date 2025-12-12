@@ -8,28 +8,54 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView, ListView
 
+from apps.base.views.list_mixins import StandardizedListMixin
 from apps.cattle.models.cattle import Cattle
 from apps.reproduction.models import BreedingEvent, PregnancyCheck
 from apps.reproduction.services.reproduction_service import ReproductionService
 
+DIAGNOSIS_LIST_URL = "reproduction:diagnosis_list"
+PREGNANCY_CHECK_NOT_FOUND_MSG = _("Pregnancy Check not found.")
 
-class DiagnosisListView(ListView):
+
+class DiagnosisListView(StandardizedListMixin, ListView):
     model = PregnancyCheck
     template_name = "reproduction/pregnancy_check_list.html"
     context_object_name = "checks"
     paginate_by = 20
 
     def get_queryset(self):
-        return PregnancyCheck.objects.select_related("breeding_event__dam").order_by(
-            "-date"
-        )
+        queryset = PregnancyCheck.objects.select_related(
+            "breeding_event__dam"
+        ).order_by("-date")
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(breeding_event__dam__tag__icontains=search_query)
+
+        result = self.request.GET.get("result")
+        if result:
+            queryset = queryset.filter(result=result)
+
+        queryset = self.filter_by_date(queryset)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # search_query and dates handled by mixin
+
+        context["selected_result"] = self.request.GET.get("result", "")
+
+        context["result_choices"] = PregnancyCheck.RESULT_CHOICES
+
+        return context
 
 
 class DiagnosisCreateView(CreateView):
     model = PregnancyCheck
     fields = ["breeding_event", "date", "result", "fetus_days"]
     template_name = "reproduction/pregnancy_check_form.html"
-    success_url = reverse_lazy("reproduction:diagnosis_list")
+    success_url = reverse_lazy(DIAGNOSIS_LIST_URL)
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -69,9 +95,9 @@ class DiagnosisDeleteView(LoginRequiredMixin, View):
         except ProtectedError as e:
             messages.error(request, str(e))
         except PregnancyCheck.DoesNotExist:
-            messages.error(request, _("Pregnancy Check not found."))
+            messages.error(request, PREGNANCY_CHECK_NOT_FOUND_MSG)
 
-        return redirect("reproduction:diagnosis_list")
+        return redirect(DIAGNOSIS_LIST_URL)
 
     def get(self, request, pk):
         try:
@@ -82,8 +108,8 @@ class DiagnosisDeleteView(LoginRequiredMixin, View):
                 {"object": check},
             )
         except PregnancyCheck.DoesNotExist:
-            messages.error(request, _("Pregnancy Check not found."))
-            return redirect("reproduction:diagnosis_list")
+            messages.error(request, PREGNANCY_CHECK_NOT_FOUND_MSG)
+            return redirect(DIAGNOSIS_LIST_URL)
 
 
 class DiagnosisTrashListView(LoginRequiredMixin, ListView):
@@ -103,9 +129,9 @@ class DiagnosisRestoreView(LoginRequiredMixin, View):
         except ValueError as e:
             messages.error(request, str(e))
         except PregnancyCheck.DoesNotExist:
-            messages.error(request, _("Pregnancy Check not found."))
+            messages.error(request, PREGNANCY_CHECK_NOT_FOUND_MSG)
 
-        return redirect("reproduction:diagnosis_list")
+        return redirect(DIAGNOSIS_LIST_URL)
 
     def get(self, request, pk):
         try:
@@ -116,8 +142,8 @@ class DiagnosisRestoreView(LoginRequiredMixin, View):
                 {"event": event},
             )
         except PregnancyCheck.DoesNotExist:
-            messages.error(request, _("Pregnancy Check not found."))
-            return redirect("reproduction:diagnosis_list")
+            messages.error(request, PREGNANCY_CHECK_NOT_FOUND_MSG)
+            return redirect(DIAGNOSIS_LIST_URL)
 
 
 class DiagnosisPermanentDeleteView(LoginRequiredMixin, View):
@@ -126,7 +152,7 @@ class DiagnosisPermanentDeleteView(LoginRequiredMixin, View):
             ReproductionService.hard_delete_pregnancy_check(pk)
             messages.success(request, _("Pregnancy Check permanently deleted."))
         except PregnancyCheck.DoesNotExist:
-            messages.error(request, _("Pregnancy Check not found."))
+            messages.error(request, PREGNANCY_CHECK_NOT_FOUND_MSG)
 
         return redirect("reproduction:diagnosis_trash")
 
@@ -139,5 +165,5 @@ class DiagnosisPermanentDeleteView(LoginRequiredMixin, View):
                 {"event": event},
             )
         except PregnancyCheck.DoesNotExist:
-            messages.error(request, _("Pregnancy Check not found."))
+            messages.error(request, PREGNANCY_CHECK_NOT_FOUND_MSG)
             return redirect("reproduction:diagnosis_trash")

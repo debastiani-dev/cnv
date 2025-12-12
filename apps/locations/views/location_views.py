@@ -17,7 +17,7 @@ from django.views.generic import (
 
 from apps.base.views.mixins import HandleProtectedErrorMixin, SafeDeleteMixin
 from apps.locations.forms import LocationForm
-from apps.locations.models import Location, LocationStatus
+from apps.locations.models import Location, LocationStatus, LocationType
 from apps.locations.services import LocationService
 
 LOCATION_LIST_URL = "locations:list"
@@ -28,10 +28,27 @@ class LocationListView(LoginRequiredMixin, ListView):
     model = Location
     template_name = "locations/location_list.html"
     context_object_name = "locations"
+    paginate_by = 10
 
     def get_queryset(self):
-        # Prefetch cattle to optimize count queries in service
-        return Location.objects.prefetch_related("cattle").order_by("name")
+        queryset = Location.objects.prefetch_related("cattle").order_by("name")
+
+        # Search
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+
+        # Filter by Type
+        location_type = self.request.GET.get("type")
+        if location_type:
+            queryset = queryset.filter(type=location_type)
+
+        # Filter by Status
+        status = self.request.GET.get("status")
+        if status:
+            queryset = queryset.filter(status=status)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,6 +79,14 @@ class LocationListView(LoginRequiredMixin, ListView):
             location_stats[location.pk] = stats
 
         context["location_stats"] = location_stats
+
+        # Filter Context
+        context["search_query"] = self.request.GET.get("q", "")
+        context["selected_type"] = self.request.GET.get("type", "")
+        context["selected_status"] = self.request.GET.get("status", "")
+        context["type_choices"] = LocationType.choices
+        context["status_choices"] = LocationStatus.choices
+
         return context
 
 

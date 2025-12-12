@@ -45,10 +45,11 @@ class CattleService:
         search_query: Optional[str] = None,
         breed: Optional[str] = None,
         status: Optional[str] = None,
+        location_id: Optional[str] = None,
     ) -> QuerySet[Cattle]:
         """
         Returns all cattle records ordered by tag.
-        Optionally filters by tag, name, breed, or status.
+        Optionally filters by tag, name, breed, status, or location.
         """
         queryset = Cattle.objects.all().order_by("tag")
 
@@ -62,6 +63,9 @@ class CattleService:
 
         if status:
             queryset = queryset.filter(status=status)
+
+        if location_id:
+            queryset = queryset.filter(location_id=location_id)
 
         return queryset
 

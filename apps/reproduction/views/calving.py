@@ -1,26 +1,52 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, Q
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView, ListView
 
+from apps.base.views.list_mixins import StandardizedListMixin
 from apps.reproduction.forms import CalvingForm
 from apps.reproduction.models import Calving
 from apps.reproduction.services.reproduction_service import ReproductionService
 
 
-class CalvingListView(ListView):
+class CalvingListView(LoginRequiredMixin, StandardizedListMixin, ListView):
     model = Calving
     template_name = "reproduction/calving_list.html"
     context_object_name = "calvings"
     paginate_by = 20
 
     def get_queryset(self):
-        return Calving.objects.select_related("dam", "calf").order_by("-date")
+        queryset = Calving.objects.select_related("dam", "calf").order_by("-date")
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(
+                Q(dam__tag__icontains=search_query)
+                | Q(calf__tag__icontains=search_query)
+            )
+
+        ease = self.request.GET.get("ease")
+        if ease:
+            queryset = queryset.filter(ease_of_birth=ease)
+
+        queryset = self.filter_by_date(queryset)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # search_query and dates handled by mixin
+
+        context["selected_ease"] = self.request.GET.get("ease", "")
+
+        context["ease_choices"] = Calving.EASE_CHOICES
+
+        return context
 
 
 class CalvingCreateView(CreateView):

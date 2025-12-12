@@ -20,6 +20,7 @@ from apps.cattle.forms import CattleForm
 from apps.cattle.models.cattle import Cattle
 from apps.cattle.services.cattle_service import CattleService
 from apps.health.services.health_service import HealthService
+from apps.locations.models import Location, LocationStatus
 from apps.weight.services.weight_service import WeightService
 
 
@@ -45,8 +46,13 @@ class CattleListView(LoginRequiredMixin, ListView):
         search_query = self.request.GET.get("q")
         breed = self.request.GET.get("breed")
         status = self.request.GET.get("status")
+        location_id = self.request.GET.get("location")
+
         return CattleService.get_all_cattle(
-            search_query=search_query, breed=breed, status=status
+            search_query=search_query,
+            breed=breed,
+            status=status,
+            location_id=location_id,
         )
 
     def get_context_data(self, **kwargs):
@@ -54,8 +60,12 @@ class CattleListView(LoginRequiredMixin, ListView):
         context["search_query"] = self.request.GET.get("q", "")
         context["selected_breed"] = self.request.GET.get("breed", "")
         context["selected_status"] = self.request.GET.get("status", "")
+        context["selected_location"] = self.request.GET.get("location", "")
         context["breed_choices"] = Cattle.BREED_CHOICES
         context["status_choices"] = Cattle.STATUS_CHOICES
+        context["locations"] = Location.objects.filter(
+            is_active=True, status=LocationStatus.ACTIVE
+        ).order_by("name")
         return context
 
 

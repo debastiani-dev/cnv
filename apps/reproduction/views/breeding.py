@@ -1,26 +1,56 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import CreateView, ListView
 
-from apps.reproduction.models import BreedingEvent
+from apps.base.views.list_mixins import StandardizedListMixin
+from apps.reproduction.models.reproduction import BreedingEvent
 from apps.reproduction.services.reproduction_service import ReproductionService
 
 
-class BreedingListView(ListView):
+class BreedingListView(StandardizedListMixin, ListView):
     model = BreedingEvent
     template_name = "reproduction/breeding_event_list.html"
     context_object_name = "events"
     paginate_by = 20
 
     def get_queryset(self):
-        return BreedingEvent.objects.select_related("dam", "sire", "batch").order_by(
-            "-date"
-        )
+        queryset = BreedingEvent.objects.select_related(
+            "dam", "sire", "batch"
+        ).order_by("-date")
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(
+                Q(dam__tag__icontains=search_query)
+                | Q(dam__name__icontains=search_query)
+                | Q(sire__tag__icontains=search_query)
+                | Q(sire__name__icontains=search_query)
+                | Q(sire_name__icontains=search_query)
+            )
+
+        method = self.request.GET.get("method")
+        if method:
+            queryset = queryset.filter(breeding_method=method)
+
+        queryset = self.filter_by_date(queryset)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # search_query and dates handled by mixin
+
+        context["selected_method"] = self.request.GET.get("method", "")
+
+        context["method_choices"] = BreedingEvent.METHOD_CHOICES
+
+        return context
 
 
 class BreedingCreateView(CreateView):

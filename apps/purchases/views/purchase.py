@@ -29,22 +29,30 @@ class PurchaseListView(LoginRequiredMixin, ListView):
         search_query = self.request.GET.get("q")
         partner_id = self.request.GET.get("partner")
 
-        return PurchaseService.get_all_purchases(
+        queryset = PurchaseService.get_all_purchases(
             search_query=search_query,
             partner_id=partner_id,
         )
+
+        date_after = self.request.GET.get("date_after")
+        date_before = self.request.GET.get("date_before")
+        if date_after:
+            queryset = queryset.filter(date__gte=date_after)
+        if date_before:
+            queryset = queryset.filter(date__lte=date_before)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context["search_query"] = self.request.GET.get("q", "")
         context["selected_partner"] = self.request.GET.get("partner", "")
-        # For purchases, maybe filter is_supplier=True? Or just all partners?
-        # Typically purchases come from Suppliers. Sales to Customers.
-        # But system allows both. I'll use is_supplier=True for dropdown context if strictly separate.
-        # Let's check Partner model again. is_customer, is_supplier.
-        # SaleListView used is_customer=True. I should probably use is_supplier=True here.
+        context["date_after"] = self.request.GET.get("date_after", "")
+        context["date_before"] = self.request.GET.get("date_before", "")
+
         context["partners"] = Partner.objects.filter(is_supplier=True)
+
         return context
 
 

@@ -4,6 +4,7 @@ from django.db.models import ProtectedError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -27,7 +28,27 @@ class PartnerListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         q = self.request.GET.get("q")
-        return PartnerService.get_partners(search_query=q)
+        role = self.request.GET.get("role")
+
+        queryset = PartnerService.get_partners(search_query=q)
+
+        if role == "customer":
+            queryset = queryset.filter(is_customer=True)
+        elif role == "supplier":
+            queryset = queryset.filter(is_supplier=True)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_query"] = self.request.GET.get("q", "")
+        context["selected_role"] = self.request.GET.get("role", "")
+        context["role_choices"] = [
+            ("customer", _("Customer")),
+            ("supplier", _("Supplier")),
+        ]
+
+        return context
 
 
 class PartnerTrashView(LoginRequiredMixin, ListView):

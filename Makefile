@@ -153,7 +153,9 @@ pytest:
 .PHONY: pytest-cov
 pytest-cov:
 	@echo "${GREEN}Running tests with coverage report${RESET}"
-	python -m pytest --cov=apps --cov-report=term-missing -v --tb=short --reuse-db --cache-clear $(opts)
+	docker compose \
+	-f docker-compose.test.yml \
+	run --rm web python -m pytest --cov=apps --cov-report=term-missing -v --tb=short --reuse-db --cache-clear $(opts)
 
 ## Installs frontend dependencies
 .PHONY: css-install
@@ -212,3 +214,13 @@ release-prod:
 	git tag -a prod-v$$version -m "Release prod-v$$version"; \
 	echo "Tag prod-v$$version created."; \
 	echo "Run 'git push origin --tags' to push."
+
+## Populates the database with mock data
+.PHONY: populate-db
+populate-db:
+	@echo "${GREEN}Cleaning database...${RESET}"
+	docker compose exec web python manage.py flush --no-input
+	@echo "${GREEN}Creating superuser...${RESET}"
+	@$(MAKE) dev/create-admin
+	@echo "${GREEN}Populating database with mock data...${RESET}"
+	docker compose exec web python manage.py populate_mock_data

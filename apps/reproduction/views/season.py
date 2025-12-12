@@ -16,7 +16,37 @@ class SeasonListView(LoginRequiredMixin, ListView):
     model = ReproductiveSeason
     template_name = "reproduction/season_list.html"
     context_object_name = "seasons"
+    context_object_name = "seasons"
+    paginate_by = 20
     ordering = ["-start_date"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+
+        start_date = self.request.GET.get("start_date")
+        end_date = self.request.GET.get("end_date")
+
+        # Overlap filter or simple start/end range?
+        # Typically looking for seasons starting within range?
+        # Or active during?
+        # Let's do simple start_date range for now.
+        if start_date:
+            queryset = queryset.filter(start_date__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(start_date__lte=end_date)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_query"] = self.request.GET.get("q", "")
+        context["start_date"] = self.request.GET.get("start_date", "")
+        context["end_date"] = self.request.GET.get("end_date", "")
+        return context
 
 
 class SeasonCreateView(LoginRequiredMixin, CreateView):

@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError, Q
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
@@ -9,6 +9,7 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from apps.health.forms import MedicationForm
 from apps.health.models import Medication
+from apps.health.models.health import MedicationType
 from apps.health.services import HealthService
 
 
@@ -16,7 +17,30 @@ class MedicationListView(LoginRequiredMixin, ListView):
     model = Medication
     template_name = "health/medication_list.html"
     context_object_name = "medications"
-    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = Medication.objects.all().order_by("name")
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query)
+                | Q(active_ingredient__icontains=search_query)
+            )
+
+        medication_type = self.request.GET.get("type")
+        if medication_type:
+            queryset = queryset.filter(medication_type=medication_type)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_query"] = self.request.GET.get("q", "")
+        context["selected_type"] = self.request.GET.get("type", "")
+        context["type_choices"] = MedicationType.choices
+
+        return context
 
 
 class MedicationCreateView(LoginRequiredMixin, CreateView):

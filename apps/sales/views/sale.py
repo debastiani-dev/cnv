@@ -11,13 +11,16 @@ from django.views.generic import (
     UpdateView,
 )
 
+from apps.base.views.list_mixins import StandardizedListMixin
 from apps.partners.models.partner import Partner
 from apps.sales.forms import SaleForm, SaleItemFormSet
 from apps.sales.models import Sale
 from apps.sales.services.sale_service import SaleService
 
+SALE_LIST_URL = "sales:list"
 
-class SaleListView(LoginRequiredMixin, ListView):
+
+class SaleListView(LoginRequiredMixin, StandardizedListMixin, ListView):
     model = Sale
     template_name = "sales/sale_list.html"
     context_object_name = "sales"
@@ -28,16 +31,24 @@ class SaleListView(LoginRequiredMixin, ListView):
         search_query = self.request.GET.get("q")
         partner_id = self.request.GET.get("partner")
 
-        return SaleService.get_all_sales(
+        queryset = SaleService.get_all_sales(
             search_query=search_query, partner_id=partner_id
         )
+
+        queryset = self.filter_by_date(queryset)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["search_query"] = self.request.GET.get("q", "")
         context["selected_partner"] = self.request.GET.get("partner", "")
+        # Date params and search query are handled by mixin, but mixin adds search_query
+        # We need to ensure mixin's get_context_data is called or we call it and add our extras.
+        # StandardizedListMixin.get_context_data calls super().
+
         context["partners"] = Partner.objects.filter(is_customer=True)
+
         return context
 
 
@@ -45,7 +56,7 @@ class SaleCreateView(LoginRequiredMixin, CreateView):
     model = Sale
     form_class = SaleForm
     template_name = "sales/sale_form.html"
-    success_url = reverse_lazy("sales:list")
+    success_url = reverse_lazy(SALE_LIST_URL)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,7 +86,7 @@ class SaleUpdateView(LoginRequiredMixin, UpdateView):
     model = Sale
     form_class = SaleForm
     template_name = "sales/sale_form.html"
-    success_url = reverse_lazy("sales:list")
+    success_url = reverse_lazy(SALE_LIST_URL)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -118,7 +129,7 @@ class SaleDetailView(LoginRequiredMixin, DetailView):
 class SaleDeleteView(LoginRequiredMixin, DeleteView):
     model = Sale
     template_name = "sales/sale_confirm_delete.html"
-    success_url = reverse_lazy("sales:list")
+    success_url = reverse_lazy(SALE_LIST_URL)
 
 
 class SaleTrashView(LoginRequiredMixin, ListView):

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
@@ -29,12 +30,36 @@ class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return UserService.get_all_users()
+        queryset = UserService.get_all_users()
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(
+                Q(username__icontains=search_query)
+                | Q(email__icontains=search_query)
+                | Q(first_name__icontains=search_query)
+                | Q(last_name__icontains=search_query)
+            )
+
+        role = self.request.GET.get("role")
+        if role == "staff":
+            queryset = queryset.filter(is_staff=True)
+        elif role == "user":
+            queryset = queryset.filter(is_staff=False)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = _("Users")
         context["segment"] = "users"
+
+        context["search_query"] = self.request.GET.get("q", "")
+        context["selected_role"] = self.request.GET.get("role", "")
+        context["role_choices"] = [
+            ("staff", _("Staff")),
+            ("user", _("Regular User")),
+        ]
         return context
 
 
@@ -103,7 +128,6 @@ class UserDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["title"] = _("Delete User")
         context["segment"] = "users"
-        context["segment"] = "users"
         return context
 
     def delete(self, request, *args, **kwargs):
@@ -132,6 +156,7 @@ class UserTrashView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = "authentication/user_trash_list.html"
     context_object_name = "users"
     permission_required = "authentication.view_user"
+    paginate_by = 20
 
     def get_queryset(self):
         # We need a custom manager logic or filter here because default objects might filter out deleted?

@@ -1,14 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DeleteView, DetailView, FormView, ListView, UpdateView
 
+from apps.base.views.list_mixins import StandardizedListMixin
 from apps.cattle.models import Cattle
 from apps.health.forms import SanitaryEventForm
 from apps.health.models import SanitaryEvent
+from apps.health.models.health import MedicationType
 from apps.health.services import HealthService
 
 
@@ -95,19 +97,48 @@ class SanitaryEventCreateView(FormView):
         return render(self.request, self.template_name, context)
 
 
-class SanitaryEventListView(LoginRequiredMixin, ListView):
+class SanitaryEventListView(LoginRequiredMixin, StandardizedListMixin, ListView):
     model = SanitaryEvent
     template_name = "health/event_list.html"
     context_object_name = "events"
     paginate_by = 10
 
     def get_queryset(self):
-        return (
+        queryset = (
             SanitaryEvent.objects.all()
             .select_related("medication", "performed_by")
             .annotate(animal_count=Count("targets"))
             .order_by("-date", "-created_at")
         )
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) | Q(notes__icontains=search_query)
+            )
+
+        medication_type = self.request.GET.get("medication_type")
+        if (
+            medication_type and medication_type != "None"
+        ):  # Handle None explicitly if needed or just non-empty info
+            # Filter by medication type join
+            queryset = queryset.filter(medication__medication_type=medication_type)
+
+        queryset = self.filter_by_date(queryset)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Search query and date params handled by mixin
+
+        context["selected_medication_type"] = self.request.GET.get(
+            "medication_type", ""
+        )
+
+        context["medication_type_choices"] = MedicationType.choices
+
+        return context
 
 
 class SanitaryEventDetailView(LoginRequiredMixin, DetailView):

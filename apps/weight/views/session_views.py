@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
@@ -18,11 +19,23 @@ class WeighingSessionListView(LoginRequiredMixin, ListView):
 
         search_query = self.request.GET.get("q")
         if search_query:
-            queryset = queryset.filter(name__icontains=search_query)
+            queryset = queryset.filter(
+                Q(name__icontains=search_query)
+                | Q(notes__icontains=search_query)
+                | Q(date__icontains=search_query)
+            )
 
         type_filter = self.request.GET.get("type")
         if type_filter:
             queryset = queryset.filter(session_type=type_filter)
+
+        # Date Range Filter
+        date_after = self.request.GET.get("date_after")
+        date_before = self.request.GET.get("date_before")
+        if date_after:
+            queryset = queryset.filter(date__gte=date_after)
+        if date_before:
+            queryset = queryset.filter(date__lte=date_before)
 
         return queryset
 
@@ -31,6 +44,9 @@ class WeighingSessionListView(LoginRequiredMixin, ListView):
         context["search_query"] = self.request.GET.get("q", "")
         context["type_choices"] = WeighingSessionType.choices
         context["selected_type"] = self.request.GET.get("type", "")
+        # Preserve date params
+        context["date_after"] = self.request.GET.get("date_after", "")
+        context["date_before"] = self.request.GET.get("date_before", "")
         return context
 
 

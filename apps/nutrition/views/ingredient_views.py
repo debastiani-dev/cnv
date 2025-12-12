@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView, View
 
+from apps.base.views.list_mixins import StandardizedListMixin
 from apps.base.views.mixins import HandleProtectedErrorMixin, SafeDeleteMixin
 from apps.nutrition.forms import FeedIngredientForm
 from apps.nutrition.models import FeedIngredient
@@ -17,11 +18,21 @@ INGREDIENT_LIST_URL = "nutrition:ingredient-list"
 INGREDIENT_NOT_FOUND_MSG = _("Ingredient not found.")
 
 
-class IngredientListView(LoginRequiredMixin, ListView):
+class IngredientListView(LoginRequiredMixin, StandardizedListMixin, ListView):
     model = FeedIngredient
     template_name = "nutrition/ingredient_list.html"
     context_object_name = "ingredients"
+    paginate_by = 20
     ordering = ["name"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        search_query = self.request.GET.get("q")
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+
+        return queryset
 
 
 class IngredientCreateView(LoginRequiredMixin, CreateView):
