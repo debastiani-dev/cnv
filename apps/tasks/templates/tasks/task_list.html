@@ -1,0 +1,163 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Task List" %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <!-- Header Text -->
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">{% trans "Tasks" %}</h1>
+      <p class="mt-2 text-sm text-gray-700">{% trans "Manage your tasks, track their status, priority, and due dates." %}</p>
+    </div>
+    
+    <!-- Actions -->
+    <!-- Actions & Search -->
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-col items-end gap-3">
+        <!-- Search Form -->
+        <form method="get" class="flex flex-col items-end gap-3">
+             {% if request.GET.mode == 'my_tasks' %}
+                <input type="hidden" name="mode" value="my_tasks">
+             {% endif %}
+            <!-- Search -->
+            <div class="relative rounded-md shadow-sm w-full sm:w-64">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 1.857l4.458 4.459a1 1 0 01-1.414 1.414l-4.458-4.459A7.097 7.097 0 012 9z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input type="text" name="q" value="{{ search_query|default:'' }}" class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="{% trans 'Search tasks...' %}">
+            </div>
+
+            <div class="flex flex-row gap-3">
+                <!-- Status Filter -->
+                <select name="status" onchange="this.form.submit()" class="block w-full sm:w-40 rounded-md border-0 py-1 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <option value="">{% trans "All Statuses" %}</option>
+                    {% for code, label in status_choices %}
+                        <option value="{{ code }}" {% if selected_status == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Priority Filter -->
+                <select name="priority" onchange="this.form.submit()" class="block w-full sm:w-40 rounded-md border-0 py-1 pl-3 pr-8 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <option value="">{% trans "All Priorities" %}</option>
+                    {% for code, label in priority_choices %}
+                        <option value="{{ code }}" {% if selected_priority == code %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-x-3">
+            <a href="{% url 'tasks:calendar' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "Calendar" %}</a>
+            <a href="{% url 'tasks:trash' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "Trash Bin" %}</a>
+            <a href="{% url 'tasks:create' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "New Task" %}</a>
+        </div>
+    </div>
+  </div>
+
+  <!-- Tabs/Filters Mock (Matching functionality) -->
+  <div class="mt-4 border-b border-gray-200">
+    <nav class="-mb-px flex gap-x-8" aria-label="Tabs">
+      <a href="{% url 'tasks:list' %}" class="{% if not request.GET.mode %}border-indigo-500 text-indigo-600{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium">{% trans "All Tasks" %}</a>
+      <a href="{% url 'tasks:list' %}?mode=my_tasks" class="{% if request.GET.mode == 'my_tasks' %}border-indigo-500 text-indigo-600{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium">{% trans "My Tasks" %}</a>
+    </nav>
+  </div>
+
+  <!-- Table Section -->
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Title" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Linked To" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Due Date" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Priority" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Status" %}</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Assigned To" %}</th>
+                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                    <span class="sr-only">{% trans "Actions" %}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                {% for task in tasks %}
+                <tr>
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+                      <div class="font-medium text-gray-900">
+                          <a href="{% url 'tasks:detail' task.pk %}" class="hover:text-indigo-600 font-semibold">
+                              {{ task.title }}
+                          </a>
+                      </div>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {% if task.content_object %}
+                      <span class="inline-flex items-center gap-1">
+                          <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>
+                          {{ task.content_type.name|title }}: {{ task.content_object }}
+                      </span>
+                      {% else %}
+                      -
+                      {% endif %}
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    {{ task.due_date }}
+                    {% if task.is_overdue and task.status != 'DONE' %}
+                        <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10 ml-2">{% trans "Overdue" %}</span>
+                    {% endif %}
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
+                        {% if task.priority == 'HIGH' or task.priority == 'CRITICAL' %}
+                            bg-red-50 text-red-700 ring-red-600/10
+                        {% elif task.priority == 'MEDIUM' %}
+                            bg-yellow-50 text-yellow-800 ring-yellow-600/20
+                        {% else %}
+                            bg-gray-50 text-gray-600 ring-gray-500/10
+                        {% endif %}">
+                        {{ task.get_priority_display }}
+                    </span>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
+                        {% if task.status == 'DONE' %}
+                            bg-green-50 text-green-700 ring-green-600/20
+                        {% elif task.status == 'IN_PROGRESS' %}
+                            bg-blue-50 text-blue-700 ring-blue-700/10
+                        {% else %}
+                            bg-gray-50 text-gray-600 ring-gray-500/10
+                        {% endif %}">
+                        {{ task.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {% if task.assigned_to %}
+                        {{ task.assigned_to.get_full_name|default:task.assigned_to.username }}
+                      {% else %}
+                        -
+                      {% endif %}
+                  </td>
+                  <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                    <a href="{% url 'tasks:update' task.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-4">{% trans "Edit" %}</a>
+                    <a href="{% url 'tasks:delete' task.pk %}" class="text-red-600 hover:text-red-900">{% trans "Delete" %}</a>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-gray-500 text-sm">{% trans "No tasks found." %}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include "includes/pagination.html" %}
+</div>
+{% endblock %}

@@ -3,6 +3,7 @@ from datetime import date
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.models.base_model import BaseModel
@@ -259,6 +260,9 @@ class Cattle(BaseModel):
         if diff_years > 0:
             return f"{diff_years}y {diff_months}m"
         return f"{diff_months}m"
+
+    def get_absolute_url(self):
+        return reverse("cattle:detail", kwargs={"pk": self.pk})
 
     def __str__(self):
         return f"{self.tag} ({self.get_status_display()})"

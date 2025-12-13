@@ -1,0 +1,157 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Task Calendar" %}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <!-- Header Text -->
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">{% trans "Task Calendar" %}</h1>
+      <p class="mt-2 text-sm text-gray-700">{% trans "View your tasks on a calendar." %}</p>
+    </div>
+    
+    <!-- Actions -->
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex items-center gap-x-3">
+        <a href="{% url 'tasks:list' %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "List View" %}</a>
+        <a href="{% url 'tasks:create' %}" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "New Task" %}</a>
+    </div>
+  </div>
+
+  <!-- Tabs/Filters -->
+  <div class="mt-4 border-b border-gray-200">
+    <nav class="-mb-px flex gap-x-8" aria-label="Tabs">
+      <a href="{% url 'tasks:calendar' %}" class="{% if not request.GET.mode %}border-indigo-500 text-indigo-600{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium">{% trans "All Tasks" %}</a>
+      <a href="{% url 'tasks:calendar' %}?mode=my_tasks" class="{% if request.GET.mode == 'my_tasks' %}border-indigo-500 text-indigo-600{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %} whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium">{% trans "My Tasks" %}</a>
+    </nav>
+  </div>
+
+  <div class="mt-8 flow-root">
+    <div class="overflow-hidden bg-white shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+        <div class="p-6">
+            <div id="calendar"></div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- FullCalendar CSS -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
+<style>
+    :root {
+        --fc-border-color: #e5e7eb; /* gray-200 */
+        --fc-button-text-color: #1f2937; /* gray-800 */
+        --fc-button-bg-color: #ffffff;
+        --fc-button-border-color: #d1d5db; /* gray-300 */
+        --fc-button-hover-bg-color: #f9fafb; /* gray-50 */
+        --fc-button-hover-border-color: #d1d5db;
+        --fc-button-active-bg-color: #f3f4f6; /* gray-100 */
+        --fc-button-active-border-color: #d1d5db;
+        
+        --fc-event-bg-color: #e0e7ff; /* indigo-100 */
+        --fc-event-border-color: #e0e7ff;
+        --fc-event-text-color: #4338ca; /* indigo-700 */
+        
+        --fc-today-bg-color: #f5f3ff; /* violet-50/indigo-50 substitute */
+    }
+
+    /* Toolbar Styling */
+    .fc .fc-toolbar-title {
+        font-size: 1.25rem; /* text-xl */
+        font-weight: 600; /* font-semibold */
+        color: #111827; /* gray-900 */
+    }
+
+    /* Buttons (Primary overrides for specific buttons if needed, generally using light buttons) */
+    .fc .fc-button-primary {
+        color: var(--fc-button-text-color);
+        background-color: var(--fc-button-bg-color);
+        border-color: var(--fc-button-border-color);
+        font-weight: 500;
+        text-transform: capitalize;
+        padding: 0.5rem 1rem;
+    }
+    .fc .fc-button-primary:hover {
+        background-color: var(--fc-button-hover-bg-color);
+        border-color: var(--fc-button-hover-border-color);
+        color: #111827;
+    }
+    .fc .fc-button-primary:not(:disabled).fc-button-active, 
+    .fc .fc-button-primary:not(:disabled):active {
+        background-color: var(--fc-button-active-bg-color);
+        border-color: var(--fc-button-active-border-color);
+        color: #4f46e5; /* indigo-600 for active state text */
+    }
+
+    /* Column Headers */
+    .fc .fc-col-header-cell-cushion {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        color: #374151; /* gray-700 */
+        font-size: 0.875rem; /* text-sm */
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+    
+    /* Events */
+    .fc-daygrid-event {
+        border-radius: 4px;
+        padding: 2px 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    /* Remove outline on focus */
+    .fc-button:focus {
+        box-shadow: none !important;
+        outline: 2px solid #6366f1 !important; /* indigo-500 ring */
+        outline-offset: 2px;
+    }
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- FullCalendar JS -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            height: 'auto',
+            aspectRatio: 1.8,
+            events: "{% url 'tasks:api-events' %}?mode={{ request.GET.mode|default:'' }}",
+            eventClick: function(info) {
+                // Navigate to detail view on click
+                if (info.event.url) {
+                    window.location.href = info.event.url;
+                    info.jsEvent.preventDefault(); // prevents browser from following link in current tab.
+                }
+            },
+            eventDidMount: function(info) {
+                // Build tooltip with description and linked object
+                let tooltipText = '';
+                if (info.event.extendedProps.linked_to) {
+                    tooltipText += info.event.extendedProps.linked_to;
+                }
+                if (info.event.extendedProps.description) {
+                    if (tooltipText) tooltipText += '\n';
+                    tooltipText += info.event.extendedProps.description;
+                }
+                if (tooltipText) {
+                    info.el.title = tooltipText;
+                }
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

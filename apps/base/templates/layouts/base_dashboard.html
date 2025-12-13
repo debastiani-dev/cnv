@@ -19,7 +19,7 @@
 
     <div x-data="{
                  sidebarOpen: false,
-                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names %}financials{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
+                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names %}financials{% elif 'tasks' in request.resolver_match.app_names %}tasks{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
                  }" class="min-h-screen relative z-0">
 
     <!-- Mobile Sidebar (Off-canvas) -->
@@ -60,7 +60,7 @@
                             </a>
                         </div>
                         <nav class="flex flex-1 flex-col" aria-label="Mobile Sidebar">
-                            <ul role="list" class="flex flex-1 flex-col gap-y-0">
+                            <ul class="flex flex-1 flex-col gap-y-0">
     <!-- Dashboard -->
                                 <li>
                                     <a href="{% url 'dashboard:home' %}"
@@ -73,15 +73,40 @@
                                     </a>
                                 </li>
 
+                                <!-- Tasks -->
+                                <li>
+                                    <button type="button" @click="openCategory === 'tasks' ? openCategory = null : openCategory = 'tasks'"
+                                            class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                            :class="openCategory === 'tasks' ? 'text-stone-900' : ''">
+                                        <span class="flex gap-x-3 items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 shrink-0">
+                                              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                            </svg>
+                                            {% trans "Tasks" %}
+                                        </span>
+                                        <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                             :class="openCategory === 'tasks' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                                  clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <ul x-show="openCategory === 'tasks'" x-cloak>
+                                        <li><a href="{% url 'tasks:list' %}"
+                                               class="{% if request.resolver_match.url_name == 'list' and 'tasks' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "All Tasks" %}</a></li>
+                                        <li><a href="{% url 'tasks:calendar' %}"
+                                               class="{% if request.resolver_match.url_name == 'calendar' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Calendar" %}</a></li>
+                                    </ul>
+                                </li>
+
     <!-- Animals (Herd & Land) -->
                             <li>
                                 <button type="button" @click="openCategory === 'animals' ? openCategory = null : openCategory = 'animals'"
                                         class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
                                         :class="openCategory === 'animals' ? 'text-stone-900' : ''">
                                     <span class="flex gap-x-3 items-center">
-                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                  d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 shrink-0">
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                                         </svg>
                                         {% trans "Animals" %}
                                     </span>
@@ -263,7 +288,7 @@
                 </div>
 
                 <nav class="flex flex-1 flex-col" aria-label="Sidebar">
-                    <ul role="list" class="flex flex-1 flex-col gap-y-0">
+                    <ul class="flex flex-1 flex-col gap-y-0">
     <!-- Dashboard -->
                         <li>
                             <a href="{% url 'dashboard:home' %}"
@@ -276,15 +301,40 @@
                             </a>
                         </li>
 
+                        <!-- Tasks -->
+                        <li>
+                            <button type="button" @click="openCategory === 'tasks' ? openCategory = null : openCategory = 'tasks'"
+                                    class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                    :class="openCategory === 'tasks' ? 'text-stone-900' : ''">
+                                <span class="flex gap-x-3 items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 shrink-0">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                    </svg>
+                                    {% trans "Tasks" %}
+                                </span>
+                                <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                     :class="openCategory === 'tasks' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <ul x-show="openCategory === 'tasks'" x-cloak>
+                                <li><a href="{% url 'tasks:list' %}"
+                                       class="{% if request.resolver_match.url_name == 'list' and 'tasks' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "All Tasks" %}</a></li>
+                                <li><a href="{% url 'tasks:calendar' %}"
+                                       class="{% if request.resolver_match.url_name == 'calendar' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Calendar" %}</a></li>
+                            </ul>
+                        </li>
+
     <!-- Animals (Herd & Land) -->
                         <li>
                             <button type="button" @click="openCategory === 'animals' ? openCategory = null : openCategory = 'animals'"
                                     class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
                                     :class="openCategory === 'animals' ? 'text-stone-900' : ''">
                                 <span class="flex gap-x-3 items-center">
-                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                              d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 shrink-0">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                                     </svg>
                                     {% trans "Animals" %}
                                 </span>

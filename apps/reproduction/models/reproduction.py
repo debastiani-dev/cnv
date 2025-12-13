@@ -106,6 +106,10 @@ class PregnancyCheck(BaseModel):
         _("Expected Calving Date"), blank=True, null=True
     )
 
+    @property
+    def is_pregnant(self):
+        return self.result == self.RESULT_POSITIVE
+
     class Meta(BaseModel.Meta):
         verbose_name = _("Pregnancy Check")
         verbose_name_plural = _("Pregnancy Checks")

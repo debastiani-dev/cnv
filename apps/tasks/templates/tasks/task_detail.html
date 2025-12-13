@@ -1,0 +1,106 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h3 class="text-base font-semibold leading-7 text-gray-900">{% trans "Task Information" %}</h3>
+      <p class="max-w-2xl text-sm leading-6 text-gray-500">{{ task.title }}</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none space-x-2">
+        <a href="{% url 'tasks:update' task.pk %}" class="rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Edit Task" %}</a>
+        <a href="{% url 'tasks:list' %}" class="rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">{% trans "Back to List" %}</a>
+    </div>
+  </div>
+
+  <div class="mt-8 flow-root">
+      
+      <!-- Task Details -->
+      <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+              <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                  <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">{% trans "Status" %}</dt>
+                      <dd class="mt-1 text-sm text-gray-900">
+                          <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
+                              {% if task.status == 'DONE' %}
+                                  bg-green-50 text-green-700 ring-green-600/20
+                              {% elif task.status == 'IN_PROGRESS' %}
+                                  bg-blue-50 text-blue-700 ring-blue-700/10
+                              {% else %}
+                                  bg-gray-50 text-gray-600 ring-gray-500/10
+                              {% endif %}">
+                              {{ task.get_status_display }}
+                          </span>
+                      </dd>
+                  </div>
+
+                  <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">{% trans "Priority" %}</dt>
+                      <dd class="mt-1 text-sm text-gray-900">
+                          <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
+                          {% if task.priority == 'HIGH' or task.priority == 'CRITICAL' %}
+                              bg-red-50 text-red-700 ring-red-600/10
+                          {% elif task.priority == 'MEDIUM' %}
+                              bg-yellow-50 text-yellow-800 ring-yellow-600/20
+                          {% else %}
+                              bg-gray-50 text-gray-600 ring-gray-500/10
+                          {% endif %}">
+                          {{ task.get_priority_display }}
+                      </span>
+                      </dd>
+                  </div>
+
+                  <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">{% trans "Due Date" %}</dt>
+                      <dd class="mt-1 text-sm text-gray-900">
+                          {{ task.due_date }}
+                          {% if task.is_overdue and task.status != 'DONE' %}
+                              <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10 ml-2">{% trans "Overdue" %}</span>
+                          {% endif %}
+                      </dd>
+                  </div>
+
+                  <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">{% trans "Assigned To" %}</dt>
+                      <dd class="mt-1 text-sm text-gray-900">
+                          {% if task.assigned_to %}
+                              {{ task.assigned_to.get_full_name|default:task.assigned_to.username }}
+                          {% else %}
+                              -
+                          {% endif %}
+                      </dd>
+                  </div>
+
+                  {% if task.content_object %}
+                  <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">{% trans "Linked To" %}</dt>
+                      <dd class="mt-1 text-sm text-gray-900">
+                          {{ task.content_type.name|title }}: 
+                          {% if task.content_object.get_absolute_url %}
+                              <a href="{{ task.content_object.get_absolute_url }}" class="text-indigo-600 hover:text-indigo-900">{{ task.content_object }}</a>
+                          {% else %}
+                              {{ task.content_object }}
+                          {% endif %}
+                      </dd>
+                  </div>
+                  {% endif %}
+
+                  <div class="sm:col-span-1">
+                      <dt class="text-sm font-medium text-gray-500">{% trans "Created At" %}</dt>
+                      <dd class="mt-1 text-sm text-gray-900">{{ task.created_at|date:"SHORT_DATE_FORMAT" }}</dd>
+                  </div>
+
+                  <div class="sm:col-span-2">
+                      <dt class="text-sm font-medium text-gray-500">{% trans "Description" %}</dt>
+                      <dd class="mt-1 text-sm text-gray-900 whitespace-pre-line">{{ task.description|default:"-" }}</dd>
+                  </div>
+              </dl>
+          </div>
+      </div>
+  </div>
+</div>
+{% endblock %}

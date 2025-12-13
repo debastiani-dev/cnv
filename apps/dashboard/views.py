@@ -8,6 +8,7 @@ from apps.locations.services import LocationService
 from apps.nutrition.models.ingredient import FeedIngredient
 from apps.purchases.services.purchase_service import PurchaseService
 from apps.sales.services.sale_service import SaleService
+from apps.tasks.services.tasks import TaskService
 from apps.weight.services.weight_service import WeightService
 
 
@@ -40,6 +41,14 @@ class HomeView(LoginRequiredMixin, TemplateView):
             stock_quantity__lte=F("min_stock_alert")
         )[:5]
 
+        # Task Stats
+        overdue_tasks_count = TaskService.get_overdue_tasks(
+            user=self.request.user
+        ).count()
+        todays_tasks = TaskService.get_overdue_tasks(user=self.request.user)[
+            :5
+        ]  # Using get_overdue for now, logic to be refined for "Agenda"
+
         # Add to context
         context.update(
             {
@@ -52,6 +61,8 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 "weight_stats": weight_stats,
                 "location_stats": location_stats,
                 "low_stock_ingredients": low_stock_ingredients,
+                "overdue_tasks_count": overdue_tasks_count,
+                "todays_tasks": todays_tasks,
             }
         )
         return context

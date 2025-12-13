@@ -1,4 +1,5 @@
 import uuid
+from datetime import date
 from unittest.mock import patch
 
 import pytest
@@ -103,8 +104,8 @@ class TestBreedingListView:
         """Test filtering by date range."""
         client.force_login(user)
         dam = baker.make(Cattle, sex=Cattle.SEX_FEMALE)
-        event_old = baker.make(BreedingEvent, dam=dam, date="2024-01-01")
-        event_new = baker.make(BreedingEvent, dam=dam, date="2024-12-01")
+        event_old = baker.make(BreedingEvent, dam=dam, date=date(2024, 1, 1))
+        event_new = baker.make(BreedingEvent, dam=dam, date=date(2024, 12, 1))
 
         response = client.get(
             reverse("reproduction:breeding_list")

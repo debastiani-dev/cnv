@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.models.base_model import BaseModel
@@ -64,6 +65,9 @@ class Location(BaseModel):
         verbose_name = _("Location")
         verbose_name_plural = _("Locations")
         ordering = ["name"]
+
+    def get_absolute_url(self):
+        return reverse("locations:detail", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.name

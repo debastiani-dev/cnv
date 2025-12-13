@@ -16,8 +16,8 @@ class ItemLookupView(LoginRequiredMixin, View):
             return JsonResponse({"error": "Invalid content_type_id"}, status=404)
 
         # Security/Whitelist check (Optional but good practice)
-        # For now, allow 'cattle', 'machinery' (future)
-        allowed_models = ["cattle"]
+        # Custom whitelist
+        allowed_models = ["cattle", "location", "partner"]
         if ct.model not in allowed_models:
             return JsonResponse(
                 {"error": "Model not allowed for sale lookup"}, status=403

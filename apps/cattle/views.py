@@ -21,6 +21,7 @@ from apps.cattle.models.cattle import Cattle
 from apps.cattle.services.cattle_service import CattleService
 from apps.health.services.health_service import HealthService
 from apps.locations.models import Location, LocationStatus
+from apps.tasks.models import Task
 from apps.weight.services.weight_service import WeightService
 
 
@@ -33,6 +34,14 @@ class CattleDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["health_events"] = HealthService.get_animal_health_history(self.object)
         context["weight_history"] = WeightService.get_animal_weight_history(self.object)
+
+        # Pending Tasks
+        context["pending_tasks"] = Task.objects.filter(
+            content_type__model="cattle",
+            object_id=self.object.pk,
+            status__in=[Task.Status.PENDING, Task.Status.IN_PROGRESS],
+        ).order_by("due_date")
+
         return context
 
 

@@ -91,6 +91,28 @@
     </div>
     {% endif %}
 
+    <!-- Overdue Tasks Alert -->
+    {% if overdue_tasks_count > 0 %}
+    <div class="rounded-md bg-rose-50 p-4 border border-rose-200">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-rose-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-rose-800">{% trans "Overdue Tasks Alert" %}</h3>
+                <div class="mt-2 text-sm text-rose-700">
+                    <p>{% blocktrans count counter=overdue_tasks_count %}You have {{ counter }} overdue task.{% plural %}You have {{ counter }} overdue tasks.{% endblocktrans %}</p>
+                    <p class="mt-1">
+                        <a href="{% url 'tasks:list' %}?status=PENDING" class="font-medium underline hover:text-rose-600">{% trans "View overdue tasks" %}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- KPI Cards -->
     <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Total Cattle -->
@@ -314,7 +336,51 @@
     </div>
 
     <!-- Operations Overview -->
-    <div class="grid grid-cols-1 gap-10 lg:grid-cols-2 items-start">
+    <div class="grid grid-cols-1 gap-10 lg:grid-cols-3 items-start">
+        
+        <!-- My Tasks (Agenda) -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">
+            <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                 <h3 class="text-base font-semibold text-gray-900">{% trans "My Agenda" %}</h3>
+                 <a href="{% url 'tasks:list' %}?mode=my_tasks" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
+            </div>
+            <ul class="divide-y divide-gray-200">
+                {% for task in todays_tasks %}
+                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-4">
+                         <div class="flex-shrink-0">
+                             {% if task.priority == 'CRITICAL' %}
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-rose-100">
+                                <span class="text-xs font-bold leading-none text-rose-700">!!!</span>
+                            </span>
+                            {% elif task.priority == 'HIGH' %}
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-orange-100">
+                                <span class="text-xs font-bold leading-none text-orange-700">!!</span>
+                            </span>
+                            {% else %}
+                             <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100">
+                                <i class="bi bi-check-lg text-indigo-700"></i>
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">{{ task.title }}</p>
+                             <p class="truncate text-xs {% if task.is_overdue %}text-rose-600 font-bold{% else %}text-gray-500{% endif %}">
+                                 Due: {{ task.due_date|date:"d M" }}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                             <a href="{% url 'tasks:update' task.pk %}" class="btn btn-xs btn-outline-secondary rounded-full">
+                                <i class="bi bi-pencil"></i>
+                             </a>
+                        </div>
+                    </div>
+                </li>
+                {% empty %}
+                 <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No pending tasks." %}</li>
+                {% endfor %}
+            </ul>
+        </div>
         
         <!-- Recent Health Events -->
         <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">

@@ -34,6 +34,7 @@ urlpatterns = [
     path("locations/", include("apps.locations.urls", namespace="locations")),
     path("nutrition/", include("apps.nutrition.urls", namespace="nutrition")),
     path("rosetta/", include("rosetta.urls")),
+    path("tasks/", include("apps.tasks.urls", namespace="tasks")),
     path("", include("apps.website.urls", namespace="website")),
 ]
 
