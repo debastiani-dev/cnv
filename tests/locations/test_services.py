@@ -1,8 +1,11 @@
+# pylint: disable=unused-argument
 from decimal import Decimal
 
 import pytest
+from django.core.exceptions import ValidationError
+from model_bakery import baker
 
-from apps.locations.models import LocationStatus
+from apps.locations.models import Location, LocationStatus
 from apps.locations.services import LocationService, MovementService
 
 
@@ -80,3 +83,63 @@ class TestLocationServices:
         assert location in stats["resting_violations"]
         violation = stats["resting_violations"].get(pk=location.pk)
         assert violation.current_head_count == 2
+
+    def test_calculate_stocking_rate_zero_area(self, location, cattle_list):
+        """Test calculate_stocking_rate with zero area_hectares (line 27)."""
+        # Create location with 0 area_hectares
+        location_zero_area = baker.make(Location, area_hectares=0, capacity_head=10)
+
+        # Add cattle
+        for c in cattle_list:
+            c.location = location_zero_area
+            c.current_weight = c.weight_kg
+            c.save()
+
+        # Should return zeros (line 27)
+        stats = LocationService.calculate_stocking_rate(location_zero_area)
+
+        assert stats["total_weight"] == Decimal("0")
+        assert stats["kg_per_ha"] == Decimal("0")
+        assert stats["au_per_ha"] == Decimal("0")
+        assert stats["occupancy_rate"] == 0.0
+
+    def test_move_cattle_inactive_destination(
+        self, location, location_b, cattle_list, user
+    ):
+        """Test move_cattle with inactive destination (line 52)."""
+
+        # Set destination as inactive
+        location_b.is_active = False
+        location_b.save()
+
+        # Attempt to move cattle
+        with pytest.raises(ValidationError) as exc_info:
+            MovementService.move_cattle(
+                cattle_list=cattle_list,
+                destination=location_b,
+                performed_by=user,
+                reason="ROTATION",
+            )
+
+        assert "inactive" in str(exc_info.value).lower()
+
+    def test_move_cattle_resting_destination(
+        self, location, location_b, cattle_list, user
+    ):
+        """Test move_cattle with RESTING destination (line 58)."""
+        # Set destination as RESTING
+        location_b.status = (
+            "RESTING"  # Should be LocationStatus.RESTING but using string
+        )
+        location_b.save()
+
+        # Should allow move (just passes through line 58)
+        movement = MovementService.move_cattle(
+            cattle_list=cattle_list,
+            destination=location_b,
+            performed_by=user,
+            reason="ROTATION",
+        )
+
+        assert movement.pk is not None
+        assert movement.destination == location_b

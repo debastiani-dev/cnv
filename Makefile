@@ -157,6 +157,14 @@ pytest-cov:
 	-f docker-compose.test.yml \
 	run --rm web python -m pytest --cov=apps --cov-report=term-missing -v --tb=short --reuse-db --cache-clear $(opts)
 
+## Runs tests in parallel without coverage (fast for development)
+.PHONY: pytest-parallel
+pytest-parallel:
+	@echo "${GREEN}Running tests in parallel (no coverage)${RESET}"
+	docker compose \
+	-f docker-compose.test.yml \
+	run --rm web python -m pytest -v --tb=short --reuse-db --cache-clear -n auto $(opts)
+
 ## Installs frontend dependencies
 .PHONY: css-install
 css-install:

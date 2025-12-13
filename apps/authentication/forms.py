@@ -36,7 +36,10 @@ class UserForm(forms.ModelForm):
 
     def clean_password(self):
         password = self.cleaned_data.get("password")
-        if not self.instance.pk and not password:
+        # For new users (not yet saved to database), password is required
+        # Uses _state.adding instead of checking pk because UUID pks are auto-generated
+        # pylint: disable=protected-access
+        if self.instance._state.adding and not password:
             raise forms.ValidationError(_("Password is required for new users."))
         return password
 

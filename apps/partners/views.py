@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.db.models import ProtectedError
@@ -73,6 +74,7 @@ class PartnerRestoreView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         PartnerService.restore_partner(self.object)
+        messages.success(self.request, _("Partner restored successfully."))
         return super().form_valid(form)
 
 
@@ -101,6 +103,7 @@ class PartnerHardDeleteView(LoginRequiredMixin, DeleteView):
                 {"object": self.object, "error": error_msg},
             )
 
+        messages.success(self.request, _("Partner permanently deleted."))
         return HttpResponseRedirect(self.success_url)
 
 
@@ -111,6 +114,10 @@ class PartnerCreateView(LoginRequiredMixin, CreateView):
     success_url = SUCCESS_URL
     extra_context = {"title": "Add Partner", "submit_text": "Save Partner"}
 
+    def form_valid(self, form):
+        messages.success(self.request, _("Partner created successfully."))
+        return super().form_valid(form)
+
 
 class PartnerUpdateView(LoginRequiredMixin, UpdateView):
     model = Partner
@@ -118,6 +125,10 @@ class PartnerUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "partners/partner_form.html"
     success_url = SUCCESS_URL
     extra_context = {"title": "Edit Partner", "submit_text": "Update Partner"}
+
+    def form_valid(self, form):
+        messages.success(self.request, _("Partner updated successfully."))
+        return super().form_valid(form)
 
 
 class PartnerDeleteView(LoginRequiredMixin, DeleteView):
@@ -142,6 +153,7 @@ class PartnerDeleteView(LoginRequiredMixin, DeleteView):
             return render(
                 request, self.template_name, {"object": self.object, "error": error_msg}
             )
+        messages.success(request, _("Partner moved to trash."))
         return HttpResponseRedirect(self.success_url)
 
 

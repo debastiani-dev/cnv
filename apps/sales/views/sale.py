@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import HttpResponseRedirect
@@ -73,6 +74,7 @@ class SaleCreateView(LoginRequiredMixin, CreateView):
         if items.is_valid():
             try:
                 SaleService.create_sale_from_forms(form, items)
+                messages.success(self.request, _("Sale created successfully."))
                 return super().form_valid(form)  # Redirects to success_url
             except Exception as e:  # pylint: disable=broad-exception-caught
                 # Handle error
@@ -116,6 +118,7 @@ class SaleUpdateView(LoginRequiredMixin, UpdateView):
                 # Update totals
                 SaleService.update_sale_totals(self.object)
 
+            messages.success(self.request, _("Sale updated successfully."))
             return super().form_valid(form)
         return self.form_invalid(form)
 
@@ -130,6 +133,16 @@ class SaleDeleteView(LoginRequiredMixin, DeleteView):
     model = Sale
     template_name = "sales/sale_confirm_delete.html"
     success_url = reverse_lazy(SALE_LIST_URL)
+
+    def form_valid(self, form):
+        # Delete view default handles deletion, but we want a message
+        # Wait, generic DeleteView calls self.object.delete() then redirect.
+        # But we probably used `delete` method override in partner.
+        # Here standard DeleteView is used.
+        # If standard, message needs to be in form_valid (which is called on POST)
+        response = super().form_valid(form)
+        messages.success(self.request, _("Sale moved to trash."))
+        return response
 
 
 class SaleTrashView(LoginRequiredMixin, ListView):
@@ -153,6 +166,7 @@ class SaleRestoreView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         SaleService.restore_sale(self.object)
+        messages.success(self.request, _("Sale restored successfully."))
         return super().form_valid(form)
 
 
@@ -166,5 +180,5 @@ class SaleHardDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         SaleService.hard_delete_sale(self.object)
-
+        messages.success(self.request, _("Sale permanently deleted."))
         return HttpResponseRedirect(self.success_url)

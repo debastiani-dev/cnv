@@ -1,4 +1,5 @@
 # pylint: disable=duplicate-code
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.http import HttpResponseRedirect
@@ -159,6 +160,7 @@ class PurchaseRestoreView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         PurchaseService.restore_purchase(self.object)
+        messages.success(self.request, _("Purchase restored successfully."))
         return super().form_valid(form)
 
 
@@ -172,5 +174,5 @@ class PurchaseHardDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         PurchaseService.hard_delete_purchase(self.object)
-
+        messages.success(self.request, _("Purchase permanently deleted."))
         return HttpResponseRedirect(self.success_url)

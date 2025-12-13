@@ -1,8 +1,12 @@
+from decimal import Decimal
+
 import pytest
+from django.contrib.contenttypes.models import ContentType
 from model_bakery import baker
 
 from apps.base.utils.money import Money
 from apps.cattle.models import Cattle
+from apps.nutrition.models import FeedIngredient
 from apps.purchases.models import Purchase, PurchaseItem
 from apps.purchases.services.purchase_service import PurchaseService
 
@@ -82,3 +86,102 @@ class TestPurchaseService:
     # Creation from forms is tricky to mock fully without complex form setups,
     # but we can test the specific logic if we extract it or rely on
     # integration tests in test_views.
+
+    def test_create_purchase_from_forms_inventory_math(self):
+        """Test that purchasing ingredients updates stock and calculates WAC correctly."""
+        # Initial State: 10 units @ $10.00
+        ingredient = baker.make(
+            FeedIngredient, stock_quantity=Decimal("10.00"), unit_cost=Decimal("10.00")
+        )
+
+        partner = baker.make("partners.Partner")
+        # Pre-create purchase to return in form save
+        # We need commit=False simulation but let's keep it simple
+        purchase = baker.make(Purchase, partner=partner)
+
+        class MockForm:
+            def save(self, commit=True):
+                # pylint: disable=unused-argument
+                return purchase
+
+        class MockFormSet:
+            def save(self, commit=True):
+                # pylint: disable=unused-argument
+                # Return list of dummy items that are not yet saved to DB fully or detached
+                # The service saves them.
+                # ContentType and ObjectID must be set for GFK
+                ct = ContentType.objects.get_for_model(FeedIngredient)
+
+                # Mock instance needs to look like PurchaseItem but be unsaved?
+                # Service calls save() on them.
+                # Baker makes saved instances by default.
+                # Let's instantiate manually.
+                item = PurchaseItem(
+                    purchase=purchase,
+                    content_type=ct,
+                    object_id=ingredient.pk,
+                    quantity=Decimal("10.00"),
+                    unit_price=Decimal("20.00"),
+                )
+                # Important: GFK needs to be accessable?
+                # Django GFK might not resolve on unsaved instance unless content_object set
+                item.content_object = ingredient
+
+                return [item]
+
+            deleted_objects = []
+
+        PurchaseService.create_purchase_from_forms(MockForm(), MockFormSet())
+
+        ingredient.refresh_from_db()
+        # Original: 10 @ 10 = 100
+        # New: 10 @ 20 = 200
+        # Total: 20 @ 300 val -> 15 cost
+        assert ingredient.stock_quantity == Decimal("20.00")
+        assert ingredient.unit_cost == Decimal("15.00")
+
+        purchase.refresh_from_db()
+        assert purchase.total_amount == Decimal("200.00")
+
+    def test_create_purchase_direct(self):
+        """Test create_purchase method (direct usage)."""
+        purchase = baker.make(Purchase, total_amount=Decimal("0.00"))
+        ingredient = baker.make(FeedIngredient)
+
+        # Item to be created
+        item = PurchaseItem(
+            purchase=purchase,
+            content_object=ingredient,
+            quantity=Decimal("5.00"),
+            unit_price=Decimal("10.00"),
+            content_type=ContentType.objects.get_for_model(FeedIngredient),
+            object_id=ingredient.pk,
+        )
+
+        PurchaseService.create_purchase(purchase, [item])
+
+        purchase.refresh_from_db()
+        assert purchase.total_amount == Decimal("50.00")
+        assert purchase.items.count() == 1
+        assert purchase.items.first().content_object == ingredient
+
+    def test_create_purchase_from_forms_with_deletion(self):
+        """Test that formset deleted_objects are actually deleted."""
+        purchase = baker.make(Purchase)
+        item_to_delete = baker.make(PurchaseItem, purchase=purchase)
+
+        class MockForm:
+            def save(self, commit=True):
+                # pylint: disable=unused-argument
+                return purchase
+
+        class MockFormSet:
+            def save(self, commit=True):
+                # pylint: disable=unused-argument
+                return []
+
+            deleted_objects = [item_to_delete]
+
+        PurchaseService.create_purchase_from_forms(MockForm(), MockFormSet())
+
+        assert not PurchaseItem.objects.filter(pk=item_to_delete.pk).exists()

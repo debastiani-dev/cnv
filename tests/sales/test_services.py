@@ -1,4 +1,5 @@
 import pytest
+from django.core.exceptions import ValidationError
 from model_bakery import baker
 
 from apps.base.utils.money import Money
@@ -76,3 +77,32 @@ class TestSaleService:
     # Creation from forms is tricky to mock fully without complex form setups,
     # but we can test the specific logic if we extract it or rely on
     # integration tests in test_views.
+
+    def test_validate_item_for_sale_inactive(self):
+        """Test that validating an inactive item raises ValidationError."""
+
+        # Using a mock object that has is_active attribute
+        class MockItem:
+            is_active = False
+
+        with pytest.raises(ValidationError, match="not active/available for sale"):
+            SaleService.validate_item_for_sale(MockItem())
+
+    def test_create_sale_from_forms_with_deletion(self):
+        """Test that formset deleted_objects are actually deleted."""
+        sale = baker.make(Sale)
+        item_to_delete = baker.make(SaleItem, sale=sale)
+
+        class MockForm:
+            def save(self, **kwargs):
+                return sale
+
+        class MockFormSet:
+            def save(self, **kwargs):
+                return []
+
+            deleted_objects = [item_to_delete]
+
+        SaleService.create_sale_from_forms(MockForm(), MockFormSet())
+
+        assert not SaleItem.objects.filter(pk=item_to_delete.pk).exists()

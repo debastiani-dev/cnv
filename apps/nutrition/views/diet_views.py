@@ -52,13 +52,14 @@ class DietCreateView(CreateView):
     def form_valid(self, form):
         context = self.get_context_data()
         items = context["items"]
+        if not items.is_valid():
+            return self.form_invalid(form)
+
         with transaction.atomic():
             self.object = form.save()
-            if items.is_valid():
-                items.instance = self.object
-                items.save()
-            else:
-                return self.form_invalid(form)
+            items.instance = self.object
+            items.save()
+
         return super().form_valid(form)
 
 
@@ -79,13 +80,14 @@ class DietUpdateView(UpdateView):
     def form_valid(self, form):
         context = self.get_context_data()
         items = context["items"]
+        if not items.is_valid():
+            return self.form_invalid(form)
+
         with transaction.atomic():
             self.object = form.save()
-            if items.is_valid():
-                items.instance = self.object
-                items.save()
-            else:
-                return self.form_invalid(form)
+            items.instance = self.object
+            items.save()
+
         return super().form_valid(form)
 
 

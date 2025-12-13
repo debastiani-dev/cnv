@@ -31,7 +31,9 @@ class PurchaseItemForm(forms.ModelForm):
     # We assume 'cattle' for now.
     # Polymorphic fields
     content_type = forms.ModelChoiceField(
-        queryset=ContentType.objects.filter(model__in=["cattle"]),  # Whitelist
+        queryset=ContentType.objects.filter(
+            model__in=["cattle", "feedingredient"]
+        ),  # Whitelist
         label=_("Item Type"),
         required=True,
     )

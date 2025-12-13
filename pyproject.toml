@@ -54,6 +54,7 @@ mypy = "^1.19.0"
 pylint = "<4.0.0"
 autoflake8 = "^0.4.1"
 pylint-django = "^2.6.1"
+pytest-xdist = "^3.6.1"
 djangorestframework-stubs = "^3.16.6"
 djhtml = "^3.0.10"
 

@@ -44,3 +44,42 @@ class TestPartnerServiceAnnotations:
 
         assert p_map["Both Partner"].total_sales == 30
         assert p_map["Both Partner"].total_purchases == 10
+
+
+@pytest.mark.django_db
+class TestPartnerServiceCRUD:
+    def test_create_partner(self):
+        data = {
+            "name": "Service Created",
+            "is_supplier": True,
+            "email": "service@example.com",
+        }
+        partner = PartnerService.create_partner(data)
+        assert partner.pk
+        assert partner.name == "Service Created"
+
+    def test_update_partner(self):
+        partner = baker.make(Partner, name="Old Name")
+        data = {"name": "New Name"}
+        updated = PartnerService.update_partner(partner, data)
+        updated.refresh_from_db()
+        assert updated.name == "New Name"
+
+    def test_delete_and_restore(self):
+        partner = baker.make(Partner)
+        PartnerService.delete_partner(partner)
+        assert partner.is_deleted
+
+        deleted = PartnerService.get_deleted_partners()
+        assert partner in deleted
+
+        PartnerService.restore_partner(partner)
+        partner.refresh_from_db()
+        assert not partner.is_deleted
+
+    def test_hard_delete(self):
+        partner = baker.make(Partner)
+        partner.delete()
+
+        PartnerService.hard_delete_partner(partner)
+        assert not Partner.all_objects.filter(pk=partner.pk).exists()

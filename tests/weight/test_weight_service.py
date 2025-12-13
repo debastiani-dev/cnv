@@ -130,3 +130,13 @@ class TestWeightService:
 
         # Average of 1.0 and 2.0 is 1.5
         assert stats["avg_adg"] == Decimal("1.500")
+
+    def test_get_animal_weight_history(self, cattle, session_1, session_2):
+        """Test retrieving weight history ordered by date."""
+        # Create records out of order
+        rec2 = WeightService.record_weight(session_2, cattle, Decimal("300"))
+        rec1 = WeightService.record_weight(session_1, cattle, Decimal("200"))
+
+        history = WeightService.get_animal_weight_history(cattle)
+        assert list(history) == [rec1, rec2]
+        assert history[0].session.date < history[1].session.date

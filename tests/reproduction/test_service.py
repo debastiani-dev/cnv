@@ -90,3 +90,15 @@ class TestReproductionService:
 
         # Verify Calving Link
         assert calving.calf == calf
+
+    def test_calculate_due_date_none(self):
+        """Test calculate_due_date returns None if date is missing."""
+        assert ReproductionService.calculate_due_date(None) is None
+
+    def test_record_breeding_male_exception(self):
+        """Test that breeding a male raises ValueError."""
+        bull = baker.make(Cattle, sex=Cattle.SEX_MALE)
+        with pytest.raises(ValueError, match="Only female cattle can be bred"):
+            ReproductionService.record_breeding(
+                dam=bull, date=date(2024, 1, 1), method=BreedingEvent.METHOD_NATURAL
+            )

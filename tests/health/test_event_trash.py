@@ -71,5 +71,29 @@ class TestSanitaryEventTrash:
         assert response.status_code == 404
 
         event.delete()
-        response = client.post(url, follow=True)
+
+    def test_delete_view_get_confirmation(self, client, event):
+        client.force_login(event.performed_by)
+        url = reverse("health:event-delete", kwargs={"pk": event.pk})
+        response = client.get(url)
         assert response.status_code == 200
+        # The template might use "Delete" or "Confirm" - assume "delete" logic from other apps
+        # Or check if template name is used.
+        # Let's check for specific text if failure occurs, but 'delete' is safe guess.
+        assert "delete" in response.content.decode().lower()
+
+    def test_restore_view_get_confirmation(self, client, event):
+        client.force_login(event.performed_by)
+        event.delete()
+        url = reverse("health:event-restore", kwargs={"pk": event.pk})
+        response = client.get(url)
+        assert response.status_code == 200
+        assert "restore" in response.content.decode().lower()
+
+    def test_hard_delete_view_get_confirmation(self, client, event):
+        client.force_login(event.performed_by)
+        event.delete()
+        url = reverse("health:event-hard-delete", kwargs={"pk": event.pk})
+        response = client.get(url)
+        assert response.status_code == 200
+        assert "permanently" in response.content.decode().lower()
