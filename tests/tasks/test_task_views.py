@@ -1,5 +1,6 @@
 import pytest
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.tasks.models import Task
 
@@ -83,6 +84,40 @@ class TestTaskViews:
         response = client.get(url, {"status": "DONE"})
         assert t3 in response.context["tasks"]
         assert t1 not in response.context["tasks"]
+
+    def test_task_list_overdue_filter(self, client, user):
+        client.force_login(user)
+        today = timezone.localdate()
+
+        t_overdue = Task.objects.create(
+            title="Overdue",
+            due_date=today - timezone.timedelta(days=1),
+            status=Task.Status.PENDING,
+            assigned_to=user,
+        )
+        t_future = Task.objects.create(
+            title="Future",
+            due_date=today + timezone.timedelta(days=1),
+            status=Task.Status.PENDING,
+            assigned_to=user,
+        )
+        t_overdue_done = Task.objects.create(
+            title="Overdue Done",
+            due_date=today - timezone.timedelta(days=1),
+            status=Task.Status.DONE,
+            assigned_to=user,
+        )
+
+        url = reverse("tasks:list")
+        response = client.get(url, {"overdue": "1"})
+
+        assert response.status_code == 200
+        tasks = response.context["tasks"]
+
+        assert t_overdue in tasks
+        assert t_future not in tasks
+        assert t_overdue_done not in tasks
+        assert response.context["is_overdue"] is True
 
     def test_calendar_view_context(self, client, user):
         client.force_login(user)

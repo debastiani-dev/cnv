@@ -49,13 +49,16 @@ class TaskService:
         return task
 
     @staticmethod
-    def get_all_tasks(search_query=None, status=None, priority=None, user=None):
+    def get_all_tasks(
+        search_query=None, status=None, priority=None, user=None, overdue_only=False
+    ):
         """
         Returns filtered tasks.
         search_query: string to search in title/description
         status: single status string or list of status strings
         priority: priority string
         user: filter by assigned_to user
+        overdue_only: boolean, if True filter tasks with due_date < today and not done/canceled
         """
 
         queryset = (
@@ -70,6 +73,14 @@ class TaskService:
                 | Q(description__icontains=search_query)
             )
 
+        if overdue_only:
+            today = timezone.localdate()
+            queryset = queryset.filter(due_date__lt=today).exclude(
+                status__in=[Task.Status.DONE, Task.Status.CANCELED]
+            )
+
+        # If status is passed explicitly, it might override/conflict with overdue logic
+        # For now, let's treat them as AND conditions if both present (though UI likely handles exclusive)
         if status:
             if isinstance(status, (list, tuple)):
                 queryset = queryset.filter(status__in=status)
@@ -90,14 +101,7 @@ class TaskService:
         Returns tasks where due_date < today AND status != DONE.
         Optional: filter by assigned user.
         """
-        today = timezone.localdate()
-        return (
-            TaskService.get_all_tasks(
-                status=None, user=user  # handled below by exclusion
-            )
-            .filter(due_date__lt=today)
-            .exclude(status__in=[Task.Status.DONE, Task.Status.CANCELED])
-        )
+        return TaskService.get_all_tasks(user=user, overdue_only=True)
 
     # --- Domain Specific Triggers ---
 

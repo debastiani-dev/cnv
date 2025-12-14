@@ -46,6 +46,25 @@
                         <option value="{{ code }}" {% if selected_priority == code %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
+
+                <!-- Overdue Filter Button -->
+                <button type="button" 
+                        onclick="var input = document.getElementById('overdue-input'); input.value = input.value === '1' ? '0' : '1'; this.form.submit();"
+                        class="relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ring-1 ring-inset
+                               {% if is_overdue %}
+                                   bg-red-600 text-white ring-red-600 hover:bg-red-500
+                               {% else %}
+                                   bg-white text-gray-900 ring-gray-300 hover:bg-gray-50
+                               {% endif %}">
+                    {% if is_overdue %}
+                        <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" /></svg>
+                        {% trans "Overdue" %}
+                    {% else %}
+                        <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>
+                        {% trans "Overdue" %}
+                    {% endif %}
+                </button>
+                <input type="hidden" name="overdue" id="overdue-input" value="{% if is_overdue %}1{% else %}0{% endif %}">
             </div>
         </form>
 

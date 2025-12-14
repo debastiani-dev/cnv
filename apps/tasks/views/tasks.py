@@ -38,6 +38,7 @@ class TaskListView(LoginRequiredMixin, ListView):
         search_query = self.request.GET.get("q")
         status = self.request.GET.get("status")
         priority = self.request.GET.get("priority")
+        overdue = self.request.GET.get("overdue") == "1"
 
         # "My Tasks" handling
         user = None
@@ -45,7 +46,11 @@ class TaskListView(LoginRequiredMixin, ListView):
             user = self.request.user
 
         return TaskService.get_all_tasks(
-            search_query=search_query, status=status, priority=priority, user=user
+            search_query=search_query,
+            status=status,
+            priority=priority,
+            user=user,
+            overdue_only=overdue,
         )
 
     def get_context_data(self, **kwargs):
@@ -53,6 +58,7 @@ class TaskListView(LoginRequiredMixin, ListView):
         context["search_query"] = self.request.GET.get("q", "")
         context["selected_status"] = self.request.GET.get("status", "")
         context["selected_priority"] = self.request.GET.get("priority", "")
+        context["is_overdue"] = self.request.GET.get("overdue") == "1"
         context["status_choices"] = Task.Status.choices
         context["priority_choices"] = Task.Priority.choices
         return context
