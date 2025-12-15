@@ -34,3 +34,55 @@ def test_dashboard_home_view_context(client):
     assert "breed_breakdown" in stats
     assert stats["breed_breakdown"]["Angus"] == 1
     assert stats["total"] == 1
+
+
+@pytest.mark.django_db
+def test_stocking_rate_api_view(client):
+    """Test StockingRateApiView returns JSON data."""
+    user = User.objects.create_user(username="testuser", password="password")
+    client.force_login(user)
+
+    url = reverse("dashboard:stocking-rate-api")
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert response["Content-Type"] == "application/json"
+
+    data = response.json()
+    assert "rate" in data
+    assert "total_au" in data
+    assert "total_area" in data
+
+
+@pytest.mark.django_db
+def test_adg_trend_api_view(client):
+    """Test AdgTrendApiView returns JSON data."""
+    user = User.objects.create_user(username="testuser", password="password")
+    client.force_login(user)
+
+    url = reverse("dashboard:adg-trend-api")
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert response["Content-Type"] == "application/json"
+
+    data = response.json()
+    assert "value" in data
+    assert "unit" in data
+    assert "trend" in data
+    assert "status" in data
+    assert "history" in data
+
+
+@pytest.mark.django_db
+def test_api_views_require_authentication(client):
+    """Test that API views require login."""
+    # Test without login
+    stocking_url = reverse("dashboard:stocking-rate-api")
+    adg_url = reverse("dashboard:adg-trend-api")
+
+    response = client.get(stocking_url)
+    assert response.status_code == 302  # Redirect to login
+
+    response = client.get(adg_url)
+    assert response.status_code == 302  # Redirect to login

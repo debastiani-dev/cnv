@@ -74,3 +74,116 @@ class TestProtocolService:
         cow.refresh_from_db()
         expected_withdrawal = today + timezone.timedelta(days=20)
         assert cow.withdrawal_end_date == expected_withdrawal
+
+
+@pytest.mark.django_db
+def test_protocol_item_string_representation():
+    """
+    Test ProtocolItem.__str__ method (line 61 in protocol.py).
+    """
+    med = baker.make(Medication, name="Ivermectin")
+    protocol = baker.make(HealthProtocol, name="Test Protocol")
+    item = baker.make(
+        ProtocolItem, protocol=protocol, medication=med, default_dosage="10ml/head"
+    )
+
+    assert str(item) == "Ivermectin (10ml/head)"
+
+
+@pytest.mark.django_db
+def test_apply_protocol_empty_cattle_list():
+    """
+    Test that applying a protocol with no cattle raises ValidationError (line 19).
+    """
+    protocol = baker.make(HealthProtocol)
+
+    with pytest.raises(Exception) as exc_info:
+        ProtocolService.apply_protocol(protocol.pk, [])
+
+    assert "No cattle selected" in str(exc_info.value)
+
+
+@pytest.mark.django_db
+def test_apply_protocol_nonexistent_protocol():
+    """
+    Test that applying a non-existent protocol raises ValidationError (lines 23-24).
+    """
+    cow = baker.make(Cattle)
+
+    with pytest.raises(Exception) as exc_info:
+        ProtocolService.apply_protocol(999999, [cow.pk])
+
+    assert "not found" in str(exc_info.value)
+
+
+@pytest.mark.django_db
+def test_apply_protocol_inactive_protocol():
+    """
+    Test that applying an inactive protocol raises ValidationError (line 27).
+    """
+    protocol = baker.make(HealthProtocol, is_active=False)
+    cow = baker.make(Cattle)
+
+    with pytest.raises(Exception) as exc_info:
+        ProtocolService.apply_protocol(protocol.pk, [cow.pk])
+
+    assert "inactive" in str(exc_info.value)
+
+
+@pytest.mark.django_db
+def test_apply_protocol_no_items():
+    """
+    Test that applying a protocol with no items raises ValidationError (line 31).
+    """
+    protocol = baker.make(HealthProtocol, is_active=True)
+    cow = baker.make(Cattle)
+
+    # Protocol has no items
+    with pytest.raises(Exception) as exc_info:
+        ProtocolService.apply_protocol(protocol.pk, [cow.pk])
+
+    assert "no items" in str(exc_info.value).lower()
+
+
+@pytest.mark.django_db
+def test_apply_protocol_with_item_notes():
+    """
+    Test that item notes are included in event notes (line 70).
+    """
+    protocol = baker.make(HealthProtocol, name="Test Protocol", is_active=True)
+    med = baker.make(Medication, name="Med A", withdrawal_days_meat=0)
+    baker.make(
+        ProtocolItem,
+        protocol=protocol,
+        medication=med,
+        default_dosage="5ml",
+        notes="Subcutaneous injection",
+    )
+
+    cow = baker.make(Cattle)
+
+    ProtocolService.apply_protocol(protocol.pk, [cow.pk])
+
+    event = SanitaryEvent.objects.first()
+    assert "Subcutaneous injection" in event.notes
+
+
+@pytest.mark.django_db
+def test_apply_protocol_invalid_cattle_ids():
+    """
+    Test protocol application with some invalid cattle IDs (line 44).
+    Should continue with valid IDs.
+    """
+    protocol = baker.make(HealthProtocol, name="Test Protocol", is_active=True)
+    med = baker.make(Medication, name="Med A", withdrawal_days_meat=0)
+    baker.make(ProtocolItem, protocol=protocol, medication=med, default_dosage="5ml")
+
+    valid_cow = baker.make(Cattle)
+    invalid_id = 999999
+
+    # Should process valid cattle and skip invalid IDs without error
+    result = ProtocolService.apply_protocol(protocol.pk, [valid_cow.pk, invalid_id])
+
+    # Verify event was created even with invalid ID in list
+    assert result["events_created"] == 1
+    assert SanitaryEventTarget.objects.count() == 1
