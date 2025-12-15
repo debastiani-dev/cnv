@@ -127,3 +127,67 @@ class TestGenealogyService:
 
         assert female_stat["count"] == 2
         assert male_stat["count"] == 3
+
+    def test_get_full_pedigree_none(self):
+        """
+        Test that get_full_pedigree returns None when root_animal is None.
+        """
+        assert GenealogyService.get_full_pedigree(None) is None
+
+    def test_get_full_pedigree_external_parents(self):
+        """
+        Test that get_full_pedigree correctly handles external parent IDs.
+        """
+        root = baker.make(
+            Cattle,
+            name="Root",
+            sire_external_id="External Sire XYZ",
+            dam_external_id="External Dam ABC",
+        )
+
+        tree = GenealogyService.get_full_pedigree(root)
+
+        # Check Root
+        assert tree["animal"] == root
+
+        # Check External Sire
+        assert tree["sire"] == {
+            "external_name": "External Sire XYZ",
+            "sex": Cattle.SEX_MALE,
+        }
+
+        # Check External Dam
+        assert tree["dam"] == {
+            "external_name": "External Dam ABC",
+            "sex": Cattle.SEX_FEMALE,
+        }
+
+    def test_progeny_stats_zero_offspring(self):
+        """
+        Test that get_progeny_stats returns zeroed/None values for cattle with no offspring.
+        """
+        animal = baker.make(Cattle)
+        stats = GenealogyService.get_progeny_stats(animal)
+
+        assert stats["total_offspring"] == 0
+        assert stats["avg_birth_weight"] is None
+        assert stats["avg_current_weight"] is None
+        assert stats["avg_current_weight"] is None
+        assert stats["sex_distribution"] == []
+
+    def test_full_pedigree_with_dam_lineage(self):
+        """
+        Verify that the service correctly recurses through the Dam (mother) line.
+        This covers lines 92-93 in genealogy.py.
+        """
+        grandmother = baker.make(Cattle, name="Grandma", sex=Cattle.SEX_FEMALE)
+        mother = baker.make(Cattle, name="Mom", sex=Cattle.SEX_FEMALE, dam=grandmother)
+        daughter = baker.make(
+            Cattle, name="Daughter", sex=Cattle.SEX_FEMALE, dam=mother
+        )
+
+        tree = GenealogyService.get_full_pedigree(daughter)
+
+        assert tree["animal"] == daughter
+        assert tree["dam"]["animal"] == mother
+        assert tree["dam"]["dam"]["animal"] == grandmother
