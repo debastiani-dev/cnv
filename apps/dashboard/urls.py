@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .api import StockingRateApiView
+from .api import AdgTrendApiView, StockingRateApiView
 from .views import HomeView
 
 app_name = "dashboard"
@@ -11,5 +11,10 @@ urlpatterns = [
         "api/stocking-rate/",
         StockingRateApiView.as_view(),
         name="stocking-rate-api",
+    ),
+    path(
+        "api/adg-trend/",
+        AdgTrendApiView.as_view(),
+        name="adg-trend-api",
     ),
 ]
