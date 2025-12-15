@@ -91,3 +91,28 @@ class TestPopulateMockData:
         ):
             with pytest.raises(ValueError, match="Simulated Failure"):
                 call_command("populate_mock_data", count=1)
+
+    def test_family_generation(self):
+        """Test that deep family trees are created."""
+        # Run with count=2 (should trigger deep family generation for min(2, 5) = 2 cattle)
+        call_command("populate_mock_data", count=2)
+
+        # Check for deep ancestry
+        # We expect at least one lineage to go several levels deep
+        # Pick the first cow
+        cattle = Cattle.objects.all()
+        deep_tree_found = False
+
+        for cow in cattle:
+            current = cow
+            depth = 0
+            while current.sire and current.dam:
+                depth += 1
+                current = current.sire  # Follow sire line
+                if depth >= 5:  # We configured depth 8, so 5 should be easy
+                    deep_tree_found = True
+                    break
+            if deep_tree_found:
+                break
+
+        assert deep_tree_found, "Did not find any cattle with ancestry depth >= 5"

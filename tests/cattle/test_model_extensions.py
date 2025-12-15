@@ -64,14 +64,16 @@ def test_cattle_parentage_constraints():
     )
 
     # 3. No Self-Parentage (Sire)
-    c3 = baker.make(Cattle, tag="SelfSire")
+    # Must be Male to pass sex check, so we can reach the self-parent check
+    c3 = baker.make(Cattle, tag="SelfSire", sex=Cattle.SEX_MALE)
     c3.sire = c3
     with pytest.raises(ValidationError) as exc:
         c3.clean()
     assert "A cattle cannot be its own sire" in str(exc.value)
 
     # 4. No Self-Parentage (Dam)
-    c4 = baker.make(Cattle, tag="SelfDam")
+    # Must be Female to pass sex check
+    c4 = baker.make(Cattle, tag="SelfDam", sex=Cattle.SEX_FEMALE)
     c4.dam = c4
     with pytest.raises(ValidationError) as exc:
         c4.clean()

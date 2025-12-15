@@ -20,6 +20,7 @@ from apps.cattle.filters import CattleFilter
 from apps.cattle.forms import CattleForm
 from apps.cattle.models.cattle import Cattle
 from apps.cattle.services.cattle_service import CattleService
+from apps.cattle.services.genealogy import GenealogyService
 from apps.health.services.health_service import HealthService
 from apps.tasks.models import Task
 from apps.weight.services.weight_service import WeightService
@@ -41,6 +42,10 @@ class CattleDetailView(LoginRequiredMixin, DetailView):
             object_id=self.object.pk,
             status__in=[Task.Status.PENDING, Task.Status.IN_PROGRESS],
         ).order_by("due_date")
+
+        # Genealogy
+        context["pedigree_tree"] = GenealogyService.get_full_pedigree(self.object)
+        context["progeny_stats"] = GenealogyService.get_progeny_stats(self.object)
 
         return context
 

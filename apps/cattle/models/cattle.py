@@ -236,6 +236,13 @@ class Cattle(BaseModel):
                 )
             )
 
+        # Sex Validation for Parents
+        if self.sire and self.sire.sex != self.SEX_MALE:
+            raise ValidationError(_("The Sire must be a male."))
+
+        if self.dam and self.dam.sex != self.SEX_FEMALE:
+            raise ValidationError(_("The Dam must be a female."))
+
         if self.pk:
             if self.sire and self.sire.pk == self.pk:
                 raise ValidationError(_("A cattle cannot be its own sire."))
