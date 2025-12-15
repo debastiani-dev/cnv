@@ -1,4 +1,4 @@
-from .api import TaskEventsView
+from .api import TaskEventsView, TaskStatusUpdateView
 from .tasks import (
     TaskCalendarView,
     TaskCreateView,
@@ -17,6 +17,7 @@ __all__ = [
     "TaskListView",
     "TaskUpdateView",
     "TaskEventsView",
+    "TaskStatusUpdateView",
     "TaskPermanentDeleteView",
     "TaskRestoreView",
     "TaskTrashListView",

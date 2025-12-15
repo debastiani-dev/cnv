@@ -17,6 +17,7 @@
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex flex-col items-end gap-3">
         <!-- Search Form -->
         <form method="get" class="flex flex-col items-end gap-3">
+             {% csrf_token %}
              {% if request.GET.mode == 'my_tasks' %}
                 <input type="hidden" name="mode" value="my_tasks">
              {% endif %}
@@ -106,7 +107,7 @@
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
                 {% for task in tasks %}
-                <tr>
+                <tr id="task-row-{{ task.pk }}" class="{% if task.status == 'DONE' %}task-done{% endif %}">
                   <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                       <div class="font-medium text-gray-900">
                           <a href="{% url 'tasks:detail' task.pk %}" class="hover:text-indigo-600 font-semibold">
@@ -143,16 +144,32 @@
                     </span>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
-                        {% if task.status == 'DONE' %}
-                            bg-green-50 text-green-700 ring-green-600/20
-                        {% elif task.status == 'IN_PROGRESS' %}
-                            bg-blue-50 text-blue-700 ring-blue-700/10
-                        {% else %}
-                            bg-gray-50 text-gray-600 ring-gray-500/10
-                        {% endif %}">
-                        {{ task.get_status_display }}
-                    </span>
+                    <div class="relative inline-block text-left status-dropdown-container" data-task-id="{{ task.pk }}">
+                        <button type="button" 
+                                class="badge inline-flex items-center gap-1 cursor-pointer rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
+                                {% if task.status == 'DONE' %}
+                                    bg-green-50 text-green-700 ring-green-600/20
+                                {% elif task.status == 'IN_PROGRESS' %}
+                                    bg-blue-50 text-blue-700 ring-blue-700/10
+                                {% elif task.status == 'CANCELED' %}
+                                    bg-gray-50 text-gray-600 ring-gray-500/10
+                                {% else %}
+                                    bg-yellow-50 text-yellow-800 ring-yellow-600/20
+                                {% endif %}"
+                                onclick="TaskController.toggleDropdown('{{ task.pk }}')">
+                            <span id="status-text-{{ task.pk }}">{{ task.get_status_display }}</span>
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    
+                        <div id="dropdown-{{ task.pk }}" class="hidden absolute z-50 mt-1 w-32 bg-white shadow-lg rounded-md border border-gray-200 py-1">
+                            {% for status_code, status_label in task.Status.choices %}
+                                <button onclick="TaskController.updateStatus('{{ task.pk }}', '{{ status_code }}')"
+                                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    {{ status_label }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </div>
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {% if task.assigned_to %}
@@ -179,4 +196,24 @@
   </div>
   {% include "includes/pagination.html" %}
 </div>
+
+<script src="{% static 'js/task_controller.js' %}"></script>
+<style>
+    /* Fade all columns EXCEPT the 5th one (Status) */
+    .task-done td:not(:nth-child(5)) {
+        opacity: 0.5;
+        text-decoration: line-through;
+    }
+
+    /* Ensure Actions column (last) doesn't have line-through on links */
+    .task-done td:last-child {
+        text-decoration: none;
+    }
+    
+    /* Ensure Status column (5th) remains fully visible and clean */
+    .task-done td:nth-child(5) {
+        opacity: 1;
+        text-decoration: none;
+    }
+</style>
 {% endblock %}

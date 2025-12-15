@@ -10,6 +10,7 @@ from apps.tasks.views import (
     TaskListView,
     TaskPermanentDeleteView,
     TaskRestoreView,
+    TaskStatusUpdateView,
     TaskTrashListView,
     TaskUpdateView,
 )
@@ -31,5 +32,10 @@ urlpatterns = [
         name="permanent-delete",
     ),
     path("api/events/", TaskEventsView.as_view(), name="api-events"),
+    path(
+        "api/<uuid:pk>/update-status/",
+        TaskStatusUpdateView.as_view(),
+        name="api-update-status",
+    ),
     path("api/item-lookup/", ItemLookupView.as_view(), name="api-item-lookup"),
 ]
