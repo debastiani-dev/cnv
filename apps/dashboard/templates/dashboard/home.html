@@ -258,11 +258,32 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2">
+    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
         <!-- Herd Composition -->
         <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-10">
             <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">{% trans "Herd Composition" %}</h3>
             <div id="herdChart"></div>
+        </div>
+
+        <!-- Stocking Rate (AU/ha) -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-10">
+            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
+                <h3 class="text-lg font-bold text-gray-900">{% trans "Stocking Rate" %}</h3>
+                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{% trans "Global" %}</span>
+            </div>
+            
+            <div id="stocking-rate-chart" class="flex justify-center"></div>
+
+            <div class="grid grid-cols-2 gap-4 mt-2 text-center border-t pt-4">
+                <div>
+                    <span class="block text-xs text-gray-400">{% trans "Total AU" %}</span>
+                    <span class="block font-bold text-gray-800" id="stat-total-au">--</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-gray-400">{% trans "Area (ha)" %}</span>
+                    <span class="block font-bold text-gray-800" id="stat-total-area">--</span>
+                </div>
+            </div>
         </div>
 
         <!-- Financial Overview -->
@@ -450,6 +471,7 @@
 {{ sales_stats.total_revenue|json_script:"sales-total-data" }}
 {{ purchases_stats.total_cost|json_script:"purchases-total-data" }}
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- Herd Composition Chart (ApexCharts) ---
@@ -578,6 +600,63 @@
 
         var financialChart = new ApexCharts(document.querySelector("#financialChart"), financialOptions);
         financialChart.render();
+
+
+        // --- Stocking Rate Widget (Async) ---
+        async function loadStockingRate() {
+            try {
+                const response = await fetch("{% url 'dashboard:stocking-rate-api' %}");
+                if (!response.ok) return;
+                const data = await response.json();
+                
+                // Update Stats text
+                document.getElementById('stat-total-au').innerText = data.total_au;
+                document.getElementById('stat-total-area').innerText = data.total_area;
+
+                // Determine Color based on value
+                let color = '#10B981'; // Green (Optimal)
+                if (data.rate < 0.5) color = '#F59E0B'; // Yellow (Under)
+                if (data.rate > 1.5) color = '#EF4444'; // Red (Over)
+
+                // Render ApexChart
+                var options = {
+                    series: [data.rate * 50], // Scaled for visualization (assuming max 2.0 = 100%)
+                    chart: { 
+                        type: 'radialBar', 
+                        height: 250,
+                        fontFamily: 'Inter, sans-serif'
+                    },
+                    plotOptions: {
+                        radialBar: {
+                            startAngle: -135,
+                            endAngle: 135,
+                            hollow: { size: '60%' },
+                            dataLabels: {
+                                name: { show: false },
+                                value: {
+                                    offsetY: 10,
+                                    fontSize: '24px',
+                                    fontWeight: 'bold',
+                                    fontFamily: 'Inter, sans-serif',
+                                    color: '#111827',
+                                    formatter: function () { return data.rate + " AU/ha" }
+                                }
+                            }
+                        }
+                    },
+                    fill: { colors: [color] },
+                    stroke: { lineCap: 'round' },
+                    labels: ['Rate'],
+                };
+
+                var chart = new ApexCharts(document.querySelector("#stocking-rate-chart"), options);
+                chart.render();
+            } catch (error) {
+                console.error("Failed to load stocking rate:", error);
+            }
+        }
+        
+        loadStockingRate();
     });
 </script>
 {% endblock %}
