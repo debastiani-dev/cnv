@@ -92,7 +92,7 @@ class Cattle(BaseModel):
         default=BREED_OTHER,
         blank=True,
     )
-    birth_date = models.DateField(_("Birth Date"), blank=True, null=True)
+    birth_date = models.DateField(_("Birth Date"), blank=True, null=True, db_index=True)
     weight_kg = models.DecimalField(
         _("Weight (kg)"),
         max_digits=10,
@@ -108,6 +108,7 @@ class Cattle(BaseModel):
         default=REP_STATUS_OPEN,
         blank=True,
         help_text=_("Biological status of the female."),
+        db_index=True,
     )
 
     # Parentage (Hybrid Approach)
@@ -151,6 +152,7 @@ class Cattle(BaseModel):
         decimal_places=2,
         null=True,
         blank=True,
+        db_index=True,
     )
     last_weighing_date = models.DateField(
         _("Last Weighing Date"), null=True, blank=True
@@ -167,6 +169,7 @@ class Cattle(BaseModel):
         max_length=20,
         choices=STATUS_CHOICES,
         default=STATUS_AVAILABLE,
+        db_index=True,
     )
 
     # Location Management
@@ -178,6 +181,7 @@ class Cattle(BaseModel):
         related_name="cattle",
         verbose_name=_("Current Location"),
         help_text=_("Where the animal is currently located."),
+        db_index=True,
     )
 
     class Meta(BaseModel.Meta):

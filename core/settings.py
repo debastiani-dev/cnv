@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "apps.website",
     "apps.tasks",
     "apps.dashboard",
+    "django_filters",
 ]
 
 AUTH_USER_MODEL = "authentication.User"

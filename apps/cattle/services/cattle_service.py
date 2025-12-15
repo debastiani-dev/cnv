@@ -48,10 +48,15 @@ class CattleService:
         location_id: Optional[str] = None,
     ) -> QuerySet[Cattle]:
         """
-        Returns all cattle records ordered by tag.
-        Optionally filters by tag, name, breed, status, or location.
+        Returns all cattle records optimized for display.
+        Includes filter params for backward compatibility,
+        but typically used as a base queryset for FilterSets.
         """
-        queryset = Cattle.objects.all().order_by("tag")
+        queryset = (
+            Cattle.objects.select_related("location", "sire", "dam")
+            .all()
+            .order_by("tag")
+        )
 
         if search_query:
             queryset = queryset.filter(
