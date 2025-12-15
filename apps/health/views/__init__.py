@@ -17,6 +17,17 @@ from .medication_views import (
     MedicationTrashListView,
     MedicationUpdateView,
 )
+from .protocol_views import (
+    ProtocolApplyView,
+    ProtocolCreateView,
+    ProtocolDeleteView,
+    ProtocolDetailView,
+    ProtocolHardDeleteView,
+    ProtocolListView,
+    ProtocolRestoreView,
+    ProtocolTrashListView,
+    ProtocolUpdateView,
+)
 
 __all__ = [
     "SanitaryEventCreateView",
@@ -34,4 +45,13 @@ __all__ = [
     "MedicationRestoreView",
     "MedicationTrashListView",
     "MedicationUpdateView",
+    "ProtocolCreateView",
+    "ProtocolDetailView",
+    "ProtocolListView",
+    "ProtocolUpdateView",
+    "ProtocolDeleteView",
+    "ProtocolTrashListView",
+    "ProtocolRestoreView",
+    "ProtocolHardDeleteView",
+    "ProtocolApplyView",
 ]

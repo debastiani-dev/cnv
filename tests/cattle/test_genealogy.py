@@ -173,7 +173,7 @@ class TestGenealogyService:
         assert stats["avg_birth_weight"] is None
         assert stats["avg_current_weight"] is None
         assert stats["avg_current_weight"] is None
-        assert stats["sex_distribution"] == []
+        assert not stats["sex_distribution"]
 
     def test_full_pedigree_with_dam_lineage(self):
         """

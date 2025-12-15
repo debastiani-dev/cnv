@@ -1,0 +1,101 @@
+{% extends 'layouts/base_dashboard.html' %}
+{% load i18n static %}
+
+{% block title %}{{ protocol.name }}{% endblock %}
+
+{% block content %}
+<style>
+    @media print {
+        /* Hide Sidebar and Top Navigation */
+        #static-sidebar, 
+        .sticky.top-0.z-40,
+        .no-print {
+            display: none !important;
+        }
+
+        /* Reset Main Content Layout */
+        #main-content {
+            padding-left: 0 !important;
+            padding-top: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* Hide Mobile Sidebar Overlay if active */
+        .relative.z-50.lg\:hidden {
+            display: none !important;
+        }
+
+        /* Ensure clean white background */
+        body, #main-content, main {
+            background-color: white !important;
+        }
+
+        /* Adjust content padding for print */
+        .px-4.sm\:px-6.lg\:px-8.py-8 {
+            padding: 0 !important;
+        }
+    }
+</style>
+<div class="px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">{{ protocol.name }}</h2>
+      <p class="mt-1 text-sm text-gray-500">
+          {% if protocol.is_active %}
+          <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">{% trans "Active" %}</span>
+          {% else %}
+          <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20">{% trans "Archived" %}</span>
+          {% endif %}
+      </p>
+    </div>
+    <div class="mt-4 flex md:ml-4 md:mt-0 no-print">
+      <button type="button" onclick="window.print()" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        {% trans "Print Worksheet" %}
+      </button>
+      <a href="{% url 'health:protocol-update' protocol.pk %}" class="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        {% trans "Edit" %}
+      </a>
+      <a href="{% url 'health:protocol-delete' protocol.pk %}" class="ml-3 inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
+        {% trans "Delete" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-8 border-t border-gray-200 pt-8">
+      <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Description" %}</h3>
+      <p class="mt-2 max-w-4xl text-sm text-gray-500">{{ protocol.description|linebreaks }}</p>
+  </div>
+
+  <div class="mt-8 flow-root">
+    <h3 class="text-base font-semibold leading-6 text-gray-900 mb-4">{% trans "Protocol Items (Medications & Procedures)" %}</h3>
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead>
+            <tr>
+              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">{% trans "Medication / Procedure" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Default Dosage" %}</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Notes" %}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            {% for item in protocol.items.all %}
+            <tr>
+              <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                  {% if item.medication %}
+                    {{ item.medication.name }}
+                  {% else %}
+                    <span class="text-gray-500 italic">{% trans "Procedure Only" %}</span>
+                  {% endif %}
+              </td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ item.default_dosage }}</td>
+              <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ item.notes }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

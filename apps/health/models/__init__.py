@@ -5,6 +5,7 @@ from .health import (
     SanitaryEvent,
     SanitaryEventTarget,
 )
+from .protocol import HealthProtocol, ProtocolItem
 
 __all__ = [
     "Medication",
@@ -12,4 +13,6 @@ __all__ = [
     "SanitaryEventTarget",
     "MedicationType",
     "MedicationUnit",
+    "HealthProtocol",
+    "ProtocolItem",
 ]

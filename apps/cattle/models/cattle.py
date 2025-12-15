@@ -157,6 +157,12 @@ class Cattle(BaseModel):
     last_weighing_date = models.DateField(
         _("Last Weighing Date"), null=True, blank=True
     )
+    withdrawal_end_date = models.DateField(
+        _("Withdrawal End Date"),
+        null=True,
+        blank=True,
+        help_text=_("Date until which the animal is in withdrawal/withholding period."),
+    )
 
     image = models.ImageField(
         _("Profile Image"),

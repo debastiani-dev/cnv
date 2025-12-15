@@ -209,6 +209,8 @@
                                 <ul x-show="openCategory === 'health'" x-cloak>
                                     <li><a href="{% url 'health:event-list' %}"
                                            class="{% if request.resolver_match.url_name == 'event-list' and 'health' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sanitary Events" %}</a></li>
+                                    <li><a href="{% url 'health:protocol-list' %}"
+                                           class="{% if 'protocol' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Protocols" %}</a></li>
                                     <li><a href="{% url 'health:medication-list' %}"
                                            class="{% if 'medication' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Medications" %}</a></li>
                                 </ul>
@@ -437,6 +439,8 @@
                             <ul x-show="openCategory === 'health'" x-cloak>
                                 <li><a href="{% url 'health:event-list' %}"
                                        class="{% if request.resolver_match.url_name == 'event-list' and 'health' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sanitary Events" %}</a></li>
+                                <li><a href="{% url 'health:protocol-list' %}"
+                                       class="{% if 'protocol' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Protocols" %}</a></li>
                                 <li><a href="{% url 'health:medication-list' %}"
                                        class="{% if 'medication' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Medications" %}</a></li>
                             </ul>

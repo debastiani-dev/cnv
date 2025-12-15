@@ -1,0 +1,56 @@
+{% extends 'layouts/base_dashboard.html' %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{% trans "Apply Health Protocol" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Apply Health Protocol" %}</h3>
+            <div class="mt-2 max-w-xl text-sm text-gray-500">
+                <p>{% blocktrans count count=cattle_count %}You are about to apply a health protocol to <strong>{{ count }}</strong> animal.{% plural %}You are about to apply a health protocol to <strong>{{ count }}</strong> animals.{% endblocktrans %}</p>
+            </div>
+            
+            <form method="post" class="mt-5">
+                {% csrf_token %}
+                <!-- Setup Phase Hidden Input -->
+                <input type="hidden" name="perform_application" value="1">
+                <input type="hidden" name="cattle_ids_str" value="{{ cattle_ids_str }}">
+
+                <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                    <div class="col-span-full">
+                        <label for="{{ form.protocol.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Protocol" %}</label>
+                        <div class="mt-2">
+                            {{ form.protocol }}
+                            {{ form.protocol.errors }}
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">{% trans "Select the protocol recipe to apply." %}</p>
+                    </div>
+
+                    <div class="sm:col-span-3">
+                        <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Date" %}</label>
+                        <div class="mt-2">
+                             {{ form.date }}
+                             {{ form.date.errors }}
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-3">
+                        <label for="{{ form.performed_by.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Performed By" %}</label>
+                        <div class="mt-2">
+                             {{ form.performed_by }}
+                             {{ form.performed_by.errors }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex items-center justify-end gap-x-6">
+                    <a href="{% url 'cattle:list' %}" class="text-sm font-semibold leading-6 text-gray-900">{% trans "Cancel" %}</a>
+                    <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Apply Protocol" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

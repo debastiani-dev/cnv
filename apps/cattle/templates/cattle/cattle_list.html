@@ -212,6 +212,9 @@
               <button type="submit" form="bulk-action-form" formaction="{% url 'reproduction:breeding_add' %}" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                   {% trans "Breeding" %}
               </button>
+              <button type="submit" form="bulk-action-form" formaction="{% url 'health:protocol-apply' %}" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                  {% trans "Apply Health Protocol" %}
+              </button>
               <button type="submit" form="bulk-action-form" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                   {% trans "New Health Event" %}
               </button>
