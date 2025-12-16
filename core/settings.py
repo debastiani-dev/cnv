@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "apps.dashboard",
     "apps.notifications",
     "django_filters",
+    "django_celery_beat",
 ]
 
 AUTH_USER_MODEL = "authentication.User"
@@ -188,3 +189,18 @@ STORAGES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Celery Settings
+CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://redis:6379/0")
+CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default="redis://redis:6379/0")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+
+CELERY_BEAT_SCHEDULE = {
+    "scan-notifications-every-minute": {
+        "task": "apps.notifications.tasks.run_notification_scanners",
+        "schedule": 60.0,  # Run every 60 seconds
+    },
+}
