@@ -24,41 +24,35 @@ class TaskDueScanner(BaseScanner):
         )
 
         for task in pending_tasks:
-            if self._should_notify(task):
-                self._create_reminder(task)
+            if self.check_task(task):
                 count += 1
 
         return count
 
+    def check_task(self, task) -> bool:
+        """
+        Check a single task and notify if needed.
+        """
+        if self._should_notify(task):
+            self._create_reminder(task)
+            return True
+        return False
+
     def _should_notify(self, task) -> bool:
         """
-        Prevent spam. Only notify if:
-        1. No unread reminder exists.
-        2. AND no reminder sent TODAY.
+        Prevent spam.
         """
-        link = f"/tasks/{task.pk}/"
+        # Calculate cooldown: Time since midnight today
+        now = timezone.now()
+        start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        cooldown = now - start_of_day
 
-        # 1. Check for unread
-        if self.notification_exists(
+        return self.should_notify(
             recipient=task.assigned_to,
             category=Notification.Category.REMINDER,
-            link=link,
-            unread_only=True,
-        ):
-            return False
-
-        # 2. Check for any sent TODAY
-        today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
-
-        if self.notification_exists(
-            recipient=task.assigned_to,
-            category=Notification.Category.REMINDER,
-            link=link,
-            since=today_start,
-        ):
-            return False
-
-        return True
+            link=f"/tasks/{task.pk}/",
+            cooldown_delta=cooldown,
+        )
 
     def _create_reminder(self, task):
         create_notification(

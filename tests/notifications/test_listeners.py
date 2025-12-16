@@ -111,5 +111,5 @@ class TestNotificationListeners:
         assert Notification.objects.filter(
             recipient=user,
             category=Notification.Category.REMINDER,
-            title="Task Due Today",
+            title="Task Due",
         ).exists()

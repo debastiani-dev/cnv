@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+
+from apps.notifications.models import Notification
 
 
 class BaseScanner(ABC):
@@ -39,8 +42,8 @@ class BaseScanner(ABC):
         Returns:
             bool: True if a match is found.
         """
-        # Avoid circular import
-        from apps.notifications.models import Notification
+        # Avoid circular import - Handled at top now (lazy loading if needed?)
+        # Notification is imported at top.
 
         filters = {"category": category, "link": link}
         if recipient:
@@ -55,3 +58,30 @@ class BaseScanner(ABC):
             return True
 
         return False
+
+    def should_notify(self, recipient, category, link, cooldown_delta=None) -> bool:
+        """
+        Generic deduplication logic.
+        Returns True if we SHOULD notify (i.e., no recent/unread notification exists).
+        """
+        # 1. Check for UNREAD
+        if self.notification_exists(
+            recipient=recipient,
+            category=category,
+            link=link,
+            unread_only=True,
+        ):
+            return False
+
+        # 2. Check for RECENT (within cooldown)
+        if cooldown_delta:
+            since = timezone.now() - cooldown_delta
+            if self.notification_exists(
+                recipient=recipient,
+                category=category,
+                link=link,
+                since=since,
+            ):
+                return False
+
+        return True

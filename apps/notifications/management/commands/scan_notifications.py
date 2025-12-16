@@ -33,7 +33,7 @@ class Command(BaseCommand):
                             f"{scanner_name}: Created {count} notifications."
                         )
                     )
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 self.stdout.write(
                     self.style.ERROR(f"Error running {scanner_name}: {str(e)}")
                 )

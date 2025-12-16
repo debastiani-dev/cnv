@@ -19,8 +19,8 @@ class TestScanners:
     def test_low_stock_scanner(self, user):
         """Test that low stock scanner creates notifications."""
         # Setup: 1 low stock, 1 normal stock
-        low = baker.make(FeedIngredient, stock_quantity=10, min_stock_alert=50)
-        ok = baker.make(FeedIngredient, stock_quantity=100, min_stock_alert=50)
+        baker.make(FeedIngredient, stock_quantity=10, min_stock_alert=50)
+        baker.make(FeedIngredient, stock_quantity=100, min_stock_alert=50)
 
         # Ensure staff user exists for notification
         user.is_staff = True
@@ -36,26 +36,34 @@ class TestScanners:
         )
         assert Notification.objects.first().recipient == user
 
-        # Run again: Should NOT create duplicate (deduplication check)
+        # Run again: Should NOT create duplicate (deduplication check - unread)
         count_2 = scanner.scan()
         assert count_2 == 0
         assert Notification.objects.count() == 1
+
+        # Run again: Should NOT create duplicate (read but recently sent)
+        notif = Notification.objects.first()
+        notif.is_read = True
+        notif.save()
+
+        count_3 = scanner.scan()
+        assert count_3 == 0  # Should be 0 because < 24h passed
 
     def test_task_due_scanner(self, user):
         """Test task due scanner."""
         today = timezone.now().date()
 
         # Due today, pending -> Notify
-        t1 = baker.make(Task, due_date=today, status="PENDING", assigned_to=user)
+        baker.make(Task, due_date=today, status="PENDING", assigned_to=user)
         # Due tomorrow -> Ignore
-        t2 = baker.make(
+        baker.make(
             Task, due_date=today + timedelta(days=1), status="PENDING", assigned_to=user
         )
         # Completed -> Ignore
-        t3 = baker.make(Task, due_date=today, status="COMPLETED", assigned_to=user)
+        baker.make(Task, due_date=today, status="COMPLETED", assigned_to=user)
 
         # Signal listener creates notification for t1. Clear it to test scanner.
-        Notification.objects.all().delete()
+        Notification.all_objects.all().delete(destroy=True)
 
         scanner = TaskDueScanner()
         count = scanner.scan()
@@ -66,9 +74,18 @@ class TestScanners:
             == 1
         )
 
-        # Deduplication
+        # Deduplication (unread)
         count_2 = scanner.scan()
         assert count_2 == 0
+
+        # Deduplication (read but sent TODAY)
+        notif = Notification.objects.first()
+        notif.is_read = True
+        notif.save()
+
+        # Should still be 0 because it was sent today
+        count_3 = scanner.scan()
+        assert count_3 == 0
 
     def test_pregnancy_check_scanner(self, user):
         """Test pregnancy check scanner."""
@@ -79,28 +96,41 @@ class TestScanners:
         old_date = today - timedelta(days=31)
 
         # Breeding > 30 days ago, no check -> Notify
-        b1 = baker.make(BreedingEvent, date=old_date)
+        baker.make(BreedingEvent, date=old_date)
 
         # Recent breeding -> Ignore
-        b2 = baker.make(BreedingEvent, date=today)
+        baker.make(BreedingEvent, date=today)
 
         # Signal listener likely fired for b1. Clear it.
-        Notification.objects.all().delete()
+        Notification.all_objects.all().delete(destroy=True)
 
         scanner = PregnancyCheckScanner()
         count = scanner.scan()
-
-        # Note regarding pregnancy checks related name:
-        # Since we passed `pregnancy_checks=[]` to baker, it implies a reverse relation.
-        # If relation issue persists we might need to adjust how we mock 'no children'.
-        # By default baker doesn't create children unless asked.
 
         assert count == 1
         assert (
             Notification.objects.filter(category=Notification.Category.REMINDER).count()
             == 1
         )
+        # Since we use ?highlight=pk, and b1 is the one older than 30 days
+        # We need to find the b1 object. b1 variable is not available here actually...
+        # Wait, lines 99-102: b1 = baker.make... b1 is local to that block? No, Python scoiing.
+        # But b1 was created in previous edit (baker.make calls).
+        # Ah, I replaced the variable assignment with bare call in step 16882!
+        # So I don't have b1 reference easily.
+        # I'll fetch it from DB or notification.
+        notif = Notification.objects.first()
+        assert notif.link.startswith("/reproduction/breeding/?highlight=")
 
-        # Deduplication
+        # Deduplication (unread)
         count_2 = scanner.scan()
         assert count_2 == 0
+
+        # Deduplication (read but sent recently - within 7 days)
+        notif = Notification.objects.first()
+        notif.is_read = True
+        notif.save()
+
+        # Should still be 0 because it was sent recently
+        count_3 = scanner.scan()
+        assert count_3 == 0
