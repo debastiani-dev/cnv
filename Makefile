@@ -80,6 +80,16 @@ dev/migrate:
 	@echo "${GREEN}Applying migrations${RESET}"
 	docker compose exec web python manage.py migrate
 
+## Create a new Django app
+.PHONY: dev/startapp
+dev/startapp:
+	@echo "${GREEN}Creating new Django app: $(app)${RESET}"
+	@if [ -z "$(app)" ]; then \
+		echo "${RED}Error: app name is required. Usage: make dev/startapp app=myapp${RESET}"; \
+		exit 1; \
+	fi
+	docker compose exec web python manage.py startapp $(app) apps/$(app)
+
 ## Checks code with isort
 .PHONY: lint-isort
 lint-isort:

@@ -82,7 +82,7 @@ class TestCalvingForm:
         # Create a breeding event linked to the cow
         breeding = BreedingEvent.objects.create(
             dam=cow,
-            date=timezone.now() - timezone.timedelta(days=280),
+            date=(timezone.now() - timezone.timedelta(days=280)).date(),
             breeding_method=BreedingEvent.METHOD_AI,
         )
 

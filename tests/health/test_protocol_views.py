@@ -1,6 +1,11 @@
 from unittest.mock import patch
 
 import pytest
+from django.contrib.messages import get_messages
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.db.models import ProtectedError
+from django.test import RequestFactory
 from django.urls import reverse
 from model_bakery import baker
 
@@ -64,7 +69,7 @@ class TestProtocolCreateView:
             "items-0-notes": "Test notes",
         }
 
-        response = client.post(url, data, follow=True)
+        client.post(url, data, follow=True)
 
         # Should create protocol and redirect
         assert HealthProtocol.objects.filter(name="New Protocol").exists()
@@ -104,7 +109,7 @@ class TestProtocolUpdateView:
             "items-MAX_NUM_FORMS": "1000",
         }
 
-        response = client.post(url, data, follow=True)
+        client.post(url, data, follow=True)
 
         protocol.refresh_from_db()
         assert protocol.name == "New Name"
@@ -145,17 +150,13 @@ class TestProtocolDeleteView:
         protocol = baker.make(HealthProtocol)
 
         url = reverse("health:protocol-delete", kwargs={"pk": protocol.pk})
-        response = client.post(url, follow=True)
+        client.post(url, follow=True)
 
         protocol.refresh_from_db()
         assert protocol.is_deleted is True
 
-    def test_protocol_delete_method_direct(self, client):
+    def test_protocol_delete_method_direct(self):
         """Test calling the delete() method directly (lines 107-110)."""
-        from django.contrib.messages.storage.fallback import FallbackStorage
-        from django.contrib.sessions.middleware import SessionMiddleware
-        from django.test import RequestFactory
-
         user = baker.make(User)
         protocol = baker.make(HealthProtocol)
 
@@ -186,13 +187,8 @@ class TestProtocolDeleteView:
         assert protocol.is_deleted is True
         assert response.status_code == 302  # Redirect
 
-    def test_protocol_delete_protected_error(self, client):
+    def test_protocol_delete_protected_error(self):
         """Test ProtectedError during soft delete (lines 111-117)."""
-        from django.contrib.messages.storage.fallback import FallbackStorage
-        from django.contrib.sessions.middleware import SessionMiddleware
-        from django.db.models import ProtectedError
-        from django.test import RequestFactory
-
         user = baker.make(User)
         protocol = baker.make(HealthProtocol)
 
@@ -225,19 +221,15 @@ class TestProtocolDeleteView:
             # Check redirect happened
             assert response.status_code == 302
             # Check error message was added
-            messages_list = list(request._messages)
+            messages_list = list(get_messages(request))
             assert len(messages_list) > 0
             assert (
                 "cannot delete" in str(messages_list[0]).lower()
                 or "being used" in str(messages_list[0]).lower()
             )
 
-    def test_protocol_delete_generic_exception(self, client):
+    def test_protocol_delete_generic_exception(self):
         """Test generic exception during soft delete (lines 118-122)."""
-        from django.contrib.messages.storage.fallback import FallbackStorage
-        from django.contrib.sessions.middleware import SessionMiddleware
-        from django.test import RequestFactory
-
         user = baker.make(User)
         protocol = baker.make(HealthProtocol)
 
@@ -270,7 +262,7 @@ class TestProtocolDeleteView:
             # Check redirect happened
             assert response.status_code == 302
             # Check error message was added
-            messages_list = list(request._messages)
+            messages_list = list(get_messages(request))
             assert len(messages_list) > 0
             assert "error" in str(messages_list[0]).lower()
 
@@ -298,7 +290,7 @@ class TestProtocolTrashViews:
         protocol = baker.make(HealthProtocol, is_deleted=True)
 
         url = reverse("health:protocol-restore", kwargs={"pk": protocol.pk})
-        response = client.get(url, follow=True)
+        client.get(url, follow=True)
 
         protocol.refresh_from_db()
         assert protocol.is_deleted is False
@@ -321,7 +313,7 @@ class TestProtocolTrashViews:
         protocol = baker.make(HealthProtocol, is_deleted=True)
 
         url = reverse("health:protocol-hard-delete", kwargs={"pk": protocol.pk})
-        response = client.post(url, follow=True)
+        client.post(url, follow=True)
 
         assert HealthProtocol.all_objects.filter(pk=protocol.pk).exists() is False
 
@@ -334,7 +326,6 @@ class TestProtocolTrashViews:
         # Create something that references the protocol to cause ProtectedError
         # The protocol has items, so deleting with destroy=False should work,
         # but we'll mock to force ProtectedError
-        from django.db.models import ProtectedError
 
         with patch.object(
             type(protocol), "delete", side_effect=ProtectedError("Cannot delete", [])

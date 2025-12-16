@@ -1,5 +1,6 @@
 # pylint: disable=unused-argument
 import pytest
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client
 from model_bakery import baker
@@ -28,3 +29,18 @@ def cattle():
 @pytest.fixture
 def bull():
     return baker.make(Cattle, sex=Cattle.SEX_MALE)
+
+
+def pytest_configure(config):
+    """
+    Override settings for all tests to use standard static files storage.
+    This prevents 'Missing staticfiles manifest entry' errors when using WhiteNoise with tests.
+    """
+    settings.STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }

@@ -35,6 +35,9 @@ urlpatterns = [
     path("nutrition/", include("apps.nutrition.urls", namespace="nutrition")),
     path("rosetta/", include("rosetta.urls")),
     path("tasks/", include("apps.tasks.urls", namespace="tasks")),
+    path(
+        "notifications/", include("apps.notifications.urls", namespace="notifications")
+    ),
     path("", include("apps.website.urls", namespace="website")),
 ]
 
