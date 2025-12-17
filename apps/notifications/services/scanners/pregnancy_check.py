@@ -4,7 +4,6 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from apps.notifications.models import Notification
-from apps.notifications.services.notification_service import create_notification
 from apps.notifications.services.scanners.base import BaseScanner
 from apps.reproduction.models.reproduction import BreedingEvent
 
@@ -55,14 +54,11 @@ class PregnancyCheckScanner(BaseScanner):
         )
 
     def _create_reminder(self, event):
-        staff_users = self._get_staff_users()
-        for user in staff_users:
-            create_notification(
-                recipient=user,
-                title=_("Pregnancy Check Due"),
-                message=_(
-                    "Breeding event for {dam} on {date} needs a pregnancy check."
-                ).format(dam=event.dam, date=event.date),
-                category=Notification.Category.REMINDER,
-                link=f"/reproduction/breeding/?highlight={event.pk}",
-            )
+        self.notify_staff(
+            title=_("Pregnancy Check Due"),
+            message=_(
+                "Breeding event for {dam} on {date} needs a pregnancy check."
+            ).format(dam=event.dam, date=event.date),
+            category=Notification.Category.REMINDER,
+            link=f"/reproduction/breeding/?highlight={event.pk}",
+        )

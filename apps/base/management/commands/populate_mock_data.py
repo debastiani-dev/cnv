@@ -8,6 +8,8 @@ from django.db import transaction
 from django.utils import timezone
 from model_bakery import baker
 
+# New Models
+from apps.authentication.models import User
 from apps.cattle.models import Cattle
 from apps.health.models import (
     Medication,
@@ -17,6 +19,7 @@ from apps.health.models import (
     SanitaryEventTarget,
 )
 from apps.locations.models import Location
+from apps.notifications.models import Notification
 from apps.nutrition.models import Diet, FeedingEvent, FeedIngredient
 
 # Import models
@@ -31,6 +34,7 @@ from apps.reproduction.models import (
 )
 from apps.sales.models import Sale, SaleItem
 from apps.sales.services.sale_service import SaleService
+from apps.tasks.models.tasks import Task, TaskTemplate
 from apps.weight.models import WeighingSession, WeighingSessionType
 from apps.weight.services.weight_service import WeightService
 
@@ -89,6 +93,12 @@ class Command(BaseCommand):
                 self._create_sales(partners, cattle_list, count)
                 self._create_purchases(partners, ingredients, count)
                 self._create_weighing_sessions(cattle_list, count)
+
+                # 4. System / Users
+                users = self._create_users(count)
+                task_templates = self._create_task_templates()
+                self._create_tasks(users, cattle_list, task_templates, count)
+                self._create_notifications(users, count)
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"Error populating data: {e}"))
@@ -200,6 +210,7 @@ class Command(BaseCommand):
             sex=Cattle.SEX_MALE,
             birth_date=sire_dob,
             status=Cattle.STATUS_AVAILABLE,
+            breed=random.choice(Cattle.BREED_CHOICES)[0],  # Fix: Ensure random breed
         )
 
         # Create Dam
@@ -210,6 +221,7 @@ class Command(BaseCommand):
             sex=Cattle.SEX_FEMALE,
             birth_date=dam_dob,
             status=Cattle.STATUS_AVAILABLE,
+            breed=random.choice(Cattle.BREED_CHOICES)[0],  # Fix: Ensure random breed
         )
 
         # Link to child
@@ -392,4 +404,64 @@ class Command(BaseCommand):
                 session=session,
                 animal=animal,
                 weight_kg=Decimal(random.uniform(200.0, 600.0)),
+            )
+
+    def _create_users(self, count):
+        self.stdout.write("Creating Users...")
+        # Ensure Superuser
+        if not User.objects.filter(is_superuser=True).exists():
+            User.objects.create_superuser("admin", "admin@cnv.com", "admin")
+
+        users = list(User.objects.all())
+
+        # Create Staff
+        for _ in range(5):
+            users.append(baker.make(User, is_staff=True, is_active=True))
+
+        # Create Regular Users
+        needed = max(0, int(count / 5) - len(users))  # Don't need 100 users, maybe 20?
+        for _ in range(needed):
+            users.append(baker.make(User, is_staff=False, is_active=True))
+
+        return users
+
+    def _create_task_templates(self):
+        self.stdout.write("Creating Task Templates...")
+        templates = [
+            baker.make(TaskTemplate, name="Vaccination Protocol", offset_days=0),
+            baker.make(TaskTemplate, name="Weaning", offset_days=210),
+            baker.make(TaskTemplate, name="Pregnancy Check", offset_days=30),
+        ]
+        return templates
+
+    def _create_tasks(self, users, cattle_list, templates, count):
+        self.stdout.write("Creating Tasks...")
+        for _ in range(count):
+            # Randomly link to an animal
+            content_object = (
+                random.choice(cattle_list) if random.random() > 0.3 else None
+            )
+
+            baker.make(
+                Task,
+                title=self._short_str("Task"),
+                description=self._short_str("Desc"),
+                assigned_to=random.choice(users),
+                task_template=random.choice(templates),
+                due_date=self.get_random_date(),
+                status=random.choice(Task.Status.choices)[0],
+                priority=random.choice(Task.Priority.choices)[0],
+                content_object=content_object,
+            )
+
+    def _create_notifications(self, users, count):
+        self.stdout.write("Creating Notifications...")
+        for _ in range(count):
+            baker.make(
+                Notification,
+                recipient=random.choice(users),
+                title=self._short_str("Notif"),
+                message=self._short_str("Msg"),
+                category=random.choice(Notification.Category.choices)[0],
+                is_read=random.choice([True, False]),
             )

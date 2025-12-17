@@ -114,6 +114,7 @@
 {% endblock %}
 
 {% block extra_js %}
+    {{ block.super }}
 <!-- FullCalendar JS -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script>
@@ -132,7 +133,7 @@
             eventClick: function(info) {
                 // Navigate to detail view on click
                 if (info.event.url) {
-                    window.location.href = info.event.url;
+                    globalThis.location.href = info.event.url;
                     info.jsEvent.preventDefault(); // prevents browser from following link in current tab.
                 }
             },

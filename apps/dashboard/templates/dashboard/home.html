@@ -55,7 +55,7 @@
                 <h3 class="text-sm font-medium text-red-800">{% trans "Resting Status Violations" %}</h3>
                 <div class="mt-2 text-sm text-red-700">
                     <p class="mb-2">{% trans "The following locations are set to 'Resting' but currently contain animals:" %}</p>
-                    <ul role="list" class="list-disc space-y-1 pl-5">
+                    <ul class="list-disc space-y-1 pl-5">
                        {% for loc in location_stats.resting_violations %}
                          <li><strong>{{ loc.name }}</strong>: {{ loc.current_head_count }} animals</li>
                        {% endfor %}
@@ -80,7 +80,7 @@
                 <h3 class="text-sm font-medium text-yellow-800">{% trans "Low Feed Stock Alert" %}</h3>
                 <div class="mt-2 text-sm text-yellow-700">
                     <p class="mb-2">{% trans "The following ingredients are below the minimum stock level:" %}</p>
-                    <ul role="list" class="list-disc space-y-1 pl-5">
+                    <ul class="list-disc space-y-1 pl-5">
                        {% for ing in low_stock_ingredients %}
                          <li><strong>{{ ing.name }}</strong>: {{ ing.stock_quantity }} kg (Min: {{ ing.min_stock_alert }} kg)</li>
                        {% endfor %}
@@ -260,13 +260,13 @@
     <!-- Analytics Charts Section -->
     <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Herd Composition -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-10">
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">{% trans "Herd Composition" %}</h3>
             <div id="herdChart"></div>
         </div>
 
         <!-- Stocking Rate (AU/ha) -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-10">
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-6">
             <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
                 <h3 class="text-lg font-bold text-gray-900">{% trans "Stocking Rate" %}</h3>
                 <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{% trans "Global" %}</span>
@@ -276,18 +276,19 @@
 
             <div class="grid grid-cols-2 gap-4 mt-2 text-center border-t pt-4">
                 <div>
-                    <span class="block text-xs text-gray-400">{% trans "Total AU" %}</span>
+                    <span class="block text-sm text-gray-400">{% trans "Total AU" %}</span>
                     <span class="block font-bold text-gray-800" id="stat-total-au">--</span>
                 </div>
                 <div>
-                    <span class="block text-xs text-gray-400">{% trans "Area (ha)" %}</span>
+                    <span class="block text-sm text-gray-400">{% trans "Area (ha)" %}</span>
                     <span class="block font-bold text-gray-800" id="stat-total-area">--</span>
                 </div>
             </div>
         </div>
 
         <!-- Global ADG (GMD) -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-10 relative overflow-hidden">
+        <!-- Global ADG (GMD) -->
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-6 relative overflow-hidden">
             <div class="flex justify-between items-start z-10 relative">
                 <div>
                     <h3 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">{% trans "Global ADG" %}</h3>
@@ -302,78 +303,16 @@
                 </span>
             </div>
 
-            <div id="adg-sparkline" class="absolute bottom-0 left-0 right-0 h-24 opacity-25"></div>
+            <div id="adg-sparkline" class="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 h-16"></div>
         </div>
 
         <!-- Financial Overview -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-10">
+        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-6">
              <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">{% trans "Financial Overview" %}</h3>
             <div id="financialChart"></div>
         </div>
     </div>
 
-    <!-- Recent Transactions Section -->
-    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2">
-        <!-- Recent Sales -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden">
-             <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                 <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Sales" %}</h3>
-                 <a href="{% url 'sales:list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
-             </div>
-             <ul class="divide-y divide-gray-200">
-                {% for sale in sales_stats.recent %}
-                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex-shrink-0">
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100">
-                                <span class="text-sm font-medium leading-none text-emerald-700">S</span>
-                            </span>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-medium text-gray-900">{{ sale.partner.name }}</p>
-                            <p class="truncate text-xs text-gray-500">{{ sale.date|date:"d M Y" }}</p>
-                        </div>
-                        <div class="text-right text-sm font-semibold text-emerald-600">
-                            + R$ {{ sale.total_amount|intcomma }}
-                        </div>
-                    </div>
-                </li>
-                {% empty %}
-                <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No recent sales." %}</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <!-- Recent Purchases -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden">
-             <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                 <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Purchases" %}</h3>
-                 <a href="{% url 'purchases:list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
-             </div>
-            <ul class="divide-y divide-gray-200">
-                {% for purchase in purchases_stats.recent %}
-                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center space-x-4">
-                         <div class="flex-shrink-0">
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-rose-100">
-                                <span class="text-sm font-medium leading-none text-rose-700">P</span>
-                            </span>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-medium text-gray-900">{{ purchase.partner.name }}</p>
-                            <p class="truncate text-xs text-gray-500">{{ purchase.date|date:"d M Y" }}</p>
-                        </div>
-                        <div class="text-right text-sm font-semibold text-rose-600">
-                            - R$ {{ purchase.total_amount|intcomma }}
-                        </div>
-                    </div>
-                </li>
-                {% empty %}
-                <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No recent purchases." %}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
 
     <!-- Operations & Monitoring Section -->
     <div class="grid grid-cols-1 gap-10 lg:grid-cols-3 items-start">
@@ -502,7 +441,7 @@
             series: cattleValues,
             chart: {
                 type: 'donut',
-                height: 350,
+                height: 250,
                 fontFamily: 'Inter, sans-serif'
             },
             labels: cattleLabels,
@@ -557,7 +496,7 @@
             }],
             chart: {
                 type: 'bar',
-                height: 350,
+                height: 250,
                 fontFamily: 'Inter, sans-serif',
                 toolbar: {
                     show: false
@@ -641,7 +580,7 @@
                     series: [data.rate * 50], // Scaled for visualization (assuming max 2.0 = 100%)
                     chart: { 
                         type: 'radialBar', 
-                        height: 250,
+                        height: 200,
                         fontFamily: 'Inter, sans-serif'
                     },
                     plotOptions: {
@@ -653,7 +592,7 @@
                                 name: { show: false },
                                 value: {
                                     offsetY: 10,
-                                    fontSize: '24px',
+                                    fontSize: '18px',
                                     fontWeight: 'bold',
                                     fontFamily: 'Inter, sans-serif',
                                     color: '#111827',
@@ -730,7 +669,7 @@
                     }],
                     chart: { 
                         type: 'area',
-                        height: 100, 
+                        height: 60, 
                         sparkline: { enabled: true },
                         animations: {
                             enabled: false
@@ -738,16 +677,16 @@
                     },
                     stroke: { 
                         curve: 'smooth',
-                        width: 2,
+                        width: 3,
                         colors: ['#6366F1'] // Indigo color for neutral line
                     },
                     fill: { 
                         type: 'gradient',
                         gradient: {
                             shadeIntensity: 1,
-                            opacityFrom: 0.3,
-                            opacityTo: 0.05,
-                            stops: [0, 100]
+                            opacityFrom: 0.7,
+                            opacityTo: 0.2,
+                            stops: [0, 90, 100]
                         }
                     },
                     colors: ['#6366F1'], // Indigo

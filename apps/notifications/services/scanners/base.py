@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from apps.notifications.models import Notification
+from apps.notifications.services.notification_service import create_notification
 
 
 class BaseScanner(ABC):
@@ -24,6 +25,20 @@ class BaseScanner(ABC):
     def _get_staff_users(self):
         """Helper to get all active staff users."""
         return get_user_model().objects.filter(is_active=True, is_staff=True)
+
+    def notify_staff(self, title, message, category, link):
+        """
+        Helper to notify all staff users.
+        """
+        staff_users = self._get_staff_users()
+        for user in staff_users:
+            create_notification(
+                recipient=user,
+                title=title,
+                message=message,
+                category=category,
+                link=link,
+            )
 
     def notification_exists(
         self, recipient, category, link, unread_only=False, since=None

@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import pytest
+from django.contrib.auth import get_user_model
 from django.core.management import call_command
 
 from apps.base.management.commands.populate_mock_data import Command
@@ -116,3 +117,13 @@ class TestPopulateMockData:
                 break
 
         assert deep_tree_found, "Did not find any cattle with ancestry depth >= 5"
+
+    def test_user_generation_threshold(self):
+        """Test that extra users are created when count is high enough."""
+        # Need count/5 > len(existing_users) to trigger creation
+        # Existing: 1 superuser + 5 staff = 6.
+        # So count/5 > 6 => count > 30. Using 40 ensures loop entry.
+        call_command("populate_mock_data", count=40)
+
+        user_model = get_user_model()
+        assert user_model.objects.count() > 6

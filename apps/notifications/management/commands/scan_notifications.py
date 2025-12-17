@@ -1,9 +1,14 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
+from apps.notifications.services.scanners.calf_weaning import CalfWeaningScanner
 from apps.notifications.services.scanners.low_stock import LowStockScanner
+from apps.notifications.services.scanners.medication_expiry import (
+    MedicationExpiryScanner,
+)
 from apps.notifications.services.scanners.pregnancy_check import PregnancyCheckScanner
 from apps.notifications.services.scanners.task_due import TaskDueScanner
+from apps.notifications.services.scanners.withdrawal_end import WithdrawalEndScanner
 
 
 class Command(BaseCommand):
@@ -18,6 +23,10 @@ class Command(BaseCommand):
             LowStockScanner(),
             TaskDueScanner(),
             PregnancyCheckScanner(),
+            # New Scanners
+            MedicationExpiryScanner(),
+            WithdrawalEndScanner(),
+            CalfWeaningScanner(),
         ]
 
         total_created = 0

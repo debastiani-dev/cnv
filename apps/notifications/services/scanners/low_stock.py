@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.utils.translation import gettext as _
 
 from apps.notifications.models import Notification
-from apps.notifications.services.notification_service import create_notification
 from apps.notifications.services.scanners.base import BaseScanner
 from apps.nutrition.models.ingredient import FeedIngredient
 
@@ -42,18 +41,15 @@ class LowStockScanner(BaseScanner):
         )
 
     def _create_alert(self, ingredient):
-        staff_users = self._get_staff_users()
-        for user in staff_users:
-            create_notification(
-                recipient=user,
-                title=_("Low Stock Alert"),
-                message=_(
-                    "Stock for {ingredient} is low ({current}kg). Min threshold: {min}kg."
-                ).format(
-                    ingredient=ingredient.name,
-                    current=ingredient.stock_quantity,
-                    min=ingredient.min_stock_alert,
-                ),
-                category=Notification.Category.ALERT,
-                link=f"/nutrition/ingredients/{ingredient.pk}/update/",
-            )
+        self.notify_staff(
+            title=_("Low Stock Alert"),
+            message=_(
+                "Stock for {ingredient} is low ({current}kg). Min threshold: {min}kg."
+            ).format(
+                ingredient=ingredient.name,
+                current=ingredient.stock_quantity,
+                min=ingredient.min_stock_alert,
+            ),
+            category=Notification.Category.ALERT,
+            link=f"/nutrition/ingredients/{ingredient.pk}/update/",
+        )
