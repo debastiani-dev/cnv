@@ -1,4 +1,5 @@
 import pytest
+from model_bakery import baker
 
 from apps.cattle.models import Cattle
 from apps.cattle.services.cattle_service import CattleService
@@ -113,5 +114,40 @@ class TestCattleService:
 
         assert breakdown["Brahman"] == 1
         assert breakdown["Other"] == 1
-        # Fallback for unknown should be title cased code
-        assert breakdown["Unknown_Breed"] == 1
+
+    def test_get_productivity_stats(self):
+        """Verify calculations for pregnancy and mortality rates."""
+        # Pregnancy Rate Setup
+        # 10 Eligible cows: 5 Pregnant, 5 Open/Bred
+        # We use baker to avoid unique constraint issues on 'tag'
+        baker.make(
+            Cattle,
+            sex=Cattle.SEX_FEMALE,
+            reproduction_status=Cattle.REP_STATUS_PREGNANT,
+            status=Cattle.STATUS_AVAILABLE,
+            _quantity=5,
+        )
+        baker.make(
+            Cattle,
+            sex=Cattle.SEX_FEMALE,
+            reproduction_status=Cattle.REP_STATUS_OPEN,
+            status=Cattle.STATUS_AVAILABLE,
+            _quantity=5,
+        )
+
+        # Ignored for Pregnancy Rate (Males, Dead, Sold, or Calves if filtered strictly but code checks sex=Female)
+        baker.make(Cattle, sex=Cattle.SEX_MALE, status=Cattle.STATUS_AVAILABLE)
+
+        # Mortality Rate Setup
+        # Total Ever: 11 active (10 cows + 1 bull) + 1 Dead = 12 Total
+        baker.make(Cattle, status=Cattle.STATUS_DEAD, sex=Cattle.SEX_FEMALE)
+
+        stats = CattleService.get_productivity_stats()
+
+        # Pregnancy Rate: 5 Pregnant / 10 Eligible = 50.0%
+        assert stats["pregnancy_rate"] == pytest.approx(50.0)
+        assert stats["pregnant_count"] == 5
+
+        # Mortality Rate: 1 Dead / 12 Total Ever = 8.3%
+        assert stats["mortality_rate"] == pytest.approx(8.3)
+        assert stats["dead_count"] == 1

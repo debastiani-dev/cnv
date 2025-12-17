@@ -20,8 +20,9 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
         # Fetch stats
         cattle_stats = CattleService.get_cattle_stats()
-        sales_stats = SaleService.get_sales_stats()
-        purchases_stats = PurchaseService.get_purchases_stats()
+        sales_stats = SaleService.get_sales_stats(days=90)
+        purchases_stats = PurchaseService.get_purchases_stats(days=90)
+        productivity_stats = CattleService.get_productivity_stats()
 
         # Calculate Net Profit
         net_profit = sales_stats["total_revenue"] - purchases_stats["total_cost"]
@@ -55,6 +56,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 "cattle_stats": cattle_stats,
                 "sales_stats": sales_stats,
                 "purchases_stats": purchases_stats,
+                "productivity_stats": productivity_stats,
                 "net_profit": net_profit,
                 "active_withdrawal_count": active_withdrawal_count,
                 "recent_health_events": recent_health_events,

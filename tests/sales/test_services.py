@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 import pytest
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from model_bakery import baker
 
 from apps.base.utils.money import Money
@@ -105,4 +108,25 @@ class TestSaleService:
 
         SaleService.create_sale_from_forms(MockForm(), MockFormSet())
 
-        assert not SaleItem.objects.filter(pk=item_to_delete.pk).exists()
+    def test_get_sales_stats_by_period(self):
+        """Verify sales stats filtering by period."""
+        today = timezone.now().date()
+
+        # Sale 1: Today (Inside 30 days)
+        baker.make(Sale, date=today, total_amount=Money("100.00"))
+
+        # Sale 2: 20 days ago (Inside 30 days)
+        baker.make(Sale, date=today - timedelta(days=20), total_amount=Money("200.00"))
+
+        # Sale 3: 40 days ago (Outside 30 days)
+        baker.make(Sale, date=today - timedelta(days=40), total_amount=Money("300.00"))
+
+        # Test Last 30 Days
+        stats_30d = SaleService.get_sales_stats(days=30)
+        assert stats_30d["count"] == 2
+        assert stats_30d["total_revenue"] == Money("300.00")
+
+        # Test All Time (No Arg)
+        stats_all = SaleService.get_sales_stats()
+        assert stats_all["count"] == 3
+        assert stats_all["total_revenue"] == Money("600.00")

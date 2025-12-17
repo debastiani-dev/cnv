@@ -1,6 +1,9 @@
 # pylint: disable=duplicate-code
+from datetime import timedelta
+
 from django.db import transaction
 from django.db.models import Count, Q, Sum
+from django.utils import timezone
 
 from apps.base.utils.money import Money
 from apps.purchases.models import Purchase, PurchaseItem
@@ -8,11 +11,15 @@ from apps.purchases.models import Purchase, PurchaseItem
 
 class PurchaseService:
     @staticmethod
-    def get_purchases_stats() -> dict:
+    def get_purchases_stats(days: int | None = None) -> dict:
         """
         Returns statistics about purchases.
         """
         queryset = Purchase.objects.all()
+        if days:
+            cutoff_date = timezone.now().date() - timedelta(days=days)
+            queryset = queryset.filter(date__gte=cutoff_date)
+
         total_count = queryset.count()
         total_cost = queryset.aggregate(total=Sum("total_amount"))["total"] or 0
         recent_purchases = queryset.order_by("-date", "-created_at")[:5]

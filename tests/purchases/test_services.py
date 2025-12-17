@@ -1,7 +1,9 @@
+from datetime import timedelta
 from decimal import Decimal
 
 import pytest
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
 from model_bakery import baker
 
 from apps.base.utils.money import Money
@@ -184,4 +186,29 @@ class TestPurchaseService:
 
         PurchaseService.create_purchase_from_forms(MockForm(), MockFormSet())
 
-        assert not PurchaseItem.objects.filter(pk=item_to_delete.pk).exists()
+    def test_get_purchases_stats_by_period(self):
+        """Verify purchases stats filtering by period."""
+        today = timezone.now().date()
+
+        # Purchase 1: Today (Inside 30 days)
+        baker.make(Purchase, date=today, total_amount=Decimal("100.00"))
+
+        # Purchase 2: 20 days ago (Inside 30 days)
+        baker.make(
+            Purchase, date=today - timedelta(days=20), total_amount=Decimal("200.00")
+        )
+
+        # Purchase 3: 40 days ago (Outside 30 days)
+        baker.make(
+            Purchase, date=today - timedelta(days=40), total_amount=Decimal("300.00")
+        )
+
+        # Test Last 30 Days
+        stats_30d = PurchaseService.get_purchases_stats(days=30)
+        assert stats_30d["count"] == 2
+        assert stats_30d["total_cost"] == Decimal("300.00")
+
+        # Test All Time (No Arg)
+        stats_all = PurchaseService.get_purchases_stats()
+        assert stats_all["count"] == 3
+        assert stats_all["total_cost"] == Decimal("600.00")

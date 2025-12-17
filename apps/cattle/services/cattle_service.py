@@ -41,6 +41,49 @@ class CattleService:
         }
 
     @staticmethod
+    def get_productivity_stats() -> dict:
+        """
+        Returns pregnancy and mortality rates.
+        """
+        # 1. Pregnancy Rate
+        # Formula: Pregnant / (Pregnant + Open)
+        # We only care about cows that are biologically capable and having status tracked
+        eligible_cows = Cattle.objects.filter(
+            sex=Cattle.SEX_FEMALE,
+            reproduction_status__in=[
+                Cattle.REP_STATUS_PREGNANT,
+                Cattle.REP_STATUS_OPEN,
+                Cattle.REP_STATUS_BRED,
+            ],
+            status=Cattle.STATUS_AVAILABLE,
+        ).count()
+
+        pregnant_cows = Cattle.objects.filter(
+            reproduction_status=Cattle.REP_STATUS_PREGNANT,
+            status=Cattle.STATUS_AVAILABLE,
+        ).count()
+
+        pregnancy_rate = 0.0
+        if eligible_cows > 0:
+            pregnancy_rate = round((pregnant_cows / eligible_cows) * 100, 1)
+
+        # 2. Mortality Rate (All Time / Active Year - Simplification: All Time based on current DB state)
+        # Using simple formula: Dead / (Alive + Dead)
+        total_ever = Cattle.objects.count()
+        dead_count = Cattle.objects.filter(status=Cattle.STATUS_DEAD).count()
+
+        mortality_rate = 0.0
+        if total_ever > 0:
+            mortality_rate = round((dead_count / total_ever) * 100, 1)
+
+        return {
+            "pregnancy_rate": pregnancy_rate,
+            "mortality_rate": mortality_rate,
+            "pregnant_count": pregnant_cows,
+            "dead_count": dead_count,
+        }
+
+    @staticmethod
     def get_all_cattle(
         search_query: Optional[str] = None,
         breed: Optional[str] = None,

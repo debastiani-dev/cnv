@@ -1,7 +1,10 @@
 # pylint: disable=duplicate-code
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Count, Q, Sum
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.utils.money import Money
@@ -12,11 +15,15 @@ from apps.sales.models import Sale, SaleItem
 
 class SaleService:
     @staticmethod
-    def get_sales_stats() -> dict:
+    def get_sales_stats(days: int | None = None) -> dict:
         """
         Returns statistics about sales.
         """
         queryset = Sale.objects.all()
+        if days:
+            cutoff_date = timezone.now().date() - timedelta(days=days)
+            queryset = queryset.filter(date__gte=cutoff_date)
+
         total_count = queryset.count()
         total_revenue = queryset.aggregate(total=Sum("total_amount"))["total"] or 0
         recent_sales = queryset.order_by("-date", "-created_at")[:5]

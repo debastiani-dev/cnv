@@ -57,3 +57,25 @@ class TestWithdrawalEndScanner:
 
         # Second run: False (hits line 56)
         assert scanner.check_animal(cow) is False
+
+    def test_scanner_skips_read_recent_notification(self, user):
+        """Test that line 56 (recent READ notification) is hit."""
+        user.is_staff = True
+        user.save()
+        today = timezone.now().date()
+        cow = baker.make(Cattle, withdrawal_end_date=today)
+        scanner = WithdrawalEndScanner()
+
+        # 1. Create Notification
+        scanner.scan()
+        assert Notification.objects.count() == 1
+        notif = Notification.objects.first()
+
+        # 2. Mark as READ
+        notif.is_read = True
+        notif.save()
+
+        # 3. Scan again
+        # Outer check (Unread?) -> Passes (No unread)
+        # Inner check (Recent?) -> Fails (Recent exists) -> Returns False (Line 56)
+        assert scanner.check_animal(cow) is False
