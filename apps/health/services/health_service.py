@@ -73,12 +73,17 @@ class HealthService:
         # Assuming no withdrawal period exceeds 365 days, we can filter query.
         cutoff_date = today - timedelta(days=365)
 
-        relevant_targets = SanitaryEventTarget.objects.filter(
-            animal=animal,
-            event__date__gte=cutoff_date,
-            event__medication__isnull=False,
-            event__is_deleted=False,
-        ).select_related("event", "event__medication")
+        relevant_targets = (
+            SanitaryEventTarget.objects.filter(
+                animal=animal,
+                event__date__gte=cutoff_date,
+                event__medication__isnull=False,
+                event__is_deleted=False,
+            )
+            .select_related("event", "event__medication")
+            .prefetch_related("event__medication__active_ingredients")
+            .order_by("-event__date")
+        )
 
         for target in relevant_targets:
             medication = target.event.medication
@@ -89,9 +94,15 @@ class HealthService:
                 withdrawal_end_date = event_date + timedelta(days=withdrawal_days)
 
                 if withdrawal_end_date > today:
+                    ingredients = medication.active_ingredients.all()
+                    ingredient_names = (
+                        ", ".join([i.name for i in ingredients])
+                        if ingredients
+                        else "Unknown"
+                    )
                     reason = (
                         f"Animal in withdrawal period until {withdrawal_end_date.strftime('%Y-%m-%d')}. "
-                        f"Medication: {medication.name} (Applied: {event_date.strftime('%Y-%m-%d')})"
+                        f"Active Ingredients: {ingredient_names} (Medication: {medication.name})"
                     )
                     return True, reason
 

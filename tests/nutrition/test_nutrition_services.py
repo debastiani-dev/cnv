@@ -56,22 +56,28 @@ class TestFeedingService:
         assert self.soy.stock_quantity == Decimal("45.00")  # 50 - 5
 
     def test_insufficient_stock(self, setup_data):
-        # Feed 200kg Total: requires 100kg Corn (OK), 100kg Soy (Fail, only 50 available)
+        # Feed 200kg Total: requires 100kg Corn (OK), 100kg Soy (Available 50)
+        # OLD BEHAVIOR: Raise ValidationError
+        # NEW BEHAVIOR: Allow negative stock (Soft Block)
 
-        with pytest.raises(ValidationError) as exc:
-            FeedingService.record_feeding(
-                location=self.location,
-                diet=self.diet,
-                amount_kg=Decimal(200),
-                date="2023-01-01",
-                performed_by=None,
-            )
+        # Execute (Should not raise)
+        FeedingService.record_feeding(
+            location=self.location,
+            diet=self.diet,
+            amount_kg=Decimal(200),
+            date="2023-01-01",
+            performed_by=None,  # Should gracefully skip notification
+        )
 
-        assert "Insufficient stock for Soy" in str(exc.value)
-
-        # Verify no changes
+        # Verify changes
         self.corn.refresh_from_db()
-        assert self.corn.stock_quantity == Decimal("100.00")
+        self.soy.refresh_from_db()
+
+        # 100 available - 100 used = 0
+        assert self.corn.stock_quantity == Decimal("0.00")
+
+        # 50 available - 100 used = -50
+        assert self.soy.stock_quantity == Decimal("-50.00")
 
     def test_empty_diet_validation(self):
         empty_diet = Diet.objects.create(name="Empty")

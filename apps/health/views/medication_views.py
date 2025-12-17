@@ -25,7 +25,7 @@ class MedicationListView(LoginRequiredMixin, ListView):
         if search_query:
             queryset = queryset.filter(
                 Q(name__icontains=search_query)
-                | Q(active_ingredient__icontains=search_query)
+                | Q(active_ingredients__name__icontains=search_query)
             )
 
         medication_type = self.request.GET.get("type")

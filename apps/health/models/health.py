@@ -26,6 +26,24 @@ class MedicationUnit(models.TextChoices):
     UNIT = "UNIT", _("Units")
 
 
+class ActiveIngredient(BaseModel):
+    """
+    Represents the chemical base of a medication (e.g., Ivermectin).
+    Used for grouping compliance checks across different brands.
+    """
+
+    name = models.CharField(_("Name"), max_length=100, unique=True)
+    description = models.TextField(_("Description"), blank=True)
+
+    class Meta:
+        verbose_name = _("Active Ingredient")
+        verbose_name_plural = _("Active Ingredients")
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
 class Medication(BaseModel):
     """
     Registry of medicines and health products.
@@ -49,8 +67,12 @@ class Medication(BaseModel):
     batch_number = models.CharField(_("Batch Number"), max_length=50, blank=True)
     expiration_date = models.DateField(_("Expiration Date"), null=True, blank=True)
 
-    active_ingredient = models.CharField(
-        _("Active Ingredient"), max_length=100, blank=True
+    active_ingredients = models.ManyToManyField(
+        ActiveIngredient,
+        blank=True,
+        related_name="medications",
+        verbose_name=_("Active Ingredients"),
+        help_text=_("Chemical bases for compliance grouping."),
     )
 
     withdrawal_days_meat = models.PositiveIntegerField(

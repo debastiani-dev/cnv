@@ -2,12 +2,15 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from apps.locations.models.location import Location
+from apps.notifications.services.notification_service import create_notification
 from apps.nutrition.models.diet import Diet
 from apps.nutrition.models.event import FeedingEvent
 from apps.nutrition.models.ingredient import FeedIngredient
+from apps.tasks.models.tasks import Task
 
 
 class FeedingService:
@@ -45,15 +48,31 @@ class FeedingService:
             ingredient = item.ingredient
 
             if ingredient.stock_quantity < required_qty:
-                raise ValidationError(
-                    _(
-                        "Insufficient stock for %(ingredient)s. Required: %(req).2f kg, Available: %(avail).2f kg"
+                # SOFT BLOCK: Allow negative stock but trigger alerts.
+                new_balance = ingredient.stock_quantity - required_qty
+
+                # 1. Create Alert Notification
+                if performed_by:
+                    create_notification(
+                        recipient=performed_by,  # Notify the feeder (and ideally managers, but start here)
+                        title=f"⚠️ Negative Inventory: {ingredient.name}",
+                        message=f"Feeding at {location} pushed stock to {new_balance:.2f}kg. Physical audit required.",
+                        category="ALERT",
+                        link="",
                     )
-                    % {
-                        "ingredient": ingredient.name,
-                        "req": required_qty,
-                        "avail": ingredient.stock_quantity,
-                    }
+
+                # 2. Create Audit Task
+                Task.objects.get_or_create(
+                    title=f"Audit Inventory: {ingredient.name}",
+                    defaults={
+                        "priority": Task.Priority.HIGH,  # type: ignore
+                        "description": (
+                            "System detected negative usage. Please count physical bags and update stock."
+                        ),
+                        "due_date": timezone.now().date(),
+                        # Assign to performed_by or leave unassigned for manager pickup
+                        "assigned_to": performed_by,
+                    },
                 )
 
             # Prepare update (in memory)
