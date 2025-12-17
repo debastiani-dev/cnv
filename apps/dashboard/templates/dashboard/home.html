@@ -617,9 +617,13 @@
                 if (data.rate < 0.5) color = '#F59E0B'; // Yellow (Under)
                 if (data.rate > 1.5) color = '#EF4444'; // Red (Over)
 
+                // Dynamic Scale: Default visual max is 2.5, but expand if rate is higher
+                const maxScale = Math.max(data.rate * 1.1, 2.5);
+                const seriesValue = (data.rate / maxScale) * 100;
+
                 // Render ApexChart
                 var options = {
-                    series: [data.rate * 50], // Scaled for visualization (assuming max 2.0 = 100%)
+                    series: [seriesValue],
                     chart: { 
                         type: 'radialBar', 
                         height: 200,

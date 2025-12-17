@@ -1,27 +1,70 @@
 /**
  * TaskController
  * Handles inline status updates for tasks via the API.
+ * Uses a "Portal" strategy to render dropdowns in the body only, avoiding table overflow clipping.
  */
 const TaskController = {
+    activeDropdownUuid: null,
+
     /**
      * Toggles the visibility of the status dropdown for a specific task.
-     * Closes all other open dropdowns.
+     * Moves the dropdown content to a fixed portal in document.body.
      * @param {string} uuid - The UUID of the task
      */
     toggleDropdown: function (uuid) {
-        const dropdown = document.getElementById(`dropdown-${uuid}`);
-        const allDropdowns = document.querySelectorAll('.status-dropdown-container > div[id^="dropdown-"]');
-
-        // Close all others
-        allDropdowns.forEach(d => {
-            if (d.id !== `dropdown-${uuid}`) {
-                d.classList.add('hidden');
-            }
-        });
-
-        if (dropdown) {
-            dropdown.classList.toggle('hidden');
+        // If clicking the same one, just close it
+        if (this.activeDropdownUuid === uuid) {
+            this.closeAllDropdowns();
+            return;
         }
+
+        // Close any existing
+        this.closeAllDropdowns();
+
+        const container = document.querySelector(`.status-dropdown-container[data-task-id="${uuid}"]`);
+        const templateDropdown = document.getElementById(`dropdown-${uuid}`);
+
+        if (container && templateDropdown) {
+            this.activeDropdownUuid = uuid;
+
+            // Create Portal
+            const portal = document.createElement('div');
+            portal.id = 'task-dropdown-portal';
+            portal.className = 'fixed z-[9999] bg-white shadow-lg rounded-md border border-gray-200 py-1 w-32';
+
+            // Clone content
+            portal.innerHTML = templateDropdown.innerHTML;
+
+            // Position it
+            const rect = container.getBoundingClientRect();
+            const spaceBelow = window.innerHeight - rect.bottom;
+
+            // Logic: Default down (mt-1), if tight (< 200) go up
+            // Since fixed, we use top/left coordinates
+            portal.style.left = `${rect.left}px`;
+
+            if (spaceBelow < 200) {
+                // Open Up
+                // Portal height is unknown until appended, but let's assume ~150px or calculate after append?
+                // Better: Append first, then measure, then position?
+                // Simple assumption for now or calculate:
+                document.body.appendChild(portal);
+                const portalHeight = portal.offsetHeight;
+                portal.style.top = `${rect.top - portalHeight - 4}px`; // 4px gap
+            } else {
+                // Open Down
+                portal.style.top = `${rect.bottom + 4}px`;
+                document.body.appendChild(portal);
+            }
+        }
+    },
+
+    closeAllDropdowns: function () {
+        const portal = document.getElementById('task-dropdown-portal');
+        if (portal) {
+            portal.remove();
+        }
+        this.activeDropdownUuid = null;
     },
 
     /**
@@ -33,10 +76,14 @@ const TaskController = {
         const url = `/tasks/api/${uuid}/update-status/`;
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         const statusText = document.getElementById(`status-text-${uuid}`);
-        const badgeButton = statusText.closest('button');
-        const dropdown = document.getElementById(`dropdown-${uuid}`);
 
-        // Visual feedback: opacity/disable
+        // Find badge button (it's in the table, not the portal)
+        // We can find it via the statusText parent
+        const badgeButton = statusText ? statusText.closest('button') : null;
+
+        if (!badgeButton) return;
+
+        // Visual feedback
         badgeButton.style.opacity = '0.5';
 
         fetch(url, {
@@ -64,8 +111,8 @@ const TaskController = {
                     // Base classes: "badge inline-flex items-center gap-1 cursor-pointer"
                     badgeButton.className = `badge ${data.color_class} inline-flex items-center gap-1 cursor-pointer`;
 
-                    // Close dropdown
-                    dropdown.classList.add('hidden');
+                    // Close dropdown (Portal)
+                    this.closeAllDropdowns();
 
                     // Handle "DONE" strikethrough logic
                     const row = document.getElementById(`task-row-${uuid}`);
@@ -87,10 +134,22 @@ const TaskController = {
 };
 
 // Close dropdowns when clicking outside
+// We need to detect if click is inside the Portal OR the Container Button
 document.addEventListener('click', function (event) {
-    if (!event.target.closest('.status-dropdown-container')) {
-        document.querySelectorAll('.status-dropdown-container > div[id^="dropdown-"]').forEach(d => {
-            d.classList.add('hidden');
-        });
-    }
+    const portal = document.getElementById('task-dropdown-portal');
+    const container = event.target.closest('.status-dropdown-container');
+
+    // If click is inside the portal, do nothing (let button clicks handle it)
+    if (event.target.closest('#task-dropdown-portal')) return;
+
+    // If click is inside the activation button, do nothing (toggleDropdown handles it)
+    if (container) return;
+
+    // Otherwise, close
+    TaskController.closeAllDropdowns();
 });
+
+// Update scroll listener to close dropdowns on scroll to avoid detached floating elements
+document.addEventListener('scroll', function () {
+    TaskController.closeAllDropdowns();
+}, true);

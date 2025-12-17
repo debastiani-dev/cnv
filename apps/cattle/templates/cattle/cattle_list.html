@@ -22,7 +22,7 @@
         </div>
 
         <!-- Advanced Filter Form -->
-        <form method="get" class="w-full flex flex-col items-end gap-3" id="cattle-filter-form">
+        <form method="get" class="relative w-full flex flex-col items-end gap-3" id="cattle-filter-form">
             <div class="flex flex-row gap-3 w-full justify-end">
                 <!-- Search -->
                 <div class="relative rounded-md shadow-sm w-full sm:w-64">
@@ -41,8 +41,8 @@
                 </button>
             </div>
 
-            <!-- Advanced Filters Panel (Hidden by default) -->
-            <div id="advanced-filters" class="hidden w-full bg-gray-50 p-4 rounded-md border border-gray-200 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Advanced Filters Panel (Hidden by default, Absolute Overlay) -->
+            <div id="advanced-filters" class="hidden absolute right-0 top-full z-50 mt-2 w-[90vw] max-w-6xl bg-white p-4 rounded-md shadow-2xl ring-1 ring-gray-900/5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <!-- Location -->
                 <div>
                      <label class="block text-sm font-medium text-gray-700">{% trans "Location" %}</label>
