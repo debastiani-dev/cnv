@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 from unittest.mock import patch
 
 import pytest
@@ -127,3 +128,17 @@ class TestPopulateMockData:
 
         user_model = get_user_model()
         assert user_model.objects.count() > 6
+
+    def test_create_diets_fallback(self):
+        """Test that ingredients are created if none exist when creating diets."""
+        # Ensure no ingredients exist
+        FeedIngredient.objects.all().delete()
+
+        cmd = Command()
+        # Mock stdout to silence output
+        with patch.object(cmd, "stdout"):
+            cmd._create_diets(count=5)
+
+        # Verify ingredients were created
+        assert FeedIngredient.objects.count() > 0
+        assert Diet.objects.count() >= 5

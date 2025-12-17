@@ -4,6 +4,7 @@ from model_bakery import baker
 
 from apps.cattle.models.cattle import Cattle
 from apps.health.models import (
+    ActiveIngredient,
     Medication,
     MedicationType,
     MedicationUnit,
@@ -91,3 +92,10 @@ class TestSanitaryEventTargetModel:
         # Should NOT raise IntegrityError because the first one is deleted
         target2 = baker.make(SanitaryEventTarget, event=event, animal=cow)
         assert target2.pk != target1.pk
+
+
+@pytest.mark.django_db
+class TestActiveIngredientModel:
+    def test_str_representation(self):
+        ingredient = baker.make(ActiveIngredient, name="Ivermectin")
+        assert str(ingredient) == "Ivermectin"

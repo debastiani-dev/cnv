@@ -1,4 +1,5 @@
 from .health import (
+    ActiveIngredient,
     Medication,
     MedicationType,
     MedicationUnit,
@@ -8,6 +9,7 @@ from .health import (
 from .protocol import HealthProtocol, ProtocolItem
 
 __all__ = [
+    "ActiveIngredient",
     "Medication",
     "SanitaryEvent",
     "SanitaryEventTarget",
