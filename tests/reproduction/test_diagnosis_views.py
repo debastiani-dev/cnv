@@ -169,6 +169,22 @@ class TestDiagnosisCreateView:
         assert breeding_bred in form_queryset
         assert breeding_open not in form_queryset
 
+    def test_create_initial_with_breeding_event(self, client, user):
+        """Test that breeding_event query param populates initial form data."""
+        client.force_login(user)
+        dam = baker.make(
+            Cattle, reproduction_status=Cattle.REP_STATUS_BRED, sex=Cattle.SEX_FEMALE
+        )
+        breeding = baker.make(BreedingEvent, dam=dam)
+
+        url = reverse("reproduction:diagnosis_add") + f"?breeding_event={breeding.pk}"
+        response = client.get(url)
+
+        assert response.status_code == 200
+        # Verify initial data in context or form
+        form = response.context["form"]
+        assert form.initial["breeding_event"] == str(breeding.pk)
+
 
 @pytest.mark.django_db
 class TestDiagnosisTrashViews:

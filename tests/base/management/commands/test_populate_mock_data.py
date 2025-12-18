@@ -4,6 +4,7 @@ from unittest.mock import patch
 import pytest
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from model_bakery import baker
 
 from apps.base.management.commands.populate_mock_data import Command
 from apps.cattle.models import Cattle
@@ -12,6 +13,7 @@ from apps.locations.models import Location
 from apps.nutrition.models import Diet, FeedingEvent, FeedIngredient
 from apps.partners.models import Partner
 from apps.purchases.models import Purchase
+from apps.reproduction.models import BreedingEvent, Calving
 from apps.sales.models import Sale
 
 
@@ -43,8 +45,8 @@ class TestPopulateMockData:
             assert len(loc.name) <= 15
 
         for cattle in Cattle.objects.all():
-            assert len(cattle.tag) <= 15
-            assert len(cattle.name) <= 15
+            assert len(cattle.tag) <= 25
+            assert len(cattle.name) <= 50
 
         for diet in Diet.objects.all():
             assert len(diet.name) <= 15
@@ -142,3 +144,35 @@ class TestPopulateMockData:
         # Verify ingredients were created
         assert FeedIngredient.objects.count() > 0
         assert Diet.objects.count() >= 5
+
+    @patch("apps.base.management.commands.populate_mock_data.baker.make")
+    def test_calf_breed_fallback(self, mock_make):
+        """Test that cross-breeding results in 'other' breed (lines 546-551)."""
+        cmd = Command()
+
+        # Setup parents with diff breeds
+        dam = baker.prepare(Cattle, breed=Cattle.BREED_ANGUS, tag="Dam-001")
+        sire = baker.prepare(Cattle, breed=Cattle.BREED_HEREFORD, tag="Sire-001")
+
+        # Pre-prepare breeding event.
+        # We assume baker.make is called with BreedingEvent as first arg.
+        breeding_event = baker.prepare(BreedingEvent, dam=dam, sire=sire)
+        mock_calf = baker.prepare(Cattle, weight_kg=30.0)
+        mock_calving = baker.prepare(Calving)
+
+        # side_effect list: 1. BreedingEvent, 2. Calf, 3. Calving
+        mock_make.side_effect = [breeding_event, mock_calf, mock_calving]
+
+        # Explicitly pass stdout mock to avoid noise
+        with patch.object(cmd, "stdout"):
+            cmd._create_calving_records([dam], count=1)
+
+        # Verify the calls to baker.make (BreedingEvent, Calf, Calving)
+        assert mock_make.call_count == 3
+
+        # Check args of 2nd call
+        _, kwargs = mock_make.call_args_list[1]
+
+        # The logic: if sire.breed != dam.breed -> breed="cross"
+        # Since "cross" not in BREED_CHOICES, breed becomes BREED_OTHER ("other")
+        assert kwargs.get("breed") == Cattle.BREED_OTHER

@@ -1,0 +1,85 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mating Plan" %}: {{ plan.season.name }} - {{ plan.sire.tag }}{% endblock %}
+
+{% block content %}
+<div class="px-4 py-8 sm:px-6 lg:px-8">
+    <div class="space-y-6">
+        <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between">
+        <div class="min-w-0 flex-1">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                {% trans "Mating Plan:" %} {{ plan.season.name }} - {{ plan.sire.tag }}
+            </h2>
+            <div class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
+                <div class="mt-2 flex items-center text-sm text-gray-500">
+                    <span class="font-medium mr-1">{% trans "Sire:" %}</span> {{ plan.sire.name|default:plan.sire.tag }}
+                </div>
+                <div class="mt-2 flex items-center text-sm text-gray-500">
+                    <span class="font-medium mr-1">{% trans "Status:" %}</span> 
+                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ring-gray-500/10 
+                        {% if plan.status == 'ACTIVE' %}bg-green-50 text-green-700 ring-green-600/20
+                        {% elif plan.status == 'COMPLETED' %}bg-gray-50 text-gray-600 ring-gray-500/10
+                        {% elif plan.status == 'APPROVED_WAITING' %}bg-blue-50 text-blue-700 ring-blue-600/20
+                        {% else %}bg-yellow-50 text-yellow-800 ring-yellow-600/20{% endif %}">
+                        {{ plan.get_status_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 flex md:ml-4 md:mt-0">
+            {% if plan.status == 'APPROVED_WAITING' %}
+            <a href="{% url 'reproduction:matingplan_activate' plan.pk %}" class="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                {% trans "Activate Plan & Move" %}
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'reproduction:matingplan_edit' plan.pk %}" class="ml-3 inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                {% trans "Edit" %}
+            </a>
+            <a href="{% url 'reproduction:matingplan_delete' plan.pk %}" class="ml-3 inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">
+                {% trans "Delete" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Details -->
+    <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Plan Details" %}</h3>
+        </div>
+        <div class="border-t border-gray-100">
+            <dl class="divide-y divide-gray-100">
+                 <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-900">{% trans "Season" %}</dt>
+                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ plan.season.name }} ({{ plan.season.start_date }} - {{ plan.season.end_date }})</dd>
+                </div>
+                <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-900">{% trans "Notes" %}</dt>
+                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{{ plan.notes|linebreaks }}</dd>
+                </div>
+                <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-900">{% trans "Allocated Cows" %} ({{ plan.cows.count }})</dt>
+                    <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
+                            {% for cow in plan.cows.all %}
+                            <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                                <div class="flex w-0 flex-1 items-center">
+                                    <span class="truncate font-medium">{{ cow.tag }}</span>
+                                    <span class="ml-2 text-gray-500">{{ cow.breed }}</span>
+                                </div>
+                                <div class="ml-4 flex-shrink-0">
+                                    <a href="{% url 'cattle:detail' cow.pk %}" class="font-medium text-indigo-600 hover:text-indigo-500">{% trans "View" %}</a>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

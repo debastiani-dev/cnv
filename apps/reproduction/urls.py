@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.reproduction.views.allocation_views import MatingPlanAllocationView
 from apps.reproduction.views.breeding import (
     BreedingCreateView,
     BreedingDeleteView,
@@ -24,6 +25,16 @@ from apps.reproduction.views.diagnosis import (
     DiagnosisRestoreView,
     DiagnosisTrashListView,
 )
+from apps.reproduction.views.mating_views import (
+    MatingPlanCreateView,
+    MatingPlanDeleteView,
+    MatingPlanDetailView,
+    MatingPlanHardDeleteView,
+    MatingPlanListView,
+    MatingPlanRestoreView,
+    MatingPlanTrashListView,
+    MatingPlanUpdateView,
+)
 from apps.reproduction.views.overview import ReproductionOverviewView
 from apps.reproduction.views.season import (
     SeasonCreateView,
@@ -33,6 +44,11 @@ from apps.reproduction.views.season import (
     SeasonRestoreView,
     SeasonTrashListView,
     SeasonUpdateView,
+)
+from apps.reproduction.views.simulator_views import (
+    MatingAnalysisView,
+    MatingPlanBulkCreateView,
+    MatingSimulatorView,
 )
 
 app_name = "reproduction"
@@ -107,5 +123,51 @@ urlpatterns = [
         "season/<uuid:pk>/permanent-delete/",
         SeasonPermanentDeleteView.as_view(),
         name="season_permanent_delete",
+    ),
+    # Mating Plan CRUD
+    path("mating-plans/", MatingPlanListView.as_view(), name="matingplan_list"),
+    path("mating-plans/add/", MatingPlanCreateView.as_view(), name="matingplan_add"),
+    path(
+        "mating-plans/trash/",
+        MatingPlanTrashListView.as_view(),
+        name="matingplan_trash",
+    ),
+    path(
+        "mating-plans/<uuid:pk>/",
+        MatingPlanDetailView.as_view(),
+        name="matingplan_detail",
+    ),
+    path(
+        "mating-plans/<uuid:pk>/edit/",
+        MatingPlanUpdateView.as_view(),
+        name="matingplan_edit",
+    ),
+    path(
+        "mating-plans/<uuid:pk>/delete/",
+        MatingPlanDeleteView.as_view(),
+        name="matingplan_delete",
+    ),
+    path(
+        "mating-plans/<uuid:pk>/restore/",
+        MatingPlanRestoreView.as_view(),
+        name="matingplan_restore",
+    ),
+    path(
+        "mating-plans/<uuid:pk>/permanent-delete/",
+        MatingPlanHardDeleteView.as_view(),
+        name="matingplan_permanent_delete",
+    ),
+    path(
+        "mating-plans/<uuid:pk>/activate/",
+        MatingPlanAllocationView.as_view(),
+        name="matingplan_activate",
+    ),
+    # Simulator
+    path("simulator/", MatingSimulatorView.as_view(), name="mating_simulator"),
+    path("simulator/analyze/", MatingAnalysisView.as_view(), name="mating_analyze"),
+    path(
+        "simulator/create-plan/",
+        MatingPlanBulkCreateView.as_view(),
+        name="mating_create_bulk",
     ),
 ]

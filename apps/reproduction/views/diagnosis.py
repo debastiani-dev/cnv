@@ -57,6 +57,15 @@ class DiagnosisCreateView(CreateView):
     template_name = "reproduction/pregnancy_check_form.html"
     success_url = reverse_lazy(DIAGNOSIS_LIST_URL)
 
+    success_url = reverse_lazy(DIAGNOSIS_LIST_URL)
+
+    def get_initial(self):
+        initial = super().get_initial()
+        breeding_event_id = self.request.GET.get("breeding_event")
+        if breeding_event_id:
+            initial["breeding_event"] = breeding_event_id
+        return initial
+
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         # Limit choices to cows that are BRED (and thus waiting for diagnosis)

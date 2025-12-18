@@ -63,6 +63,10 @@ document.addEventListener('alpine:init', () => {
                         'X-CSRFToken': this.getCookie('csrftoken')
                     }
                 });
+
+                if (response.ok) {
+                    window.location.reload();
+                }
             } catch (error) {
                 console.error('Error marking all read:', error);
             }

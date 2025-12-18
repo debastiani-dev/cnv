@@ -148,6 +148,9 @@
                                 <ul x-show="openCategory === 'reproduction'" x-cloak>
                                     <li><a href="{% url 'reproduction:overview' %}"
                                            class="{% if request.resolver_match.url_name == 'overview' and 'reproduction' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Overview" %}</a></li>
+
+                                    <li><a href="{% url 'reproduction:matingplan_list' %}"
+                                           class="{% if request.resolver_match.url_name == 'matingplan_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Mating Plans" %}</a></li>
                                     <li><a href="{% url 'reproduction:breeding_list' %}"
                                            class="{% if request.resolver_match.url_name == 'breeding_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Breeding Events" %}</a></li>
                                     <li><a href="{% url 'reproduction:calving_list' %}"
@@ -378,6 +381,9 @@
                             <ul x-show="openCategory === 'reproduction'" x-cloak>
                                 <li><a href="{% url 'reproduction:overview' %}"
                                        class="{% if request.resolver_match.url_name == 'overview' and 'reproduction' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Overview" %}</a></li>
+
+                                <li><a href="{% url 'reproduction:matingplan_list' %}"
+                                       class="{% if request.resolver_match.url_name == 'matingplan_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Mating Plans" %}</a></li>
                                 <li><a href="{% url 'reproduction:breeding_list' %}"
                                        class="{% if request.resolver_match.url_name == 'breeding_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Breeding Events" %}</a></li>
                                 <li><a href="{% url 'reproduction:calving_list' %}"

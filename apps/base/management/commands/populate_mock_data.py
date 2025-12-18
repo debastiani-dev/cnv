@@ -33,6 +33,7 @@ from apps.purchases.services.purchase_service import PurchaseService
 from apps.reproduction.models import (
     BreedingEvent,
     Calving,
+    MatingPlan,
     PregnancyCheck,
     ReproductiveSeason,
 )
@@ -103,6 +104,7 @@ class Command(BaseCommand):
                     medications, cattle_list, users, count
                 )  # passed users
                 self._create_reproduction_data(cattle_list, seasons, count)
+                self._create_mating_plans(cattle_list, seasons, locations, count)
                 self._create_sales(partners, cattle_list, count)
                 self._create_purchases(partners, ingredients, count)
                 self._create_weighing_sessions(cattle_list, count)
@@ -211,7 +213,9 @@ class Command(BaseCommand):
                     name=self._short_str("Cow"),
                     location=random.choice(locations) if locations else None,
                     birth_date=self.get_random_date(),
-                    sex=random.choice(Cattle.SEX_CHOICES)[0],
+                    sex=(
+                        Cattle.SEX_MALE if random.random() < 0.1 else Cattle.SEX_FEMALE
+                    ),  # 10% Bulls
                     breed=random.choice(Cattle.BREED_CHOICES)[0],
                     status=random.choices(
                         [c[0] for c in Cattle.STATUS_CHOICES],
@@ -219,13 +223,27 @@ class Command(BaseCommand):
                         k=1,
                     )[0],
                     weight_kg=Decimal(random.uniform(30.0, 50.0)),  # Birth weight
-                    current_weight=Decimal(
-                        random.uniform(200.0, 600.0)
-                    ),  # Initial guess
+                    # Current weight will be calculated below
                     sire=None,
                     dam=None,
                 )
             )
+
+            # Fix Birth Date and Current Weight
+            # Allow ages up to 12 years (approx 4380 days)
+            age_days = random.randint(30, 4380)
+            cattle_list[-1].birth_date = timezone.now().date() - timedelta(
+                days=age_days
+            )
+
+            # Simple growth curve approximation
+            # Birth: 40kg. Growth: ~0.8kg/day until 600kg cap.
+            birth_weight = float(cattle_list[-1].weight_kg)
+            growth = min(600, birth_weight + (age_days * 0.7))  # 0.7 kg/day avg
+            cattle_list[-1].current_weight = Decimal(
+                growth * random.uniform(0.9, 1.1)
+            )  # +/- 10% variance
+            cattle_list[-1].save()
 
         # Generate deep ancestry for the first few cattle (up to 5)
         # We aim for 10 generations. To avoid exponential explosion (2^10 = 1024 records per cow),
@@ -264,7 +282,7 @@ class Command(BaseCommand):
             name=self._short_str("Bull"),
             sex=Cattle.SEX_MALE,
             birth_date=sire_dob,
-            status=Cattle.STATUS_AVAILABLE,
+            status=Cattle.STATUS_DEAD if current_depth > 0 else Cattle.STATUS_AVAILABLE,
             breed=random.choice(Cattle.BREED_CHOICES)[0],  # Fix: Ensure random breed
         )
 
@@ -275,7 +293,7 @@ class Command(BaseCommand):
             name=self._short_str("Cow"),
             sex=Cattle.SEX_FEMALE,
             birth_date=dam_dob,
-            status=Cattle.STATUS_AVAILABLE,
+            status=Cattle.STATUS_DEAD if current_depth > 0 else Cattle.STATUS_AVAILABLE,
             breed=random.choice(Cattle.BREED_CHOICES)[0],  # Fix: Ensure random breed
         )
 
@@ -518,16 +536,45 @@ class Command(BaseCommand):
             calving_date = self.get_random_date()
 
             # Create a calf for this calving
-            # We use baker to create a new calf record
+            dam_tag_suffix = dam.tag.split("-")[-1] if "-" in dam.tag else dam.tag[-4:]
+            # Use wider random range to prevent collision (10k-99k)
+            calf_tag = f"C-{dam_tag_suffix}-{random.randint(10000, 99999)}"
+
+            # Determine Breed
+            calf_breed = dam.breed
+            if breeding.sire and breeding.sire.breed != dam.breed:
+                calf_breed = (
+                    "cross"  # Simplified, or pick one. Model validates choices.
+                )
+                # If "cross" is not in choices, fallback to Dam's or "other"
+                if "cross" not in dict(Cattle.BREED_CHOICES):
+                    calf_breed = Cattle.BREED_OTHER
+
             calf = baker.make(
                 Cattle,
-                tag=self._short_str(f"Calf-{dam.tag[-4:]}"),
+                tag=calf_tag,
+                name=f"Calf of {dam.name or dam.tag}",
                 sex=random.choice(Cattle.SEX_CHOICES)[0],
                 birth_date=calving_date,
                 dam=dam,
-                sire=breeding.sire,  # Use sire from breeding event if available
+                sire=breeding.sire,
+                breed=calf_breed,
+                location=dam.location,  # Same as Dam
                 status=Cattle.STATUS_AVAILABLE,
+                weight_kg=Decimal(random.uniform(25.0, 45.0)),  # Birth weight
+                reproduction_status=Cattle.REP_STATUS_OPEN,
             )
+
+            # Calculate calf current weight
+            calf_age_days = (timezone.now().date() - calving_date).days
+            calf_age_days = max(calf_age_days, 0)
+
+            calf_birth_weight = float(calf.weight_kg)
+            # Calves grow ~0.8-1.0kg/day
+            calf_growth = calf_birth_weight + (calf_age_days * random.uniform(0.7, 1.0))
+            # Cap at 300kg for this specific generation logic (if they are young)
+            calf.current_weight = Decimal(calf_growth)
+            calf.save()
 
             baker.make(
                 Calving,
@@ -756,3 +803,37 @@ class Command(BaseCommand):
                 category=random.choice(Notification.Category.choices)[0],
                 is_read=random.choice([True, False]),
             )
+
+    def _create_mating_plans(self, cattle_list, seasons, _locations, count):
+        self.stdout.write("Creating Mating Plans...")
+
+        # Filter potential sires and cows
+        bulls = [c for c in cattle_list if c.sex == Cattle.SEX_MALE]
+        cows = [c for c in cattle_list if c.sex == Cattle.SEX_FEMALE]
+
+        if not bulls or not cows:
+            self.stdout.write(
+                self.style.WARNING("Not enough cattle for mating plans. Skipping.")
+            )
+            return
+
+        # Create fewer plans than total count (e.g. 20% of count)
+        plan_count = max(5, int(count / 5))
+
+        for _ in range(plan_count):
+            status = random.choice(MatingPlan.Status.choices)[0]
+
+            plan = baker.make(
+                MatingPlan,
+                season=random.choice(seasons) if seasons else None,
+                sire=random.choice(bulls),
+                status=status,
+                notes=self._short_str("Plan"),
+            )
+
+            # Assign random cows (5 to 15)
+            # Use baker or manual set? M2M needs .set() or baker can handle it if defined?
+            # Baker allows `entries=[...]` for M2M? simpler to just create and set.
+            sample_size = min(len(cows), random.randint(5, 15))
+            if sample_size > 0:
+                plan.cows.set(random.sample(cows, k=sample_size))

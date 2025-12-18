@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -49,7 +50,7 @@ class PregnancyCheckScanner(BaseScanner):
         return self.should_notify(
             recipient=None,
             category=Notification.Category.REMINDER,
-            link=f"/reproduction/breeding/?highlight={event.pk}",
+            link=f"{reverse('reproduction:diagnosis_add')}?breeding_event={event.pk}",
             cooldown_delta=timedelta(days=7),
         )
 
@@ -60,5 +61,5 @@ class PregnancyCheckScanner(BaseScanner):
                 "Breeding event for {dam} on {date} needs a pregnancy check."
             ).format(dam=event.dam, date=event.date),
             category=Notification.Category.REMINDER,
-            link=f"/reproduction/breeding/?highlight={event.pk}",
+            link=f"{reverse('reproduction:diagnosis_add')}?breeding_event={event.pk}",
         )

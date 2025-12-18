@@ -63,6 +63,11 @@ urlpatterns = [
         name="medication-trash",
     ),
     path(
+        "medications/<uuid:pk>/",
+        MedicationUpdateView.as_view(),
+        name="medication-detail",
+    ),
+    path(
         "medications/<uuid:pk>/edit/",
         MedicationUpdateView.as_view(),
         name="medication-update",

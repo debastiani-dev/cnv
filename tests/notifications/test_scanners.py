@@ -120,7 +120,7 @@ class TestScanners:
         # So I don't have b1 reference easily.
         # I'll fetch it from DB or notification.
         notif = Notification.objects.first()
-        assert notif.link.startswith("/reproduction/breeding/?highlight=")
+        assert notif.link.startswith("/reproduction/diagnosis/add/?breeding_event=")
 
         # Deduplication (unread)
         count_2 = scanner.scan()

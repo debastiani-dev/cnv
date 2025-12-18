@@ -1,0 +1,495 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Mating Simulator" %}{% endblock %}
+
+{% block content %}
+<div class="min-h-full" x-data="matingSimulator()">
+    
+    <!-- Header / Wizard Progress -->
+    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-16 z-30">
+        <div class="px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-xl font-bold leading-6 text-gray-900">{% trans "Mating Simulator" %}</h1>
+                    <p class="mt-1 text-sm text-gray-500">{% trans "Analyze genetics and create optimal mating plans." %}</p>
+                </div>
+                
+                <!-- Progress Steps (Premium Icon Stepper) -->
+                <nav aria-label="Progress" class="w-full max-w-xl mx-auto mb-4">
+                    <ol class="flex items-center justify-between relative">
+                        <!-- Connecting Line Background -->
+                        <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-100 -z-10 transform -translate-y-[14px]"></div>
+                        <!-- Active Line (dynamic width) -->
+                        <div class="absolute top-1/2 left-0 h-0.5 bg-indigo-600 -z-10 transform -translate-y-[14px] transition-all duration-500 ease-in-out" 
+                             :style="'width: ' + ((step - 1) * 50) + '%'"></div>
+
+                        <!-- Step 1: Sire -->
+                        <li class="relative bg-transparent">
+                            <a href="#" @click.prevent="step = 1" class="flex flex-col items-center group cursor-pointer">
+                                <div class="h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-white z-10"
+                                     :class="step >= 1 ? 'border-indigo-600 text-indigo-600 shadow-[0_0_0_4px_rgba(79,70,229,0.1)]' : 'border-gray-200 text-gray-300 bg-gray-50'">
+                                     <!-- Icon: Magnifying Glass (Search) -->
+                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                     </svg>
+                                </div>
+                                <span class="mt-2 text-[10px] uppercase tracking-widest font-bold transition-colors duration-300"
+                                      :class="step >= 1 ? 'text-indigo-600' : 'text-gray-400'">
+                                    {% trans "Sire" %}
+                                </span>
+                            </a>
+                        </li>
+
+                        <!-- Step 2: Cows -->
+                        <li class="relative bg-transparent">
+                             <a href="#" @click.prevent="if(selectedSire) step = 2" class="flex flex-col items-center group"
+                                :class="{'cursor-not-allowed opacity-50': !selectedSire, 'cursor-pointer': selectedSire}">
+                                <div class="h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-white z-10"
+                                     :class="step >= 2 ? 'border-indigo-600 text-indigo-600 shadow-[0_0_0_4px_rgba(79,70,229,0.1)]' : 'border-gray-200 text-gray-300 bg-gray-50'">
+                                     <!-- Icon: Users (Cows) -->
+                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                                     </svg>
+                                </div>
+                                <span class="mt-2 text-[10px] uppercase tracking-widest font-bold transition-colors duration-300"
+                                      :class="step >= 2 ? 'text-indigo-600' : 'text-gray-400'">
+                                    {% trans "Cows" %}
+                                </span>
+                            </a>
+                        </li>
+
+                        <!-- Step 3: Review -->
+                        <li class="relative bg-transparent">
+                             <a href="#" class="flex flex-col items-center group cursor-default">
+                                <div class="h-10 w-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 bg-white z-10"
+                                     :class="step >= 3 ? 'border-indigo-600 text-indigo-600 shadow-[0_0_0_4px_rgba(79,70,229,0.1)]' : 'border-gray-200 text-gray-300 bg-gray-50'">
+                                     <!-- Icon: Chart Bar (Analysis) -->
+                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                       <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                                     </svg>
+                                </div>
+                                <span class="mt-2 text-[10px] uppercase tracking-widest font-bold transition-colors duration-300"
+                                      :class="step >= 3 ? 'text-indigo-600' : 'text-gray-400'">
+                                    {% trans "Results" %}
+                                </span>
+                            </a>
+                        </li>
+                    </ol>
+                </nav>
+
+                <!-- Action Button -->
+                <div class="flex items-center gap-x-4">
+                     <span class="text-sm text-gray-500" x-show="step === 2">
+                        <span class="font-bold text-gray-900" x-text="selectedCows.length"></span> {% trans "cows selected" %}
+                    </span>
+
+                    <button type="button" 
+                            x-show="step === 1"
+                            @click="step = 2"
+                            :disabled="!selectedSire"
+                            class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                        {% trans "Next: Select Cows" %}
+                    </button>
+                    
+                    <button type="button" 
+                            x-show="step === 2"
+                            @click="runAnalysis()"
+                            :disabled="selectedCows.length === 0"
+                            class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-x-2">
+                        <svg x-show="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {% trans "Run Analysis" %}
+                    </button>
+                    
+                    <button type="button" 
+                            id="create-plan-btn"
+                            x-show="step === 3"
+                            @click="createPlan()"
+                            class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+                        {% trans "Create Mating Plan" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="px-4 py-8 sm:px-6 lg:px-8">
+        
+        <!-- STEP 1: Select Sire -->
+        <div x-show="step === 1" x-transition.opacity.duration.300ms>
+            <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">{% trans "Choose a Sire" %}</h2>
+                    <p class="mt-1 text-sm text-gray-500">{% trans "Select a bull to start the genetic analysis." %}</p>
+                </div>
+                <div class="relative w-full sm:w-80">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <input type="text" x-model="sireSearch" 
+                           class="block w-full rounded-lg border-0 py-2.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 shadow-sm"
+                           placeholder="{% trans 'Search by Name, Tag or Breed...' %}">
+                </div>
+            </div>
+
+            <!-- Sire Grid (Client-Side Rendering) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                <template x-for="sire in filteredSires" :key="sire.id">
+                    <div class="group relative flex flex-row overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200 transition-all duration-200 hover:shadow-lg hover:ring-indigo-400 cursor-pointer h-full"
+                         :class="selectedSire && selectedSire.id === sire.id ? '!ring-2 !ring-indigo-600 bg-indigo-50/30' : ''"
+                         @click="selectSire(sire.id, sire.tag, sire.breed)">
+                        
+                        <!-- Image Section (Left) -->
+                        <div class="relative w-32 h-full flex-shrink-0 bg-gray-100 overflow-hidden border-r border-gray-100">
+                            <img :src="sire.image_url" :alt="sire.tag" class="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105">
+                             
+                             <!-- Selected Verified Badge -->
+                            <div x-show="selectedSire && selectedSire.id === sire.id" 
+                                 x-transition.scale
+                                 class="absolute top-1 left-1 z-10 rounded-full bg-indigo-600 p-1 text-white shadow-lg ring-2 ring-white">
+                                <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Info Section (Right) -->
+                        <div class="flex flex-1 flex-col p-3 justify-between min-w-0">
+                            <div>
+                                <div class="flex justify-between items-start mb-0.5">
+                                    <h3 class="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors truncate" x-text="sire.tag"></h3>
+                                     <!-- Age Badge -->
+                                    <span class="flex-shrink-0 inline-flex items-center rounded-md bg-white px-1.5 py-0.5 text-[10px] font-medium text-gray-600 ring-1 ring-inset ring-gray-200"
+                                      x-text="sire.age"></span>
+                                </div>
+                                <p class="text-xs text-gray-700 font-medium truncate mb-1" x-text="sire.name" x-show="sire.name"></p>
+                                <p class="text-xs text-gray-500 truncate" x-text="sire.breed_display"></p>
+                            </div>
+                            
+                            <!-- Detailed Stats -->
+                            <div class="mt-2 space-y-1 text-xs">
+                                 <div class="flex justify-between">
+                                     <span class="text-gray-500">{% trans "Weight" %}</span>
+                                     <span class="font-medium text-gray-900" x-text="sire.weight ? sire.weight + ' kg' : '-'"></span>
+                                 </div>
+                                 <div class="flex justify-between">
+                                     <span class="text-gray-500">{% trans "Sire" %}</span>
+                                     <span class="font-medium text-gray-900 truncate ml-1" x-text="sire.sire_tag || '-'"></span>
+                                 </div>
+                                  <div class="flex justify-between">
+                                     <span class="text-gray-500">{% trans "Dam" %}</span>
+                                     <span class="font-medium text-gray-900 truncate ml-1" x-text="sire.dam_tag || '-'"></span>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            
+             <!-- Empty State for Search -->
+            <div x-show="filteredSires.length === 0" class="text-center py-24" x-cloak>
+                <div class="mx-auto h-16 w-16 text-gray-300 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">{% trans "No sires found" %}</h3>
+                <p class="mt-2 text-sm text-gray-500">{% trans "We couldn't find any bulls matching your search criteria." %}</p>
+                <button type="button" @click="sireSearch = ''" class="mt-6 text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+                    {% trans "Clear search" %}
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Select Cows -->
+        <div x-show="step === 2" x-cloak x-transition.opacity>
+             <div class="mb-6 flex items-center justify-between">
+                <div>
+                     <h2 class="text-lg font-semibold text-gray-900">{% trans "Select Dams" %}</h2>
+                     <p class="text-sm text-gray-500">{% trans "Select the cows you want to verify compatibility for." %}</p>
+                </div>
+                <div class="flex gap-x-4">
+                     <button type="button" @click="selectAllCows()" class="text-sm text-indigo-600 hover:text-indigo-900 font-medium">{% trans "Select All" %}</button>
+                     <button type="button" @click="selectedCows = []" class="text-sm text-gray-500 hover:text-gray-900 font-medium">{% trans "Clear" %}</button>
+                     <div class="relative w-64">
+                         <input type="text" x-model="cowSearch" placeholder="{% trans 'Search cows...' %}" 
+                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cow Grid -->
+             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                {% for cow in cows %}
+                <div class="group relative flex flex-col sm:flex-row overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200 transition-all duration-200 hover:shadow-lg hover:ring-indigo-400 cursor-pointer"
+                     :class="selectedCows.includes('{{ cow.pk }}') ? 'ring-2 ring-indigo-600 bg-indigo-50/50 shadow-md' : 'hover:-translate-y-1'"
+                     @click="toggleCow('{{ cow.pk }}')"
+                     x-show="matchesSearch('{{ cow.tag }}', '{{ cow.breed }}', cowSearch)">
+                    
+                    <!-- Image Section -->
+                    <div class="relative w-full sm:w-32 h-32 sm:h-auto flex-shrink-0 bg-gray-100 overflow-hidden border-r border-gray-100">
+                         <img src="{% if cow.image %}{{ cow.image.url }}{% else %}{% static 'img/default_cow.png' %}{% endif %}" alt="{{ cow.tag }}" class="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105">
+
+                         
+                         <!-- Selected Verified Badge -->
+                        <div x-show="selectedCows.includes('{{ cow.pk }}')" 
+                             x-transition.scale
+                             class="absolute top-2 left-2 z-10 rounded-full bg-indigo-600 p-1 text-white shadow-lg ring-2 ring-white">
+                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Info Section -->
+                    <div class="flex flex-1 flex-col p-3 justify-between min-w-0">
+                        <div>
+                            <div class="flex justify-between items-start mb-0.5">
+                                <h3 class="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors truncate">{{ cow.tag }}</h3>
+                                 <!-- Age Badge -->
+                                <span class="flex-shrink-0 inline-flex items-center rounded-md bg-white px-1.5 py-0.5 text-[10px] font-medium text-gray-600 ring-1 ring-inset ring-gray-200">
+                                    {{ cow.age|default:"-" }} y/o
+                                </span>
+                            </div>
+                            {% if cow.name %}
+                            <p class="text-xs text-gray-700 font-medium truncate mb-1">{{ cow.name }}</p>
+                            {% endif %}
+                            <p class="text-xs text-gray-500 truncate">{{ cow.get_breed_display|default:cow.breed }}</p>
+                        </div>
+                        
+                        <!-- Detailed Stats -->
+                        <div class="mt-2 space-y-1 text-xs">
+                             <div class="flex justify-between">
+                                 <span class="text-gray-500">{% trans "Weight" %}</span>
+                                 <span class="font-medium text-gray-900">{{ cow.current_weight|default:cow.weight_kg|default:"-" }} kg</span>
+                             </div>
+                             <div class="flex justify-between">
+                                 <span class="text-gray-500">{% trans "Sire" %}</span>
+                                 <span class="font-medium text-gray-900 truncate ml-1">{{ cow.sire.tag|default:cow.sire_external_id|default:"-" }}</span>
+                             </div>
+                              <div class="flex justify-between">
+                                 <span class="text-gray-500">{% trans "Dam" %}</span>
+                                 <span class="font-medium text-gray-900 truncate ml-1">{{ cow.dam.tag|default:cow.dam_external_id|default:"-" }}</span>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- STEP 3: Analysis Results -->
+        <div x-show="step === 3" x-cloak x-transition.opacity>
+             <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h2 class="text-base font-semibold leading-6 text-gray-900">{% trans "Compatibility Analysis" %}</h2>
+                    <p class="mt-2 text-sm text-gray-700">
+                        {% trans "Results for Sire" %} <span class="font-bold" x-text="selectedSire?.tag"></span>.
+                    </p>
+                </div>
+                <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                     <div class="inline-flex gap-x-2 text-sm">
+                        <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 font-medium text-green-700 ring-1 ring-inset ring-green-600/20">{% trans "Safe" %}</span>
+                        <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">{% trans "Warning" %}</span>
+                        <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 font-medium text-red-700 ring-1 ring-inset ring-red-600/10">{% trans "Critical" %}</span>
+                     </div>
+                </div>
+            </div>
+
+             <div class="mt-8 flow-root">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-300">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Cow Tag" %}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Inbreeding Coeff." %}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Risk Level" %}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Details" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    <template x-for="result in results" :key="result.cow_id">
+                                        <tr :class="{
+                                            'bg-red-50': result.risk_level === 'CRITICAL' || result.risk_level === 'HIGH',
+                                            'bg-yellow-50': result.risk_level === 'WARNING'
+                                        }">
+                                            <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6" x-text="result.cow_tag"></td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" x-text="(result.coefficient * 100).toFixed(2) + '%'"></td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                                      :class="{
+                                                        'bg-green-50 text-green-700 ring-green-600/20': result.risk_level === 'SAFE',
+                                                        'bg-yellow-50 text-yellow-800 ring-yellow-600/20': result.risk_level === 'WARNING',
+                                                        'bg-red-50 text-red-700 ring-red-600/10': result.risk_level === 'CRITICAL' || result.risk_level === 'HIGH'
+                                                      }"
+                                                      x-text="result.risk_level"></span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" x-text="result.details || '-'"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function matingSimulator() {
+        return {
+            step: 1,
+            loading: false,
+            sireSearch: '',
+            cowSearch: '',
+            
+            // Client-side Sire Data for proper filtering
+            sires: [
+                {% for sire in sires %}
+                {
+                    id: '{{ sire.pk|escapejs }}',
+                    tag: '{{ sire.tag|escapejs }}',
+                    name: '{{ sire.name|escapejs }}',
+                    breed: '{{ sire.breed|escapejs }}',
+                    breed_display: '{{ sire.get_breed_display|default:sire.breed|escapejs }}',
+                    image_url: '{% if sire.image %}{{ sire.image.url|escapejs }}{% else %}{% static "img/default_cow.png" %}{% endif %}',
+                    age: '{{ sire.age|default:"-"|escapejs }}',
+                    status_display: '{{ sire.get_status_display|escapejs }}',
+                    weight: '{{ sire.current_weight|default:sire.weight_kg|default:""|escapejs }}',
+                    sire_tag: '{{ sire.sire.tag|default:sire.sire_external_id|default:""|escapejs }}',
+                    dam_tag: '{{ sire.dam.tag|default:sire.dam_external_id|default:""|escapejs }}'
+                },
+                {% endfor %}
+            ],
+            
+            selectedSire: null,
+            selectedCows: [],
+            results: null,
+
+            get filteredSires() {
+                if (!this.sireSearch) return this.sires;
+                const s = this.sireSearch.toLowerCase();
+                return this.sires.filter(sire => {
+                    return sire.tag.toLowerCase().includes(s) || 
+                           (sire.name && sire.name.toLowerCase().includes(s)) ||
+                           (sire.breed && sire.breed.toLowerCase().includes(s)) ||
+                           (sire.breed_display && sire.breed_display.toLowerCase().includes(s));
+                });
+            },
+
+            selectSire(id, tag, breed) {
+                if (this.selectedSire && this.selectedSire.id === id) {
+                    this.selectedSire = null; // deselect
+                } else {
+                    this.selectedSire = { id, tag, breed };
+                }
+            },
+            
+            toggleCow(id) {
+                if (this.selectedCows.includes(id)) {
+                    this.selectedCows = this.selectedCows.filter(c => c !== id);
+                } else {
+                    this.selectedCows.push(id);
+                }
+            },
+            
+            selectAllCows() {
+                // Select all cows visible in the current filter
+                // Ideally filtering logic should be shared, but for now select ALL IDs or cleared
+                if (this.selectedCows.length > 0) {
+                    this.selectedCows = [];
+                } else {
+                   // This selects ALL loaded cows, ignoring search for simplicity, 
+                   // or we could iterate over the DOM or filtered list
+                   // Let's just select every ID in the context for now
+                   const allIds = [];
+                   {% for cow in cows %}
+                   allIds.push('{{ cow.pk }}');
+                   {% endfor %}
+                   this.selectedCows = allIds;
+                }
+            },
+            
+            matchesSearch(tag, breed, search) {
+                if (!search) return true;
+                const s = search.toLowerCase();
+                return tag.toLowerCase().includes(s) || (breed && breed.toLowerCase().includes(s));
+            },
+
+            async runAnalysis() {
+                this.loading = true;
+                try {
+                    const response = await fetch("{% url 'reproduction:mating_analyze' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: JSON.stringify({
+                            sire_id: this.selectedSire.id,
+                            cow_ids: this.selectedCows
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error("Analysis failed");
+                    
+                    const data = await response.json();
+                    this.results = data.results;
+                    this.step = 3;
+                    
+                } catch (error) {
+                    console.error("Analysis Error:", error);
+                    alert("Error running analysis: " + error.message);
+                } finally {
+                    this.loading = false;
+                }
+            },
+            
+            async createPlan() {
+                console.log("Creating plan...");
+                // Note: Removed confirm dialog to prevent browser blocking issues
+                
+                try {
+                    const response = await fetch("{% url 'reproduction:mating_create_bulk' %}", {
+                         method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: JSON.stringify({
+                            sire_id: this.selectedSire.id,
+                            cow_ids: this.selectedCows 
+                        })
+                    });
+                    
+                    console.log("Create Response status:", response.status);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log("Plan created:", data);
+                        window.location.href = "{% url 'reproduction:matingplan_list' %}";
+                    } else {
+                         const errText = await response.text();
+                         console.error("Create Plan Failed:", errText);
+                         alert("Failed to create plan: " + response.statusText);
+                    }
+                } catch (error) {
+                    console.error("Create Plan Error:", error);
+                    alert("Error: " + error.message);
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

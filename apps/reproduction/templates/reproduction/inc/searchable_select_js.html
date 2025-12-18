@@ -1,0 +1,48 @@
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('searchableSelect', (selectElement) => ({
+            params: {
+                placeholder: 'Search...',
+            },
+            query: '',
+            show: false,
+            options: [],
+            selected: null,
+            init() {
+                // Determine placeholder from select label or default
+                this.options = Array.from(selectElement.options).map(opt => ({
+                    value: opt.value,
+                    text: opt.innerText,
+                    selected: opt.selected
+                }));
+                
+                // Find initially selected
+                const initial = this.options.find(o => o.selected && o.value);
+                this.selected = initial || null;
+                
+                // Watch for external changes if needed (not implemented for simplicity)
+            },
+            get filteredOptions() {
+                if (!this.query) return this.options;
+                return this.options.filter(o => 
+                    o.text.toLowerCase().includes(this.query.toLowerCase())
+                );
+            },
+            select(option) {
+                this.selected = option;
+                selectElement.value = option.value;
+                // Dispatch change event so other listeners (e.g. invalidation logic) pick it up
+                selectElement.dispatchEvent(new Event('change'));
+                this.show = false;
+                this.query = '';
+            },
+            get displayValue() {
+                if (this.selected) return this.selected.text;
+                // If nothing selected, maybe show placeholder or "Select..."
+                // Check if there is an empty option
+                const empty = this.options.find(o => !o.value);
+                return empty ? empty.text : 'Select...';
+            }
+        }));
+    });
+</script>

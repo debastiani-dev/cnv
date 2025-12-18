@@ -1,13 +1,18 @@
+from unittest.mock import patch
+
 import pytest
 from django.utils import timezone
+from model_bakery import baker
 
 from apps.cattle.models.cattle import Cattle
+from apps.locations.models import Location, LocationType
 from apps.reproduction.forms import (
     BreedingEventForm,
     CalvingForm,
+    MatingPlanForm,
     ReproductiveSeasonForm,
 )
-from apps.reproduction.models import BreedingEvent, Calving
+from apps.reproduction.models import BreedingEvent, Calving, MatingPlan
 
 
 @pytest.mark.django_db
@@ -117,3 +122,123 @@ class TestCalvingForm:
 
         assert pregnant_cow in queryset
         assert open_cow not in queryset
+
+
+@pytest.mark.django_db
+class TestMatingPlanForm:
+    def test_clean_active_status_requires_location(self):
+        """Test that ACTIVE status requires a location (lines 137-141)."""
+        form = MatingPlanForm(data={"status": MatingPlan.Status.ACTIVE, "location": ""})
+        # Mock other required fields or allow validation to proceed to clean()
+        form.cleaned_data = {
+            "status": MatingPlan.Status.ACTIVE,
+            "location": None,
+            "sire": None,
+            "cows": [],
+        }
+        # Force clean method call via full validation usually, or mock
+        # Let's try simple valid data structure
+        season = baker.make("reproduction.ReproductiveSeason")
+        sire = baker.make(Cattle, sex=Cattle.SEX_MALE)
+
+        data = {
+            "season": season.pk,
+            "sire": sire.pk,
+            "cows": [],
+            "status": MatingPlan.Status.ACTIVE,
+            "location": "",
+        }
+        form = MatingPlanForm(data=data)
+        assert not form.is_valid()
+        assert "location" in form.errors
+        assert "must select a location" in form.errors["location"][0]
+
+    def test_clean_active_status_validates_move(self):
+        """Test move validation during clean (lines 142-152)."""
+        season = baker.make("reproduction.ReproductiveSeason")
+        sire = baker.make(Cattle, sex=Cattle.SEX_MALE)
+        cow = baker.make(Cattle, sex=Cattle.SEX_FEMALE)
+        loc = baker.make(Location, is_active=True, type=LocationType.PASTURE)
+
+        data = {
+            "season": season.pk,
+            "sire": sire.pk,
+            "cows": [cow.pk],
+            "status": MatingPlan.Status.ACTIVE,
+            "location": loc.pk,
+        }
+
+        # Mock validation to return error
+        with patch(
+            "apps.locations.services.allocation.AllocationService.validate_move"
+        ) as mock_val:
+            mock_val.return_value = {
+                "valid": False,
+                "errors": ["Capacity Exceeded"],
+                "warnings": [],
+            }
+            form = MatingPlanForm(data=data)
+            assert not form.is_valid()
+            assert "location" in form.errors
+            assert "Capacity Exceeded" in form.errors["location"]
+
+    def test_clean_active_status_warnings_pass(self):
+        """Test move validation warnings do not block save (lines 154-158)."""
+        season = baker.make("reproduction.ReproductiveSeason")
+        sire = baker.make(Cattle, sex=Cattle.SEX_MALE)
+        cow = baker.make(Cattle, sex=Cattle.SEX_FEMALE)
+        loc = baker.make(Location, is_active=True, type=LocationType.PASTURE)
+
+        data = {
+            "season": season.pk,
+            "sire": sire.pk,
+            "cows": [cow.pk],
+            "status": MatingPlan.Status.ACTIVE,
+            "location": loc.pk,
+        }
+
+        with patch(
+            "apps.locations.services.allocation.AllocationService.validate_move"
+        ) as mock_val:
+            mock_val.return_value = {
+                "valid": True,
+                "errors": [],
+                "warnings": ["Crowded"],
+            }
+            form = MatingPlanForm(data=data)
+            assert form.is_valid(), form.errors
+
+    def test_save_moves_animals(self):
+        """Test that saving as ACTIVE moves animals (lines 168-175)."""
+        season = baker.make("reproduction.ReproductiveSeason")
+        sire = baker.make(Cattle, sex=Cattle.SEX_MALE)
+        cow = baker.make(Cattle, sex=Cattle.SEX_FEMALE)
+        loc_old = baker.make(Location, name="Old")
+        loc_new = baker.make(Location, name="New", type=LocationType.PASTURE)
+
+        sire.location = loc_old
+        sire.save()
+        cow.location = loc_old
+        cow.save()
+
+        data = {
+            "season": season.pk,
+            "sire": sire.pk,
+            "cows": [cow.pk],
+            "status": MatingPlan.Status.ACTIVE,
+            "location": loc_new.pk,
+        }
+
+        # Ensure validation passes
+        with patch(
+            "apps.locations.services.allocation.AllocationService.validate_move",
+            return_value={"valid": True, "errors": [], "warnings": []},
+        ):
+            form = MatingPlanForm(data=data)
+            assert form.is_valid()
+            form.save()
+
+        sire.refresh_from_db()
+        cow.refresh_from_db()
+        assert sire.location == loc_new
+        assert cow.location == loc_new

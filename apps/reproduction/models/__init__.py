@@ -1,3 +1,4 @@
+from .mating import MatingExclusion, MatingPlan
 from .reproduction import BreedingEvent, Calving, PregnancyCheck, ReproductiveSeason
 
 __all__ = [
@@ -5,4 +6,6 @@ __all__ = [
     "BreedingEvent",
     "PregnancyCheck",
     "Calving",
+    "MatingPlan",
+    "MatingExclusion",
 ]

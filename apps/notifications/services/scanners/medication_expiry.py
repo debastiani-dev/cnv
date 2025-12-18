@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -44,23 +45,8 @@ class MedicationExpiryScanner(BaseScanner):
             else Notification.Category.INFO
         )
 
-        # Link to list view with filter or detail if available.
-        # Assuming detail view exists or fallback to list.
-        link = f"/health/medications/{medication.pk}/"
-
-        # Unique identifier for this SPECIFIC alert type
-        # We append status to link purely for deduplication uniqueness if needed,
-        # or rely on separate scan logic.
-        # Actually, let's use the standard link but rely on cooldown/unread.
-
-        # Deduplication Rule:
-        # If we notified about "EXPIRING" recently, don't spam.
-        # If it changes to "EXPIRED", that is a NEW event?
-        # Yes. But the link is the same.
-        # So `notification_exists` with same link would block it?
-        # We should probably differentiate the link or category in deduplication.
-        # BaseScanner uses (recipient, category, link).
-        # Category differs! ALERT vs INFO. So that helps.
+        # Link to Update view since Detail view doesn't exist
+        link = reverse("health:medication-update", kwargs={"pk": medication.pk})
 
         if self.should_notify(
             recipient=None,
