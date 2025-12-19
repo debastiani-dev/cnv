@@ -4,9 +4,13 @@
 import os
 import sys
 
+from core.locale_setup import set_brazilian_locale
+
 
 def main():
     """Run administrative tasks."""
+    set_brazilian_locale()
+
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
     try:
         from django.core.management import (  # pylint: disable=import-outside-toplevel

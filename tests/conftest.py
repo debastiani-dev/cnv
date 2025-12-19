@@ -1,4 +1,6 @@
 # pylint: disable=unused-argument
+import locale
+
 import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -44,3 +46,9 @@ def pytest_configure(config):
             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
         },
     }
+
+    try:
+        locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
+    except locale.Error:
+        # Fallback if locale is not generated (e.g. in CI without full locales)
+        pass

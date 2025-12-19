@@ -16,10 +16,8 @@ class TestMoney:
 
     def test_string_representation(self):
         m = Money(1000.50)
-        # Assuming en-us or similar where dot is decimal separator,
-        # but :n locale might vary.
-        # Just checking it returns a string for now.
-        assert str(m) == "1000.5" or str(m) == "1000,5" or "1000" in str(m)
+        # BRL format expectation: 1.000,50
+        assert str(m) == "1.000,50"
 
     def test_repr(self):
         m = Money(10)
