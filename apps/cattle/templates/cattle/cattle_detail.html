@@ -1,5 +1,6 @@
 {% extends 'layouts/base_dashboard.html' %}
 {% load i18n static %}
+{% load currency_tags tz %}
 
 {% block title %}{{ cattle.tag }} - {{ cattle.name|default:"Cattle Detail" }}{% endblock %}
 
@@ -49,6 +50,9 @@
             </button>
             <button onclick="switchTab('progeny')" id="tab-btn-progeny" class="tab-btn border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium">
                 {% trans "Progeny" %}
+            </button>
+            <button onclick="switchTab('financial')" id="tab-btn-financial" class="tab-btn border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 whitespace-nowrap border-b-2 py-4 px-4 text-sm font-medium">
+                {% trans "Financial" %}
             </button>
         </nav>
     </div>
@@ -306,7 +310,13 @@
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ movement.origin.name|default:"-" }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">{{ movement.destination.name }}</td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ movement.get_reason_display }}</td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ movement.performed_by.get_full_name|default:movement.performed_by.username }}</td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {% if movement.performed_by %}
+                                        {{ movement.performed_by.get_full_name|default:movement.performed_by.username }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -584,6 +594,72 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- TAB: Financial -->
+    <div id="tab-financial" class="tab-content hidden">
+        {% timezone "America/Sao_Paulo" %}
+        <div class="space-y-6">
+            <!-- Summary Card -->
+            <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
+                <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Financial Overview" %}</h3>
+                <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 border border-gray-200">
+                        <dt class="truncate text-sm font-medium text-gray-500">{% trans "Lifetime Cost" %}</dt>
+                        <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900 flex items-baseline">
+                            <span class="text-sm font-medium text-gray-500 mr-1">R$</span>
+                            {{ cattle.total_cost|to_money }}
+                        </dd>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost History Table -->
+            <div class="bg-white shadow sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Cost History" %}</h3>
+                    <a href="{% url 'finance:cost-create' %}?animal={{ cattle.pk }}" class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        {% trans "Add Cost" %}
+                    </a>
+                </div>
+                <div class="border-t border-gray-200">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-300">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{% trans "Date (Local)" %}</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Category" %}</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Description" %}</th>
+                                    <th scope="col" class="px-3 py-3.5 text-right text-sm font-semibold text-gray-900">{% trans "Value (R$)" %}</th>
+                                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                        <span class="sr-only">{% trans "Actions" %}</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                {% for cost in cattle.costs.all %}
+                                <tr>
+                                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ cost.date|date:"d/m/Y" }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cost.get_category_display }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ cost.description }}</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-right font-mono">{{ cost.amount|to_money }}</td>
+                                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                        <a href="{% url 'finance:cost-update' cost.pk %}" class="text-indigo-600 hover:text-indigo-900 mr-2">{% trans "Edit" %}</a>
+                                        <a href="{% url 'finance:cost-delete' cost.pk %}" class="text-red-600 hover:text-red-900">{% trans "Delete" %}</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="px-3 py-4 text-sm text-gray-500 text-center">{% trans "No cost entries found." %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endtimezone %}
     </div>
 </div>
 </div>

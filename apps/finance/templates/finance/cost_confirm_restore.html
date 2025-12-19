@@ -1,0 +1,38 @@
+{% extends 'layouts/base_dashboard.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Restore Cost" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                {% trans "Restore Cost Entry" %}
+            </h3>
+            <div class="mt-2 max-w-xl text-sm text-gray-500">
+                <p>
+                    {% trans "Are you sure you want to restore this cost entry?" %}
+                </p>
+                <div class="mt-4 p-4 bg-gray-50 rounded-md">
+                    <p><strong>{% trans "Date" %}:</strong> {{ cost.date }}</p>
+                    <p><strong>{% trans "Description" %}:</strong> {{ cost.description }}</p>
+                    <p><strong>{% trans "Amount" %}:</strong> R$ {{ cost.amount }}</p>
+                    <p><strong>{% trans "Animal" %}:</strong> {{ cost.animal.tag }}</p>
+                </div>
+            </div>
+            <div class="mt-5 sm:flex sm:items-center justify-end">
+                <form method="post">
+                    {% csrf_token %}
+                    <a href="{% url 'finance:cost-trash' %}" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        {% trans "Cancel" %}
+                    </a>
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        {% trans "Restore" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

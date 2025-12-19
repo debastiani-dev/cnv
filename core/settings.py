@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "apps.website",
     "apps.tasks",
     "apps.dashboard",
+    "apps.finance",
     "apps.notifications",
     "django_filters",
     "django_celery_beat",

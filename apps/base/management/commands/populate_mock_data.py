@@ -11,6 +11,7 @@ from model_bakery import baker
 # New Models
 from apps.authentication.models import User
 from apps.cattle.models import Cattle
+from apps.finance.models.finance import CostEntry
 from apps.health.models import (
     ActiveIngredient,
     HealthProtocol,
@@ -108,6 +109,7 @@ class Command(BaseCommand):
                 self._create_sales(partners, cattle_list, count)
                 self._create_purchases(partners, ingredients, count)
                 self._create_weighing_sessions(cattle_list, count)
+                self._create_costs(cattle_list)
 
                 # 4. System
                 self._create_tasks(
@@ -676,6 +678,83 @@ class Command(BaseCommand):
                 # Update animal's current weight to match latest
                 animal.current_weight = weight
                 animal.save(update_fields=["current_weight"])
+
+    def _create_costs(self, cattle_list):
+        self.stdout.write("Creating Costs...")
+        costs = []
+
+        # 1. Health Costs from SanitaryEventTargets
+        # We need to fetch the targets we just created.
+        targets = SanitaryEventTarget.objects.select_related("event", "animal").all()
+        for target in targets:
+            costs.append(
+                CostEntry(
+                    animal=target.animal,
+                    date=target.event.date,
+                    category=CostEntry.CATEGORY_HEALTH,
+                    description=f"Health: {target.event.title} ({target.event.medication.name if target.event.medication else 'No Med'})",
+                    amount=target.cost_per_head,
+                    source_event=target.event,
+                )
+            )
+
+        # 2. Nutrition Costs from FeedingEvents
+        # Distribute feeding cost among animals in that location
+        feeding_events = FeedingEvent.objects.select_related("location", "diet").all()
+        for fe in feeding_events:
+            # Find animals currently in this location (approximation for mock data)
+            # OR better: find animals that *were* in this location?
+            # For simplicity in mock data, let's pick random animals associated with this location from our main list
+            possible_animals = [
+                c for c in cattle_list if c.location_id == fe.location_id
+            ]
+
+            if not possible_animals:
+                # If no animals in location, pick random ones to ensure we have costs
+                possible_animals = random.sample(
+                    cattle_list, k=min(len(cattle_list), 5)
+                )
+
+            # Distribute cost
+            if possible_animals and fe.cost_total > 0:
+                cost_per_head = fe.cost_total / len(possible_animals)
+                for animal in possible_animals:
+                    costs.append(
+                        CostEntry(
+                            animal=animal,
+                            date=fe.date,
+                            category=CostEntry.CATEGORY_NUTRITION,
+                            description=f"Nutrition: {fe.diet.name}",
+                            amount=cost_per_head,
+                            source_event=fe,
+                        )
+                    )
+
+        # 3. Indirect/Overhead Costs (Random)
+        # Create some random overhead costs for 20% of cattle
+        overhead_targets = random.sample(cattle_list, k=int(len(cattle_list) * 0.2))
+        for animal in overhead_targets:
+            costs.append(
+                CostEntry(
+                    animal=animal,
+                    date=self.get_random_date(),
+                    category=CostEntry.CATEGORY_INDIRECT,
+                    description=random.choice(
+                        [
+                            "Barn Maintenance",
+                            "Utilities",
+                            "Labor Allocation",
+                            "Vet Visit (General)",
+                        ]
+                    ),
+                    amount=Decimal(random.uniform(10.0, 100.0)),
+                )
+            )
+
+        # Bulk create all costs
+        # Note: bulk_create does not call save(), so money logic in save() won't run.
+        # But we are passing Decimal/Money objects directly, which is fine for DecimalField.
+        CostEntry.objects.bulk_create(costs)
 
     def _create_users(self, count):
         self.stdout.write("Creating Users...")

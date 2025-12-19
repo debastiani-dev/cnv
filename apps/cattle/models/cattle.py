@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from apps.base.models.base_model import BaseModel
+from apps.base.utils.money import Money
 from apps.purchases.models.purchase import PurchaseItem
 from apps.sales.models.sale import SaleItem
 
@@ -277,6 +278,14 @@ class Cattle(BaseModel):
         if diff_years > 0:
             return f"{diff_years}y {diff_months}m"
         return f"{diff_months}m"
+
+    @property
+    def total_cost(self):
+        """
+        Calculates the total cost for the animal.
+        """
+        total = self.costs.aggregate(total=models.Sum("amount"))["total"] or 0
+        return Money(total)
 
     def get_absolute_url(self):
         return reverse("cattle:detail", kwargs={"pk": self.pk})
