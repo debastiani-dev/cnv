@@ -1,27 +1,362 @@
-{% extends "layouts/base_public.html" %}
-{% load i18n %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabanha Nelore do Vale | Genetic Precision</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
 
-{% block title %}{% trans "Home" %}{% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Oswald:wght@400;500&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    <style>
+        /* "V" Watermark */
+        .watermark-v {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10 10 L50 90 L90 10' fill='none' stroke='%23ffffff' stroke-width='2' opacity='0.05'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Map Grayscale to Color Filter */
+        .map-filter {
+            filter: grayscale(100%) contrast(1.2);
+            transition: all 0.5s ease;
+        }
+        .map-container:hover .map-filter {
+            filter: grayscale(0%) contrast(1);
+        }
 
-{% block content %}
-<div class="relative px-6 pt-14 lg:px-8">
-    <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-        <div class="text-center">
-            <div class="mx-auto max-w-2xl text-center">
-                <div class="mb-8 flex justify-center">
-                    <img class="h-20 w-auto" src="{% static 'img/logo.png' %}" alt="CNV System">
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(27, 38, 79, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased text-gen-navy selection:bg-gen-green selection:text-white">
+
+    <!-- Fixed Watermark -->
+    <div class="watermark-v"></div>
+
+    <!-- Section A: Header (Sticky) -->
+    <nav class="fixed top-0 w-full z-50 bg-gen-navy/95 backdrop-blur-md border-b border-white/5 h-16 flex items-center shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
+            <!-- Icon/Logo -->
+            <a href="#" class="flex items-center gap-2">
+                <!-- Using Logo directly but scaled as icon -->
+                <div class="h-8 w-8 bg-white rounded-sm overflow-hidden flex items-center justify-center p-0.5">
+                    <img src="{% static 'img/logo.png' %}" alt="CNV Icon" class="h-full w-full object-contain">
                 </div>
+                <span class="text-white font-display uppercase tracking-widest text-sm hidden sm:block">Cabanha Nelore do Vale</span>
+            </a>
 
-            <p class="mt-6 text-lg leading-8 text-gray-600">
-                {% trans "Premium management system for premium cattle." %}
-                {% trans "Experience the difference in genetic quality and performance tracking." %}
-            </p>
-            <div class="mt-10 flex items-center justify-center gap-x-6">
-                <a href="{% url 'authentication:login' %}" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Access System" %}</a>
-                <a href="#" class="text-sm font-semibold leading-6 text-gray-900">{% trans "Learn more" %} <span aria-hidden="true">→</span></a>
+            <!-- Nav Links -->
+            <div class="hidden md:flex items-center gap-8 text-white/80 text-sm font-medium tracking-wide">
+                <a href="#genetics" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">GENETICS</a>
+                <a href="#about" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">ABOUT</a>
+                <a href="#methodology" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">METHODOLOGY</a>
+                <a href="#location" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">LOCATION</a>
+                <a href="#contact" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">CONTACT</a>
+            </div>
+
+            <!-- Portal Login -->
+            <a href="/auth/login/" class="px-5 py-2 border border-gen-green text-gen-green text-xs font-bold uppercase rounded hover:bg-gen-green hover:text-white transition-all">
+                Portal Login
+            </a>
+        </div>
+    </nav>
+
+    <!-- Section B: Hero (First Impression) -->
+    <header id="genetics" class="relative min-h-screen bg-white text-gen-navy flex flex-col justify-center items-center text-center px-4 overflow-hidden">
+        <!-- Interactive Network Canvas -->
+        <canvas id="network-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-40"></canvas>
+        
+        <div class="relative z-10 max-w-4xl space-y-8 animate-fade-in-up">
+            <!-- Full Logo Container - Transparent on white -->
+            <div class="inline-block p-4">
+                 <img src="{% static 'img/logo.png' %}" alt="Cabanha Nelore do Vale" class="h-40 md:h-64 w-auto object-contain">
+            </div>
+
+            <div class="space-y-4">
+                <h1 class="font-serif font-bold text-4xl md:text-6xl tracking-wide uppercase text-gen-navy drop-shadow-sm">
+                    Precision Genetics <br>
+                    <span class="text-gray-500 font-light block mt-2 text-2xl md:text-4xl">in Rio Grande do Sul</span>
+                </h1>
+                <p class="font-sans text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    Merging structural integrity with proprietary data analysis to produce Nelore cattle adapted to the southern climate.
+                </p>
             </div>
         </div>
-    </div>
-</div>
-{% endblock %}
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 animate-bounce z-10">
+            <a href="#about" class="text-gen-green">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+            </a>
+        </div>
+    </header>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('network-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+
+            // Configuration
+            const particleCount = 100; // Increased density
+            const connectionDist = 150;
+            const mouseDist = 200;
+            const color = '27, 38, 79'; // Gen Navy RGB
+            
+            let mouse = { x: null, y: null };
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = (Math.random() - 0.5) * 1.5;
+                    this.vy = (Math.random() - 0.5) * 1.5;
+                    this.size = Math.random() * 2 + 1;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${color}, 0.5)`;
+                    ctx.fill();
+                }
+            }
+
+            function init() {
+                resize();
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                connect();
+                requestAnimationFrame(animate);
+            }
+
+            function connect() {
+                // Connect particles to each other
+                for (let a = 0; a < particles.length; a++) {
+                    for (let b = a; b < particles.length; b++) {
+                        let dx = particles[a].x - particles[b].x;
+                        let dy = particles[a].y - particles[b].y;
+                        let dist = Math.hypot(dx, dy);
+
+                        if (dist < connectionDist) {
+                            ctx.strokeStyle = `rgba(${color}, ${1 - dist/connectionDist})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(particles[b].x, particles[b].y);
+                            ctx.stroke();
+                        }
+                    }
+                    
+                    // Connect particles to mouse
+                    if (mouse.x) {
+                        let dx = particles[a].x - mouse.x;
+                        let dy = particles[a].y - mouse.y;
+                        let dist = Math.hypot(dx, dy);
+                        if (dist < mouseDist) {
+                            // Pull effect (optional, keep simple for now)
+                            ctx.strokeStyle = `rgba(${color}, ${1 - dist/mouseDist})`;
+                            ctx.lineWidth = 1.5; // Slightly thicker
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(mouse.x, mouse.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            globalThis.addEventListener('resize', init);
+            globalThis.addEventListener('mousemove', e => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.clientX - rect.left;
+                mouse.y = e.clientY - rect.top;
+            });
+            globalThis.addEventListener('mouseleave', () => {
+                mouse.x = null;
+                mouse.y = null;
+            });
+
+            init();
+            animate();
+        })();
+    </script>
+
+    <!-- Section C: About (Tradition & Adaptation) -->
+    <section id="about" class="py-24 bg-gen-navy relative z-10 text-white">
+        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            
+            <!-- Visual: Stylized Map Silhouette (Simplified SVG Representation) -->
+            <div class="relative h-96 w-full flex justify-center items-center">
+                <!-- Abstract RS Map Shape -->
+                <svg viewBox="0 0 300 300" class="w-full h-full text-white opacity-10 absolute top-0 left-0">
+                    <path fill="currentColor" d="M80,30 L220,30 L250,110 L220,250 L100,220 L50,120 Z" /> <!-- Abstract Polygon for Art -->
+                </svg>
+                <div class="z-10 text-center">
+                    <h3 class="font-display text-4xl text-white/10 font-bold uppercase">Alto Uruguai</h3>
+                    <p class="text-sm font-sans text-gen-platinum font-bold uppercase tracking-widest mt-2">Region</p>
+                    <div class="mt-4 w-2 h-2 bg-gen-green rounded-full mx-auto shadow-[0_0_0_8px_rgba(46,89,54,0.1)]"></div>
+                </div>
+            </div>
+
+            <!-- Narrative -->
+            <div class="space-y-6">
+                <div class="w-12 h-1 bg-gen-green"></div>
+                <h2 class="font-serif text-4xl text-white font-bold">ADAPTED PERFORMANCE</h2>
+                <p class="text-gray-300 leading-relaxed text-lg">
+                    The southern climate demands more. Our herd is subjected to rigorous selection pressure for <strong class="text-gen-green">rusticity</strong>, <strong class="text-gen-green">fertility</strong>, and <strong class="text-gen-green">conversion rates</strong> under distinct fluctuations of cold and heat.
+                </p>
+                <p class="text-gray-300 leading-relaxed text-lg">
+                    We define the Cabanha not just by the breed, but by the environment the breed conquers. This is Nelore genetics engineered for resilience.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section D: Methodology (The Tech Factor) -->
+    <section id="methodology" class="py-24 bg-gen-silver relative z-10 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-serif text-3xl text-gen-navy">The Precision Pillars</h2>
+                <div class="w-16 h-1 bg-gen-green mx-auto mt-4"></div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass-card p-10 rounded-sm hover:-translate-y-2 transition duration-300 shadow-xl !bg-white/80 !backdrop-blur rounded-xl border border-gray-200">
+                    <div class="text-gen-green mb-6">
+                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                    </div>
+                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">TRACEABILITY</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Every animal is tracked from birth. Complete genealogical history and sanitary control via the proprietary <a href="/auth/login/" class="font-bold text-gen-navy hover:text-gen-green transition-colors">CNV Management System</a>.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass-card p-10 rounded-sm hover:-translate-y-2 transition duration-300 shadow-xl !bg-white/80 !backdrop-blur rounded-xl border border-gen-green/30">
+                    <div class="text-gen-green mb-6">
+                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                    </div>
+                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">SELECTION</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Rigorous culling based on real-world zootechnical indices: fertility, maternal ability, and weight gain.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass-card p-10 rounded-sm hover:-translate-y-2 transition duration-300 shadow-xl !bg-white/80 !backdrop-blur rounded-xl border border-gray-200">
+                    <div class="text-gen-green mb-6">
+                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                    </div>
+                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">GENETICS</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Strategic mating to lower inbreeding coefficients and maximize heterosis in commercial herds.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section E: Location (Physical Asset) -->
+    <section id="location" class="relative w-full h-[500px] border-t-4 border-gen-green group map-container">
+        <!-- Google Map Iframe -->
+        <iframe 
+            title="Cabanha Nelore do Vale Location Map"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1017.343431992612!2d-52.12387084572717!3d-27.46480039094381!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94e373e54c22a629%3A0x982c423d520bd10a!2sCabanha%20Nelore%20do%20Vale!5e1!3m2!1sen!2sbr!4v1766112835059!5m2!1sen!2sbr" 
+            width="100%" 
+            height="100%" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"
+            class="map-filter w-full h-full"
+        ></iframe>
+
+        <!-- Address Overlay (Desktop) -->
+        <div class="absolute bottom-8 left-8 bg-white p-6 shadow-xl max-w-sm hidden md:block">
+            <h4 class="font-display text-gen-navy font-bold text-lg mb-2">HEADQUARTERS</h4>
+            <p class="font-sans text-gray-600 text-sm mb-4">
+                Severiano de Almeida, Rio Grande do Sul, Brasil<br>
+                GPS Coordinates: -27.4648, -52.1238
+            </p>
+            <div class="text-xs text-gen-green font-bold uppercase tracking-wider">Open by Appointment</div>
+        </div>
+    </section>
+
+    <!-- Section F: Contact (Conversion) -->
+    <section id="contact" class="py-24 bg-gen-navy text-center border-t border-white/5">
+        <div class="max-w-2xl mx-auto px-6">
+            <h2 class="font-serif text-3xl text-white mb-8">Invest in Verified Genetics.</h2>
+            
+            <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
+                <a href="https://wa.me/5554999400033" class="w-full md:w-auto px-8 py-4 bg-gen-green text-white font-bold rounded shadow-lg hover:bg-green-800 transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    <span>Speak with the Manager</span>
+                </a>
+                <a href="https://www.instagram.com/cabanhaneloredovale/" class="w-full md:w-auto px-8 py-4 border border-white/20 text-white font-bold rounded hover:bg-white/10 transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.069-4.85.069-3.204 0-3.584-.012-4.849-.069-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    <span>Follow on Instagram</span>
+                </a>
+            </div>
+            
+            <div class="flex justify-center gap-6 mt-12">
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Footer -->
+    <footer class="bg-black text-white py-12 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-sans gap-4">
+            <div>
+                &copy; 2025 Cabanha Nelore do Vale. All Rights Reserved.
+            </div>
+            
+            <div class="flex items-center gap-1">
+                System Architecture & Development by 
+                <a href="https://debastiani.dev" target="_blank" class="font-bold text-gray-400 hover:text-gen-green transition ml-1">debastiani.dev</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

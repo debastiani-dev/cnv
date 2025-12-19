@@ -1,3 +1,4 @@
+
 {% extends "layouts/base_public.html" %}
 {% load i18n %}
 {% load static %}
@@ -5,60 +6,182 @@
 {% block title %}{% trans "Login" %}{% endblock %}
 
 {% block content %}
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <div class="mx-auto flex justify-center">
-            <a href="{% url 'website:home' %}">
-                <img class="h-16 w-auto" src="{% static 'img/logo.png' %}" alt="CNV System">
-            </a>
-        </div>
-        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">{% trans "Sign in to your account" %}</h2>
-    </div>
+<div class="relative min-h-screen bg-white text-gen-navy flex flex-col justify-center items-center overflow-hidden">
+    <!-- Interactive Network Canvas -->
+    <canvas id="network-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-40"></canvas>
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form class="space-y-6" action="#" method="POST">
-            {% csrf_token %}
-            
-            {% if form.errors %}
-                <div class="rounded-md bg-red-50 p-4">
-                    <div class="flex">
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">{% trans "There were errors with your submission" %}</h3>
-                            <div class="mt-2 text-sm text-red-700">
-                                <ul class="list-disc pl-5 space-y-1">
-                                    {% for field in form %}
-                                        {% for error in field.errors %}
+    <div class="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-xl p-10 rounded-xl shadow-2xl border border-white/50 animate-fade-in-up">
+        <div class="space-y-8">
+            <!-- Header -->
+            <div class="text-center space-y-4">
+                <a href="{% url 'website:home' %}">
+                    <img class="h-64 w-auto mx-auto object-contain hover:scale-105 transition-transform duration-300" src="{% static 'img/logo.png' %}" alt="CNV System">
+                </a>
+                <h2 class="font-serif text-3xl font-bold text-gen-navy">Portal Login</h2>
+                <p class="text-sm text-gray-500 font-sans">Authorized Personnel Only</p>
+            </div>
+
+            <form class="space-y-6" action="#" method="POST">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                    <div class="rounded-md bg-red-50 p-4 border border-red-100">
+                        <div class="flex">
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">{% trans "Access Denied" %}</h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <ul class="list-disc pl-5 space-y-1">
+                                        {% for field in form %}
+                                            {% for error in field.errors %}
+                                                <li>{{ error }}</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {% for error in form.non_field_errors %}
                                             <li>{{ error }}</li>
                                         {% endfor %}
-                                    {% endfor %}
-                                    {% for error in form.non_field_errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
 
-            <div>
-                <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Username" %}</label>
-                <div class="mt-2">
-                    <input id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" type="text" autocomplete="username" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                </div>
-            </div>
+                <div class="space-y-4">
+                    <div>
+                        <label for="{{ form.username.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{% trans "Username" %}</label>
+                        <input id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" type="text" autocomplete="username" required 
+                               class="block w-full rounded border-gray-300 py-3 text-gen-navy shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gen-navy focus:border-gen-navy sm:text-sm sm:leading-6 transition-all bg-white/50 focus:bg-white">
+                    </div>
 
-            <div>
-                <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Password" %}</label>
-                <div class="mt-2">
-                    <input id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" type="password" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    <div>
+                        <label for="{{ form.password.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">{% trans "Password" %}</label>
+                        <input id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" type="password" autocomplete="current-password" required 
+                               class="block w-full rounded border-gray-300 py-3 text-gen-navy shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gen-navy focus:border-gen-navy sm:text-sm sm:leading-6 transition-all bg-white/50 focus:bg-white">
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{% trans "Sign in" %}</button>
-            </div>
-        </form>
+                <div>
+                    <button type="submit" class="flex w-full justify-center rounded bg-gen-navy px-3 py-4 text-sm font-bold uppercase tracking-widest text-white shadow-lg hover:bg-gen-green hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                        {% trans "Secure Sign In" %}
+                    </button>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'website:home' %}" class="text-xs text-gen-green hover:underline">Back to Website</a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('network-canvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        // Configuration
+        const particleCount = 80; // Slightly less than home for cleanliness
+        const connectionDist = 150;
+        const mouseDist = 200;
+        const color = '27, 38, 79'; // Gen Navy RGB
+        
+        let mouse = { x: null, y: null };
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 1; // Slower movement for login
+                this.vy = (Math.random() - 0.5) * 1;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${color}, 0.5)`;
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            resize();
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connect();
+            requestAnimationFrame(animate);
+        }
+
+        function connect() {
+            // Connect particles to each other
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let dist = Math.hypot(dx, dy);
+
+                    if (dist < connectionDist) {
+                        ctx.strokeStyle = `rgba(${color}, ${1 - dist/connectionDist})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Connect particles to mouse
+                if (mouse.x) {
+                    let dx = particles[a].x - mouse.x;
+                    let dy = particles[a].y - mouse.y;
+                    let dist = Math.hypot(dx, dy);
+                    if (dist < mouseDist) {
+                        ctx.strokeStyle = `rgba(${color}, ${1 - dist/mouseDist})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        globalThis.addEventListener('resize', init);
+        globalThis.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        });
+        globalThis.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        init();
+        animate();
+    })();
+</script>
 {% endblock %}
