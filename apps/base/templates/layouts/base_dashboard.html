@@ -19,7 +19,7 @@
 
     <div x-data="{
                  sidebarOpen: false,
-                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'sales' in request.resolver_match.app_names or 'purchases' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names %}financials{% elif 'tasks' in request.resolver_match.app_names %}tasks{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
+                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'transactions' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names or 'finance' in request.resolver_match.app_names %}financials{% elif 'tasks' in request.resolver_match.app_names %}tasks{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
                  }" class="min-h-screen relative z-0">
 
     <!-- Mobile Sidebar (Off-canvas) -->
@@ -241,10 +241,8 @@
                                     <ul x-show="openCategory === 'financials'" x-cloak>
                                         <li><a href="{% url 'finance:cost-list' %}"
                                                class="{% if 'finance' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Costs" %}</a></li>
-                                        <li><a href="{% url 'sales:list' %}"
-                                               class="{% if 'sales' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sales" %}</a></li>
-                                        <li><a href="{% url 'purchases:list' %}"
-                                               class="{% if 'purchases' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Purchases" %}</a></li>
+                                        <li><a href="{% url 'transactions:list' %}"
+                                               class="{% if 'transactions' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Transactions" %}</a></li>
                                         <li><a href="{% url 'partners:list' %}"
                                                class="{% if 'partners' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Partners" %}</a></li>
                                     </ul>
@@ -476,10 +474,8 @@
                             <ul x-show="openCategory === 'financials'" x-cloak>
                                 <li><a href="{% url 'finance:cost-list' %}"
                                        class="{% if 'finance' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Costs" %}</a></li>
-                                <li><a href="{% url 'sales:list' %}"
-                                       class="{% if 'sales' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sales" %}</a></li>
-                                <li><a href="{% url 'purchases:list' %}"
-                                       class="{% if 'purchases' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Purchases" %}</a></li>
+                                <li><a href="{% url 'transactions:list' %}"
+                                       class="{% if 'transactions' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Transactions" %}</a></li>
                                 <li><a href="{% url 'partners:list' %}"
                                        class="{% if 'partners' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Partners" %}</a></li>
                             </ul>

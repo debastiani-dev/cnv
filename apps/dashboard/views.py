@@ -7,9 +7,8 @@ from apps.finance.services.costing import CostingService
 from apps.health.services import HealthService
 from apps.locations.services import LocationService
 from apps.nutrition.models.ingredient import FeedIngredient
-from apps.purchases.services.purchase_service import PurchaseService
-from apps.sales.services.sale_service import SaleService
 from apps.tasks.services.tasks import TaskService
+from apps.transactions.services.transaction_service import TransactionService
 from apps.weight.services.weight_service import WeightService
 
 
@@ -24,13 +23,26 @@ class HomeView(LoginRequiredMixin, TemplateView):
     def _get_dashboard_stats(self):
         """Helper to fetch all dashboard statistics."""
         # Fetch stats
-        sales_stats = SaleService.get_sales_stats(days=90)
-        purchases_stats = PurchaseService.get_purchases_stats(days=90)
+        tx_stats = TransactionService.get_stats(days=90)
         cost_stats = CostingService.get_cost_stats(days=90)
 
+        # Sales/Purchases are pre-calculated in tx_stats
+        sales_stats = {
+            "count": tx_stats["sales_count"],
+            "total_revenue": tx_stats["total_revenue"],
+            "recent": [],  # TODO: Separate recent if needed or use tx_stats['recent']
+        }
+        purchases_stats = {
+            "count": tx_stats["purchases_count"],
+            "total_cost": tx_stats["total_expense"],
+            "recent": [],
+        }
+
         # Calculate Net Profit
-        total_expenses = purchases_stats["total_cost"] + cost_stats["total_cost"]
-        net_profit = sales_stats["total_revenue"] - total_expenses
+        # tx_stats['net_profit'] considers rev - exp.
+        # But we also have CostingService costs (indirect, etc).
+        total_expenses = tx_stats["total_expense"] + cost_stats["total_cost"]
+        net_profit = tx_stats["total_revenue"] - total_expenses
 
         return {
             "cattle_stats": CattleService.get_cattle_stats(),
@@ -50,4 +62,5 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 TaskService.get_overdue_tasks(user=self.request.user).count()
             ),
             "todays_tasks": TaskService.get_overdue_tasks(user=self.request.user)[:5],
+            "recent_transactions": tx_stats["recent"],
         }

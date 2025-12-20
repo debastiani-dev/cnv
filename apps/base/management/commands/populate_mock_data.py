@@ -29,8 +29,9 @@ from apps.nutrition.models import Diet, DietItem, FeedingEvent, FeedIngredient
 
 # Import models
 from apps.partners.models import Partner
-from apps.purchases.models import Purchase, PurchaseItem
-from apps.purchases.services.purchase_service import PurchaseService
+
+# from apps.purchases.models import Purchase, PurchaseItem
+# from apps.purchases.services.purchase_service import PurchaseService
 from apps.reproduction.models import (
     BreedingEvent,
     Calving,
@@ -38,8 +39,9 @@ from apps.reproduction.models import (
     PregnancyCheck,
     ReproductiveSeason,
 )
-from apps.sales.models import Sale, SaleItem
-from apps.sales.services.sale_service import SaleService
+
+# from apps.sales.models import Sale, SaleItem
+# from apps.sales.services.sale_service import SaleService
 from apps.tasks.models.tasks import Task, TaskTemplate
 from apps.weight.models import WeighingSession, WeighingSessionType
 from apps.weight.services.weight_service import WeightService

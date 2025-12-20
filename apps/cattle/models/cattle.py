@@ -8,8 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.base.models.base_model import BaseModel
 from apps.base.utils.money import Money
-from apps.purchases.models.purchase import PurchaseItem
-from apps.sales.models.sale import SaleItem
+from apps.transactions.models.transaction_item import TransactionItem
 
 
 class Cattle(BaseModel):
@@ -207,20 +206,12 @@ class Cattle(BaseModel):
         Override delete to check for linked transactions (Sales/Purchases)
         before allowing both Soft and Hard deletes.
         """
-        # Check Linked Sales
+        # Check Linked Transactions
         ct = ContentType.objects.get_for_model(self)
-        if SaleItem.objects.filter(content_type=ct, object_id=self.pk).exists():
+        if TransactionItem.objects.filter(content_type=ct, object_id=self.pk).exists():
             raise ValidationError(
                 _(
-                    "Cannot delete cattle because it is part of a Sale transaction. Please delete the transaction item first."
-                )
-            )
-
-        # Check Linked Purchases
-        if PurchaseItem.objects.filter(content_type=ct, object_id=self.pk).exists():
-            raise ValidationError(
-                _(
-                    "Cannot delete cattle because it is part of a Purchase transaction. Please delete the transaction item first."
+                    "Cannot delete cattle because it is part of a Transaction. Please delete the transaction item first."
                 )
             )
 

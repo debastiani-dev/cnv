@@ -7,7 +7,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("partners", "0001_initial"),
-        ("sales", "0001_initial"),
     ]
 
     operations = [

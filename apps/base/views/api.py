@@ -17,7 +17,7 @@ class ItemLookupView(LoginRequiredMixin, View):
 
         # Security/Whitelist check (Optional but good practice)
         # Custom whitelist
-        allowed_models = ["cattle", "location", "partner"]
+        allowed_models = ["cattle", "location", "partner", "feedingredient", "medicine"]
         if ct.model not in allowed_models:
             return JsonResponse(
                 {"error": "Model not allowed for sale lookup"}, status=403
