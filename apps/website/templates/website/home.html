@@ -1,10 +1,11 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cabanha Nelore do Vale | Genetic Precision</title>
+    <title>{% trans "Cabanha Nelore do Vale | Genetic Precision" %}</title>
     <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,16 +72,16 @@
 
             <!-- Nav Links -->
             <div class="hidden md:flex items-center gap-8 text-white/80 text-sm font-medium tracking-wide">
-                <a href="#genetics" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">GENETICS</a>
-                <a href="#about" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">ABOUT</a>
-                <a href="#methodology" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">METHODOLOGY</a>
-                <a href="#location" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">LOCATION</a>
-                <a href="#contact" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">CONTACT</a>
+                <a href="#genetics" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "GENETICS" %}</a>
+                <a href="#about" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "ABOUT" %}</a>
+                <a href="#methodology" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "METHODOLOGY" %}</a>
+                <a href="#location" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "LOCATION" %}</a>
+                <a href="#contact" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "CONTACT" %}</a>
             </div>
 
             <!-- Portal Login -->
             <a href="/auth/login/" class="px-5 py-2 border border-gen-green text-gen-green text-xs font-bold uppercase rounded hover:bg-gen-green hover:text-white transition-all">
-                Portal Login
+                {% trans "Portal Login" %}
             </a>
         </div>
     </nav>
@@ -103,11 +104,11 @@
 
             <div class="space-y-4">
                 <h1 class="font-serif font-bold text-4xl md:text-6xl tracking-wide uppercase text-gen-navy drop-shadow-sm">
-                    Precision Genetics <br>
-                    <span class="text-gray-500 font-light block mt-2 text-2xl md:text-4xl">in Rio Grande do Sul</span>
+                    {% trans "Precision Genetics" %} <br>
+                    <span class="text-gray-500 font-light block mt-2 text-2xl md:text-4xl">{% trans "in Rio Grande do Sul" %}</span>
                 </h1>
                 <p class="font-sans text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                    Merging structural integrity with proprietary data analysis to produce Nelore cattle adapted to the southern climate.
+                    {% trans "Merging structural integrity with proprietary data analysis to produce Nelore cattle adapted to the southern climate." %}
                 </p>
             </div>
         </div>
@@ -255,7 +256,7 @@
                         </svg>
                         <div class="z-10 text-center ml-12 md:ml-20">
                             <div class="mb-4 w-2 h-2 bg-gen-green rounded-full mx-auto shadow-[0_0_0_8px_rgba(46,89,54,0.1)]"></div>
-                            <p class="text-sm font-sans text-gen-navy/40 font-bold uppercase tracking-widest mb-2">Region</p>
+                            <p class="text-sm font-sans text-gen-navy/40 font-bold uppercase tracking-widest mb-2">{% trans "Region" %}</p>
                             <h3 class="font-display text-4xl text-gen-navy/30 font-bold uppercase">Alto Uruguai</h3>
                         </div>
                     </div>
@@ -263,12 +264,12 @@
                     <!-- Narrative -->
                     <div class="space-y-6">
                         <div class="w-12 h-1 bg-gen-green"></div>
-                        <h2 class="font-serif text-4xl text-gen-navy font-bold">ADAPTED PERFORMANCE</h2>
+                        <h2 class="font-serif text-4xl text-gen-navy font-bold">{% trans "ADAPTED PERFORMANCE" %}</h2>
                         <p class="text-gen-navy/90 leading-relaxed text-lg font-medium">
-                            The southern climate demands more. Our herd is subjected to rigorous selection pressure for <strong class="text-gen-green">rusticity</strong>, <strong class="text-gen-green">fertility</strong>, and <strong class="text-gen-green">conversion rates</strong> under distinct fluctuations of cold and heat.
+                            {% blocktrans %}The southern climate demands more. Our herd is subjected to rigorous selection pressure for <strong class="text-gen-green">rusticity</strong>, <strong class="text-gen-green">fertility</strong>, and <strong class="text-gen-green">conversion rates</strong> under distinct fluctuations of cold and heat.{% endblocktrans %}
                         </p>
                         <p class="text-gen-navy/90 leading-relaxed text-lg font-medium">
-                            We define the Cabanha not just by the breed, but by the environment the breed conquers. This is Nelore genetics engineered for resilience.
+                            {% trans "We define the Cabanha not just by the breed, but by the environment the breed conquers. This is Nelore genetics engineered for resilience." %}
                         </p>
                     </div>
                 </div>
@@ -280,7 +281,7 @@
     <section id="methodology" class="py-24 relative z-10 w-full"> <!-- Removed section bg -->
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 rellax" data-rellax-speed="0">
-                <h2 class="font-serif text-3xl text-gen-navy inline-block px-8 py-2 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-[2px] border border-white/40 rounded-full shadow-lg">The Precision Pillars</h2>
+                <h2 class="font-serif text-3xl text-gen-navy inline-block px-8 py-2 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-[2px] border border-white/40 rounded-full shadow-lg">{% trans "The Precision Pillars" %}</h2>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
@@ -289,9 +290,9 @@
                     <div class="text-gen-green mb-6">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                     </div>
-                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">TRACEABILITY</h3>
+                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">{% trans "TRACEABILITY" %}</h3>
                     <p class="text-gen-navy/90 text-sm leading-relaxed font-semibold">
-                        Every animal is tracked from birth. Complete genealogical history and sanitary control via the proprietary <a href="/auth/login/" class="font-bold text-gen-navy hover:text-gen-green transition-colors">CNV Management System</a>.
+                        {% blocktrans %}Every animal is tracked from birth. Complete genealogical history and sanitary control via the proprietary <a href="/auth/login/" class="font-bold text-gen-navy hover:text-gen-green transition-colors">CNV Management System</a>.{% endblocktrans %}
                     </p>
                 </div>
 
@@ -300,9 +301,9 @@
                     <div class="text-gen-green mb-6">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                     </div>
-                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">SELECTION</h3>
+                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">{% trans "SELECTION" %}</h3>
                     <p class="text-gen-navy/90 text-sm leading-relaxed font-semibold">
-                        Rigorous culling based on real-world zootechnical indices: fertility, maternal ability, and weight gain.
+                        {% trans "Rigorous culling based on real-world zootechnical indices: fertility, maternal ability, and weight gain." %}
                     </p>
                 </div>
 
@@ -311,9 +312,9 @@
                     <div class="text-gen-green mb-6">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                     </div>
-                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">GENETICS</h3>
+                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">{% trans "GENETICS" %}</h3>
                     <p class="text-gen-navy/90 text-sm leading-relaxed font-semibold">
-                        Strategic mating to lower inbreeding coefficients and maximize heterosis in commercial herds.
+                        {% trans "Strategic mating to lower inbreeding coefficients and maximize heterosis in commercial herds." %}
                     </p>
                 </div>
             </div>
@@ -338,12 +339,12 @@
 
         <!-- Address Overlay (Desktop) -->
         <div class="absolute bottom-8 left-8 bg-white p-6 shadow-xl max-w-sm hidden md:block">
-            <h4 class="font-display text-gen-navy font-bold text-lg mb-2">HEADQUARTERS</h4>
+            <h4 class="font-display text-gen-navy font-bold text-lg mb-2">{% trans "HEADQUARTERS" %}</h4>
             <p class="font-sans text-gray-600 text-sm mb-4">
                 Severiano de Almeida, Rio Grande do Sul, Brasil<br>
-                GPS Coordinates: -27.4648, -52.1238
+                {% trans "GPS Coordinates" %}: -27.4648, -52.1238
             </p>
-            <div class="text-xs text-gen-green font-bold uppercase tracking-wider">Open by Appointment</div>
+            <div class="text-xs text-gen-green font-bold uppercase tracking-wider">{% trans "Open by Appointment" %}</div>
         </div>
     </section>
 
@@ -351,16 +352,16 @@
     <section id="contact" class="py-24 relative z-10 pointer-events-none">
          <div class="max-w-2xl mx-auto px-6 pointer-events-auto">
              <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] rounded-3xl p-12 text-center shadow-2xl border border-white/50 rellax" data-rellax-speed="0.5">
-                <h2 class="font-serif text-3xl text-gen-navy mb-8">Invest in Verified Genetics.</h2>
+                <h2 class="font-serif text-3xl text-gen-navy mb-8">{% trans "Invest in Verified Genetics." %}</h2>
                 
                 <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
                     <a href="https://wa.me/5554999400033" class="w-full md:w-auto px-8 py-4 bg-gen-green text-white font-bold rounded shadow-lg hover:bg-green-800 transition flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                        <span>Speak with the Manager</span>
+                        <span>{% trans "Speak with the Manager" %}</span>
                     </a>
                     <a href="https://www.instagram.com/cabanhaneloredovale/" class="w-full md:w-auto px-8 py-4 border border-gen-navy/20 text-gen-navy font-bold rounded hover:bg-gen-navy/5 transition flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.069-4.85.069-3.204 0-3.584-.012-4.849-.069-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.949 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                        <span>Follow on Instagram</span>
+                        <span>{% trans "Follow on Instagram" %}</span>
                     </a>
                 </div>
              </div>
@@ -371,11 +372,11 @@
     <footer class="bg-black text-white py-12 border-t border-white/5">
         <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-sans gap-4">
             <div>
-                &copy; 2025 Cabanha Nelore do Vale. All Rights Reserved.
+                &copy; 2025 {% trans "Cabanha Nelore do Vale. All Rights Reserved." %}
             </div>
             
             <div class="flex items-center gap-1">
-                System Architecture & Development by 
+                {% trans "System Architecture & Development by" %} 
                 <a href="https://debastiani.dev" target="_blank" class="font-bold text-gray-400 hover:text-gen-green transition ml-1">debastiani.dev</a>
             </div>
         </div>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cabanha Nelore do Vale 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-20 07:48+0000\n"
+"POT-Creation-Date: 2025-12-20 08:17+0000\n"
 "PO-Revision-Date: 2025-12-20 07:44+0000\n"
 "Last-Translator:   <admin@example.com>\n"
 "Language-Team: Portuguese (Brazil) <pt_BR@li.org>\n"
@@ -5457,6 +5457,136 @@ msgstr "Tarefa excluída permanentemente."
 msgid "Website"
 msgstr "Website"
 
+#: apps/website/templates/website/home.html:8
+msgid "Cabanha Nelore do Vale | Genetic Precision"
+msgstr "Cabanha Nelore do Vale | Precisão Genética"
+
+#: apps/website/templates/website/home.html:75
+#: apps/website/templates/website/home.html:315
+msgid "GENETICS"
+msgstr "GENÉTICA"
+
+#: apps/website/templates/website/home.html:76
+msgid "ABOUT"
+msgstr "SOBRE"
+
+#: apps/website/templates/website/home.html:77
+msgid "METHODOLOGY"
+msgstr "METODOLOGIA"
+
+#: apps/website/templates/website/home.html:78
+msgid "LOCATION"
+msgstr "LOCALIZAÇÃO"
+
+#: apps/website/templates/website/home.html:79
+msgid "CONTACT"
+msgstr "CONTATO"
+
+#: apps/website/templates/website/home.html:84
+msgid "Portal Login"
+msgstr "Login do Portal"
+
+#: apps/website/templates/website/home.html:107
+msgid "Precision Genetics"
+msgstr "Precisão Genética"
+
+#: apps/website/templates/website/home.html:108
+msgid "in Rio Grande do Sul"
+msgstr "no Rio Grande do Sul"
+
+#: apps/website/templates/website/home.html:111
+msgid ""
+"Merging structural integrity with proprietary data analysis to produce "
+"Nelore cattle adapted to the southern climate."
+msgstr "Unindo integridade estrutural com análise de dados proprietária para produzir gado Nelore adaptado ao clima do sul."
+
+#: apps/website/templates/website/home.html:259
+msgid "Region"
+msgstr "Região"
+
+#: apps/website/templates/website/home.html:267
+msgid "ADAPTED PERFORMANCE"
+msgstr "DESEMPENHO ADAPTADO"
+
+#: apps/website/templates/website/home.html:269
+msgid ""
+"The southern climate demands more. Our herd is subjected to rigorous "
+"selection pressure for <strong class=\"text-gen-green\">rusticity</strong>, "
+"<strong class=\"text-gen-green\">fertility</strong>, and <strong "
+"class=\"text-gen-green\">conversion rates</strong> under distinct "
+"fluctuations of cold and heat."
+msgstr "O clima do sul exige mais. Nosso rebanho é submetido a rigorosa pressão de seleção para <strong class=\"text-gen-green\">rusticidade</strong>, <strong class=\"text-gen-green\">fertilidade</strong> e <strong class=\"text-gen-green\">taxas de conversão</strong> sob distintas flutuações de frio e calor."
+
+#: apps/website/templates/website/home.html:272
+msgid ""
+"We define the Cabanha not just by the breed, but by the environment the "
+"breed conquers. This is Nelore genetics engineered for resilience."
+msgstr "Definimos a Cabanha não apenas pela raça, mas pelo ambiente que a raça conquista. Esta é genética Nelore projetada para resiliência."
+
+#: apps/website/templates/website/home.html:284
+msgid "The Precision Pillars"
+msgstr "Os Pilares da Precisão"
+
+#: apps/website/templates/website/home.html:293
+msgid "TRACEABILITY"
+msgstr "RASTREABILIDADE"
+
+#: apps/website/templates/website/home.html:295
+msgid ""
+"Every animal is tracked from birth. Complete genealogical history and "
+"sanitary control via the proprietary <a href=\"/auth/login/\" class=\"font-"
+"bold text-gen-navy hover:text-gen-green transition-colors\">CNV Management "
+"System</a>."
+msgstr "Cada animal é rastreado desde o nascimento. Histórico genealógico completo e controle sanitário via o exclusivo <a href=\"/auth/login/\" class=\"font-bold text-gen-navy hover:text-gen-green transition-colors\">Sistema de Gestão CNV</a>."
+
+#: apps/website/templates/website/home.html:304
+msgid "SELECTION"
+msgstr "SELEÇÃO"
+
+#: apps/website/templates/website/home.html:306
+msgid ""
+"Rigorous culling based on real-world zootechnical indices: fertility, "
+"maternal ability, and weight gain."
+msgstr "Descarte rigoroso baseado em índices zootécnicos do mundo real: fertilidade, habilidade materna e ganho de peso."
+
+#: apps/website/templates/website/home.html:317
+msgid ""
+"Strategic mating to lower inbreeding coefficients and maximize heterosis in "
+"commercial herds."
+msgstr "Acasalamento estratégico para reduzir coeficientes de endogamia e maximizar a heterose em rebanhos comerciais."
+
+#: apps/website/templates/website/home.html:342
+msgid "HEADQUARTERS"
+msgstr "SEDE"
+
+#: apps/website/templates/website/home.html:345
+msgid "GPS Coordinates"
+msgstr "Coordenadas GPS"
+
+#: apps/website/templates/website/home.html:347
+msgid "Open by Appointment"
+msgstr "Aberto com Hora Marcada"
+
+#: apps/website/templates/website/home.html:355
+msgid "Invest in Verified Genetics."
+msgstr "Invista em Genética Verificada."
+
+#: apps/website/templates/website/home.html:360
+msgid "Speak with the Manager"
+msgstr "Fale com o Gerente"
+
+#: apps/website/templates/website/home.html:364
+msgid "Follow on Instagram"
+msgstr "Siga no Instagram"
+
+#: apps/website/templates/website/home.html:375
+msgid "Cabanha Nelore do Vale. All Rights Reserved."
+msgstr "Cabanha Nelore do Vale. Todos os Direitos Reservados."
+
+#: apps/website/templates/website/home.html:379
+msgid "System Architecture & Development by"
+msgstr "Arquitetura de Sistema e Desenvolvimento por"
+
 #: apps/weight/apps.py:8
 msgid "Weight & Performance"
 msgstr "Peso & Desempenho"
@@ -5777,6 +5907,3 @@ msgstr "Português (Brasil)"
 
 #~ msgid "You are logged in to the management system."
 #~ msgstr "Você está logado no sistema de gerenciamento."
-
-#~ msgid "Cabanha Nelore do Vale"
-#~ msgstr "Cabanha Nelore do Vale"
