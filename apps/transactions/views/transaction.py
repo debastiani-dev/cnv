@@ -16,6 +16,7 @@ from apps.base.views.list_mixins import StandardizedListMixin
 from apps.partners.models.partner import Partner
 from apps.transactions.forms import TransactionForm, TransactionItemFormSet
 from apps.transactions.models.transaction import Transaction
+from apps.transactions.services.transaction_service import TransactionService
 
 TRANSACTION_LIST_URL = "transactions:list"
 
@@ -30,34 +31,12 @@ class TransactionListView(LoginRequiredMixin, StandardizedListMixin, ListView):
     def get_queryset(self):
         # We can implement a filter in service, or just filter here.
         # Let's simple filter here for now, or use service if complex.
-        queryset = (
-            Transaction.objects.all()
-            .select_related("partner")
-            .prefetch_related("items")
+        # Use Service for filtering
+        queryset = TransactionService.get_all_transactions(
+            search_query=self.request.GET.get("q"),
+            partner_id=self.request.GET.get("partner"),
+            transaction_type=self.request.GET.get("type"),
         )
-
-        search_query = self.request.GET.get("q")
-        partner_id = self.request.GET.get("partner")
-        tx_type = self.request.GET.get("type")  # Added type filter
-
-        if search_query:
-            queryset = queryset.filter(
-                partner__name__icontains=search_query
-            ) | queryset.filter(notes__icontains=search_query)
-
-        if partner_id:
-            queryset = queryset.filter(partner_id=partner_id)
-
-        if tx_type:
-            queryset = queryset.filter(type=tx_type)
-
-        date_after = self.request.GET.get("date_after")
-        date_before = self.request.GET.get("date_before")
-
-        if date_after:
-            queryset = queryset.filter(date__gte=date_after)
-        if date_before:
-            queryset = queryset.filter(date__lte=date_before)
 
         queryset = self.filter_by_date(queryset)
 
@@ -102,7 +81,7 @@ class TransactionCreateView(LoginRequiredMixin, CreateView):
 
                 messages.success(self.request, _("Transaction created successfully."))
                 return HttpResponseRedirect(self.get_success_url())
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 form.add_error(None, str(e))
                 return self.form_invalid(form)
         else:

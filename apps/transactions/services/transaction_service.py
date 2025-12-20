@@ -14,7 +14,7 @@ from apps.transactions.models.transaction import Transaction
 
 class TransactionService:
     @staticmethod
-    def get_stats(days: int | None = None) -> dict:
+    def get_stats(days: int | None = None, transaction_type: str | None = None) -> dict:
         """
         Returns unified statistics for Transactions.
         """
@@ -22,6 +22,9 @@ class TransactionService:
         if days:
             cutoff_date = timezone.now().date() - timedelta(days=days)
             queryset = queryset.filter(date__gte=cutoff_date)
+
+        if transaction_type:
+            queryset = queryset.filter(type=transaction_type)
 
         # Sales Stats
         sales = queryset.filter(type=Transaction.TYPE_SALE)
@@ -44,6 +47,34 @@ class TransactionService:
             "net_profit": net_profit,
             "recent": queryset.order_by("-date", "-created_at")[:5],
         }
+
+    @staticmethod
+    def get_all_transactions(
+        search_query: str | None = None,
+        partner_id: str | None = None,
+        transaction_type: str | None = None,
+    ):
+        """
+        Returns a filtered queryset of transactions.
+        """
+        queryset = (
+            Transaction.objects.all()
+            .select_related("partner")
+            .prefetch_related("items")
+        )
+
+        if search_query:
+            queryset = queryset.filter(
+                partner__name__icontains=search_query
+            ) | queryset.filter(notes__icontains=search_query)
+
+        if partner_id:
+            queryset = queryset.filter(partner_id=partner_id)
+
+        if transaction_type:
+            queryset = queryset.filter(type=transaction_type)
+
+        return queryset.order_by("-date", "-created_at")
 
     @staticmethod
     def validate_item_for_sale(item_object):
@@ -84,13 +115,27 @@ class TransactionService:
             return  # Already confirmed
 
         # validate items before confirming
-        for item in transaction_instance.items.all():
+        TransactionService._validate_transaction_items(transaction_instance)
+
+        # Execute Integrations
+        TransactionService._execute_transaction_integrations(transaction_instance)
+
+        # Finalize Header
+        transaction_instance.status = Transaction.STATUS_CONFIRMED
+        transaction_instance.save(update_fields=["status"])
+
+    @staticmethod
+    def _validate_transaction_items(transaction_instance: Transaction) -> None:
+        """Validates all items in the transaction."""
+        for item in transaction_instance.items.all():  # type: ignore
             if transaction_instance.type == Transaction.TYPE_SALE:
                 if item.content_object:
                     TransactionService.validate_item_for_sale(item.content_object)
 
-        # Execute Integrations
-        for item in transaction_instance.items.all():
+    @staticmethod
+    def _execute_transaction_integrations(transaction_instance: Transaction) -> None:
+        """Executes side effects for each item."""
+        for item in transaction_instance.items.all():  # type: ignore
             content_object = item.content_object
 
             # 1. SALE -> Cattle Integration
@@ -102,25 +147,23 @@ class TransactionService:
             # 2. PURCHASE -> Feed/Inventory Integration
             elif transaction_instance.type == Transaction.TYPE_PURCHASE:
                 if isinstance(content_object, FeedIngredient):
-                    # Weighted Average Cost (WAC) Logic
-                    # New Cost = ( (OldQty * OldCost) + (NewQty * NewCost) ) / (OldQty + NewQty)
+                    TransactionService._update_inventory_wac(
+                        content_object, item.quantity, item.unit_price
+                    )
 
-                    current_qty = content_object.stock_quantity
-                    current_cost = content_object.unit_cost
-                    new_qty = item.quantity
-                    new_cost = item.unit_price
+    @staticmethod
+    def _update_inventory_wac(ingredient, new_qty, new_cost):
+        """Calculates and updates Weighted Average Cost."""
+        current_qty = ingredient.stock_quantity
+        current_cost = ingredient.unit_cost
 
-                    total_qty = current_qty + new_qty
+        total_qty = current_qty + new_qty
 
-                    if total_qty > 0:
-                        new_avg_cost = (
-                            (current_qty * current_cost) + (new_qty * new_cost)
-                        ) / total_qty
-                        content_object.unit_cost = new_avg_cost
+        if total_qty > 0:
+            new_avg_cost = (
+                (current_qty * current_cost) + (new_qty * new_cost)
+            ) / total_qty
+            ingredient.unit_cost = new_avg_cost
 
-                    content_object.stock_quantity = total_qty
-                    content_object.save(update_fields=["stock_quantity", "unit_cost"])
-
-        # Finalize Header
-        transaction_instance.status = Transaction.STATUS_CONFIRMED
-        transaction_instance.save(update_fields=["status"])
+        ingredient.stock_quantity = total_qty
+        ingredient.save(update_fields=["stock_quantity", "unit_cost"])

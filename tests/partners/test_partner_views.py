@@ -4,7 +4,7 @@ from django.urls import reverse
 from model_bakery import baker
 
 from apps.partners.models import Partner
-from apps.purchases.models.purchase import Purchase
+from apps.transactions.models import Transaction
 
 
 @pytest.mark.django_db
@@ -133,11 +133,11 @@ class TestPartnerViews:
     def test_delete_protected_error(self, client, user):
         """Test protected error on delete (if applicable)."""
         # If Partner is foreign key to something with on_delete=PROTECT
-        # E.g. Purchase.partner uses PROTECT.
+        # E.g. Transaction.partner uses PROTECT.
 
         client.force_login(user)
         partner = baker.make(Partner)
-        baker.make(Purchase, partner=partner)
+        baker.make(Transaction, partner=partner, type=Transaction.TYPE_PURCHASE)
 
         url = reverse("partners:delete", kwargs={"pk": partner.pk})
         response = client.post(url)

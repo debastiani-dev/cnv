@@ -33,7 +33,7 @@ class TransactionAdmin(admin.ModelAdmin):
                 self.message_user(
                     request, f"Error confirming {tx}: {e}", level=messages.ERROR
                 )
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 self.message_user(
                     request,
                     f"Unexpected error confirming {tx}: {e}",

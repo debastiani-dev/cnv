@@ -35,12 +35,12 @@ class Partner(BaseModel):
         Override delete to check for linked transactions (Sales/Purchases)
         before allowing both Soft and Hard deletes.
         """
-        if self.transactions.filter(type="sale").exists():
+        if self.transactions.filter(type="SALE").exists():
             raise ValidationError(
                 _("Cannot delete partner because they have associated Sales.")
             )
 
-        if self.transactions.filter(type="purchase").exists():
+        if self.transactions.filter(type="PURCHASE").exists():
             raise ValidationError(
                 _("Cannot delete partner because they have associated Purchases.")
             )

@@ -4,8 +4,7 @@ from model_bakery import baker
 from apps.base.utils.money import Money
 from apps.partners.models import Partner
 from apps.partners.services.partner_service import PartnerService
-from apps.purchases.models import Purchase
-from apps.sales.models import Sale
+from apps.transactions.models import Transaction
 
 
 @pytest.mark.django_db
@@ -16,17 +15,33 @@ class TestPartnerServiceAnnotations:
 
         # 2. Partner with Sales
         p2 = baker.make(Partner, name="Sales Partner")
-        baker.make(Sale, partner=p2, total_amount=Money(100))
-        baker.make(Sale, partner=p2, total_amount=Money(50))
+        baker.make(
+            Transaction, partner=p2, total_amount=Money(100), type=Transaction.TYPE_SALE
+        )
+        baker.make(
+            Transaction, partner=p2, total_amount=Money(50), type=Transaction.TYPE_SALE
+        )
 
         # 3. Partner with Purchases
         p3 = baker.make(Partner, name="Purchases Partner")
-        baker.make(Purchase, partner=p3, total_amount=Money(200))
+        baker.make(
+            Transaction,
+            partner=p3,
+            total_amount=Money(200),
+            type=Transaction.TYPE_PURCHASE,
+        )
 
         # 4. Partner with Both
         p4 = baker.make(Partner, name="Both Partner")
-        baker.make(Sale, partner=p4, total_amount=Money(30))
-        baker.make(Purchase, partner=p4, total_amount=Money(10))
+        baker.make(
+            Transaction, partner=p4, total_amount=Money(30), type=Transaction.TYPE_SALE
+        )
+        baker.make(
+            Transaction,
+            partner=p4,
+            total_amount=Money(10),
+            type=Transaction.TYPE_PURCHASE,
+        )
 
         # Act
         partners = PartnerService.get_partners()

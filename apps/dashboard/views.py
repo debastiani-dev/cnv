@@ -30,12 +30,10 @@ class HomeView(LoginRequiredMixin, TemplateView):
         sales_stats = {
             "count": tx_stats["sales_count"],
             "total_revenue": tx_stats["total_revenue"],
-            "recent": [],  # TODO: Separate recent if needed or use tx_stats['recent']
         }
         purchases_stats = {
             "count": tx_stats["purchases_count"],
             "total_cost": tx_stats["total_expense"],
-            "recent": [],
         }
 
         # Calculate Net Profit

@@ -4,11 +4,12 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
 
+from apps.base.views.list_mixins import StandardizedListMixin
 from apps.weight.forms import WeighingSessionForm
 from apps.weight.models import WeighingSession, WeighingSessionType
 
 
-class WeighingSessionListView(LoginRequiredMixin, ListView):
+class WeighingSessionListView(LoginRequiredMixin, StandardizedListMixin, ListView):
     model = WeighingSession
     template_name = "weight/session_list.html"
     context_object_name = "sessions"
@@ -30,12 +31,7 @@ class WeighingSessionListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(session_type=type_filter)
 
         # Date Range Filter
-        date_after = self.request.GET.get("date_after")
-        date_before = self.request.GET.get("date_before")
-        if date_after:
-            queryset = queryset.filter(date__gte=date_after)
-        if date_before:
-            queryset = queryset.filter(date__lte=date_before)
+        queryset = self.filter_by_date(queryset)
 
         return queryset
 

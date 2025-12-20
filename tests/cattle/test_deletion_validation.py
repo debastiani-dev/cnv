@@ -4,8 +4,7 @@ from django.core.exceptions import ValidationError
 from model_bakery import baker
 
 from apps.cattle.models import Cattle
-from apps.purchases.models.purchase import PurchaseItem
-from apps.sales.models.sale import SaleItem
+from apps.transactions.models import Transaction, TransactionItem
 
 
 @pytest.mark.django_db
@@ -13,9 +12,12 @@ class TestCattleDeletionValidation:
 
     def test_cannot_delete_cattle_in_sale(self):
         cattle = baker.make(Cattle)
-        # Create Sale Item linked to cattle
+        # Create Sale Transaction
+        tx = baker.make(Transaction, type=Transaction.TYPE_SALE)
+        # Create Transaction Item linked to cattle
         baker.make(
-            SaleItem,
+            TransactionItem,
+            transaction=tx,
             content_type=ContentType.objects.get_for_model(Cattle),
             object_id=cattle.pk,
             quantity=1,
@@ -25,13 +27,16 @@ class TestCattleDeletionValidation:
         # Validation Error expected on delete
         with pytest.raises(ValidationError) as exc:
             cattle.delete()
-        assert "part of a Sale transaction" in str(exc.value)
+        assert "part of a Transaction" in str(exc.value)
 
     def test_cannot_delete_cattle_in_purchase(self):
         cattle = baker.make(Cattle)
-        # Create Purchase Item linked to cattle
+        # Create Purchase Transaction
+        tx = baker.make(Transaction, type=Transaction.TYPE_PURCHASE)
+        # Create Transaction Item linked to cattle
         baker.make(
-            PurchaseItem,
+            TransactionItem,
+            transaction=tx,
             content_type=ContentType.objects.get_for_model(Cattle),
             object_id=cattle.pk,
             quantity=1,
@@ -41,7 +46,7 @@ class TestCattleDeletionValidation:
         # Validation Error expected on delete
         with pytest.raises(ValidationError) as exc:
             cattle.delete()
-        assert "part of a Purchase transaction" in str(exc.value)
+        assert "part of a Transaction" in str(exc.value)
 
     def test_can_delete_unlinked_cattle(self):
         cattle = baker.make(Cattle)
@@ -50,8 +55,10 @@ class TestCattleDeletionValidation:
 
     def test_cannot_hard_delete_if_linked(self):
         cattle = baker.make(Cattle)
+        tx = baker.make(Transaction, type=Transaction.TYPE_SALE)
         baker.make(
-            SaleItem,
+            TransactionItem,
+            transaction=tx,
             content_type=ContentType.objects.get_for_model(Cattle),
             object_id=cattle.pk,
         )

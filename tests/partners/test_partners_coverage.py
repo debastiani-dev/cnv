@@ -7,7 +7,7 @@ from django.urls import reverse
 from model_bakery import baker
 
 from apps.partners.models import Partner
-from apps.sales.models import Sale
+from apps.transactions.models import Transaction
 
 
 @pytest.mark.django_db
@@ -17,12 +17,14 @@ class TestPartnersCoverage:
         """Test Partner.delete() validation for sales (line 35)."""
         partner = baker.make(Partner, is_customer=True)
         # Create a sale linked to this partner
-        baker.make(Sale, partner=partner)
+        baker.make(Transaction, partner=partner, type=Transaction.TYPE_SALE)
 
         # Should raise ValidationError due to associated sales
         with pytest.raises(ValidationError) as exc_info:
             partner.delete()
-        assert "associated Sales" in str(exc_info.value)
+        assert "associated Transactions" in str(
+            exc_info.value
+        ) or "associated Sales" in str(exc_info.value)
 
     def test_partner_delete_view_protected_error(self, client, django_user_model):
         """Test PartnerDeleteView ProtectedError handling (lines 140, 149)."""

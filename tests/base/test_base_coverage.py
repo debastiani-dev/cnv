@@ -13,8 +13,8 @@ from apps.cattle.models import Cattle
 from apps.locations.models import Location
 from apps.nutrition.models import Diet, DietItem, FeedIngredient
 from apps.partners.models.partner import Partner
-from apps.purchases.models.purchase import Purchase, PurchaseItem
 from apps.reproduction.models.reproduction import Calving
+from apps.transactions.models import Transaction, TransactionItem
 
 
 @pytest.mark.django_db
@@ -68,14 +68,16 @@ class TestBaseModelCoverage:
         """Test _strict_deletion_check with one-to-one relation (lines 154-158)."""
         # Create a purchase with cattle items
         partner = baker.make(Partner)
-        purchase = baker.make(Purchase, partner=partner)
+        purchase = baker.make(
+            Transaction, partner=partner, type=Transaction.TYPE_PURCHASE
+        )
         cattle = baker.make(Cattle)
 
         # Add cattle to purchase
 
         ct = ContentType.objects.get_for_model(Cattle)
         baker.make(  # Keep reference to prevent lint warning
-            PurchaseItem, purchase=purchase, content_type=ct, object_id=cattle.pk
+            TransactionItem, transaction=purchase, content_type=ct, object_id=cattle.pk
         )
 
         # Try to delete cattle - should raise ProtectedError (lines 154-158)

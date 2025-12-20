@@ -15,14 +15,14 @@ class PartnerService:
         """
         queryset = Partner.objects.annotate(
             total_sales=Coalesce(
-                Sum("transactions__total_amount", filter=Q(transactions__type="sale")),
+                Sum("transactions__total_amount", filter=Q(transactions__type="SALE")),
                 Value(0),
                 output_field=DecimalField(),
             ),
             total_purchases=Coalesce(
                 Sum(
                     "transactions__total_amount",
-                    filter=Q(transactions__type="purchase"),
+                    filter=Q(transactions__type="PURCHASE"),
                 ),
                 Value(0),
                 output_field=DecimalField(),

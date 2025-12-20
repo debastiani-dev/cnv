@@ -12,9 +12,8 @@ from apps.health.models import SanitaryEvent
 from apps.locations.models import Location
 from apps.nutrition.models import Diet, FeedingEvent, FeedIngredient
 from apps.partners.models import Partner
-from apps.purchases.models import Purchase
 from apps.reproduction.models import BreedingEvent, Calving
-from apps.sales.models import Sale
+from apps.transactions.models import Transaction
 
 
 @pytest.mark.django_db
@@ -57,11 +56,8 @@ class TestPopulateMockData:
         for event in SanitaryEvent.objects.all():
             assert len(event.title) <= 15
 
-        for sale in Sale.objects.all():
-            assert len(sale.notes) <= 15
-
-        for purchase in Purchase.objects.all():
-            assert len(purchase.notes) <= 15
+        for tx in Transaction.objects.all():
+            assert len(tx.notes) <= 15
 
     def test_short_str(self):
         """Test _short_str helper (lines 44-55)."""

@@ -90,8 +90,7 @@ class TransactionItemForm(forms.ModelForm):
 
 
 class BaseTransactionItemFormSet(BaseInlineFormSet):
-    def clean(self):
-        super().clean()
+    pass
 
 
 TransactionItemFormSet = inlineformset_factory(

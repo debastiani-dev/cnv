@@ -3,6 +3,7 @@ import string
 from datetime import timedelta
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
@@ -29,9 +30,6 @@ from apps.nutrition.models import Diet, DietItem, FeedingEvent, FeedIngredient
 
 # Import models
 from apps.partners.models import Partner
-
-# from apps.purchases.models import Purchase, PurchaseItem
-# from apps.purchases.services.purchase_service import PurchaseService
 from apps.reproduction.models import (
     BreedingEvent,
     Calving,
@@ -39,10 +37,9 @@ from apps.reproduction.models import (
     PregnancyCheck,
     ReproductiveSeason,
 )
-
-# from apps.sales.models import Sale, SaleItem
-# from apps.sales.services.sale_service import SaleService
 from apps.tasks.models.tasks import Task, TaskTemplate
+from apps.transactions.models import Transaction, TransactionItem
+from apps.transactions.services.transaction_service import TransactionService
 from apps.weight.models import WeighingSession, WeighingSessionType
 from apps.weight.services.weight_service import WeightService
 
@@ -596,10 +593,12 @@ class Command(BaseCommand):
         for _ in range(count):
             sales.append(
                 baker.make(
-                    Sale,
+                    Transaction,
                     partner=random.choice(partners),
                     date=self.get_random_date(),
                     notes=self._short_str("Note"),
+                    type=Transaction.TYPE_SALE,
+                    status=Transaction.STATUS_DRAFT,
                 )
             )
 
@@ -613,13 +612,19 @@ class Command(BaseCommand):
 
             for animal in targets:
                 baker.make(
-                    SaleItem,
-                    sale=sale,
+                    TransactionItem,
+                    transaction=sale,
                     content_object=animal,
                     quantity=1,
                     unit_price=1000.00,
                 )
-            SaleService.update_sale_totals(sale)
+            try:
+                sale.update_total()
+                TransactionService.confirm_transaction(sale)
+            except ValidationError as e:
+                self.stdout.write(
+                    self.style.WARNING(f"Skipping sale confirmation: {e}")
+                )
 
     def _create_purchases(self, partners, ingredients, count):
         self.stdout.write("Creating Purchases...")
@@ -627,10 +632,12 @@ class Command(BaseCommand):
         for _ in range(count):
             purchases.append(
                 baker.make(
-                    Purchase,
+                    Transaction,
                     partner=random.choice(partners),
                     date=self.get_random_date(),
                     notes=self._short_str("Note"),
+                    type=Transaction.TYPE_PURCHASE,
+                    status=Transaction.STATUS_DRAFT,
                 )
             )
 
@@ -642,14 +649,20 @@ class Command(BaseCommand):
             )
             for ing in targets:
                 baker.make(
-                    PurchaseItem,
-                    purchase=purchase,
+                    TransactionItem,
+                    transaction=purchase,
                     content_object=ing,
                     quantity=100,
                     unit_price=10.00,
                 )
 
-            PurchaseService.update_purchase_totals(purchase)
+            try:
+                purchase.update_total()
+                TransactionService.confirm_transaction(purchase)
+            except ValidationError as e:
+                self.stdout.write(
+                    self.style.WARNING(f"Skipping purchase confirmation: {e}")
+                )
 
     def _create_weighing_sessions(self, cattle_list, count):
         self.stdout.write("Creating Weighing Sessions...")

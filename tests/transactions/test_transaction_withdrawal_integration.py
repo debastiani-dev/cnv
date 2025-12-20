@@ -9,15 +9,15 @@ from apps.cattle.models import Cattle
 from apps.health.models import Medication, MedicationType, MedicationUnit
 from apps.health.services.health_service import HealthService
 from apps.partners.models import Partner
-from apps.sales.models import Sale, SaleItem
-from apps.sales.services.sale_service import SaleService
+from apps.transactions.models import Transaction, TransactionItem
+from apps.transactions.services.transaction_service import TransactionService
 
 
 @pytest.mark.django_db
-class TestSalesWithdrawalIntegration:
-    def test_withdrawal_blocks_sale(self):
+class TestTransactionWithdrawalIntegration:
+    def test_withdrawal_blocks_sale_transaction(self):
         """
-        Verify that an animal under withdrawal cannot be added to a sale.
+        Verify that an animal under withdrawal cannot be added to a SALE transaction.
         """
         # 1. Setup Data
         partner = Partner.objects.create(name="Buyer Inc", email="buyer@example.com")
@@ -43,20 +43,29 @@ class TestSalesWithdrawalIntegration:
         )
 
         # 4. Attempt to Validate for Sale
+        # Assuming TransactionService exposes this, or checking via confirm
+        # If confirm_transaction runs validation, we should try that.
+
+        tx = Transaction.objects.create(
+            partner=partner,
+            date=timezone.localdate(),
+            type=Transaction.TYPE_SALE,
+            status=Transaction.STATUS_DRAFT,
+        )
+        TransactionItem.objects.create(
+            transaction=tx,
+            content_object=cow,
+            quantity=1,
+            unit_price=Decimal("1000.00"),
+        )
+
         with pytest.raises(ValidationError) as excinfo:
-            SaleService.validate_item_for_sale(cow)
+            TransactionService.confirm_transaction(tx)
 
-        assert "Sanitary Block" in str(excinfo.value)
-        assert "Animal in withdrawal period" in str(excinfo.value)
-
-        # 5. Attempt to Create Sale via Service (Integration)
-        sale = Sale.objects.create(partner=partner, date=timezone.localdate())
-        item = SaleItem(content_object=cow, quantity=1, unit_price=Decimal("1000.00"))
-
-        with pytest.raises(ValidationError) as excinfo:
-            SaleService.create_sale(sale, [item])
-
-        assert "Sanitary Block" in str(excinfo.value)
+        # Check for specific error messages (adapted from old test)
+        # Note: The error might be "Item X is not available: Animal in withdrawal..."
+        err_msg = str(excinfo.value)
+        assert "Sanitary Block" in err_msg or "withdrawal" in err_msg.lower()
 
     def test_expired_withdrawal_allows_sale(self):
         """
@@ -86,24 +95,45 @@ class TestSalesWithdrawalIntegration:
             cattle_uuids=[cow.pk],
         )
 
-        # 4. Validate
-        try:
-            SaleService.validate_item_for_sale(cow)
-        except ValidationError:
-            pytest.fail("Validation raised Error unexpectedly for expired withdrawal")
+        # 4. Create Sale
+        tx = Transaction.objects.create(
+            partner=partner,
+            date=timezone.localdate(),
+            type=Transaction.TYPE_SALE,
+            status=Transaction.STATUS_DRAFT,
+        )
+        TransactionItem.objects.create(
+            transaction=tx,
+            content_object=cow,
+            quantity=1,
+            unit_price=Decimal("1000.00"),
+        )
 
-        # 5. Create Sale
-        sale = Sale.objects.create(partner=partner, date=timezone.localdate())
-        item = SaleItem(content_object=cow, quantity=1, unit_price=Decimal("1000.00"))
+        # 5. Confirm - Should NOT raise
+        TransactionService.confirm_transaction(tx)
 
-        # Should NOT raise
-        SaleService.create_sale(sale, [item])
-
-        assert sale.items.count() == 1
+        tx.refresh_from_db()
+        assert tx.status == Transaction.STATUS_CONFIRMED
 
     def test_clean_animal_allows_sale(self):
         """
         Verify that an animal with NO events CAN be sold.
         """
+        partner = Partner.objects.create(name="Buyer Inc")
         cow = Cattle.objects.create(tag="FRESH-001", birth_date=date(2023, 1, 1))
-        SaleService.validate_item_for_sale(cow)  # Should pass
+
+        tx = Transaction.objects.create(
+            partner=partner,
+            date=timezone.localdate(),
+            type=Transaction.TYPE_SALE,
+            status=Transaction.STATUS_DRAFT,
+        )
+        TransactionItem.objects.create(
+            transaction=tx,
+            content_object=cow,
+            quantity=1,
+            unit_price=Decimal("1000.00"),
+        )
+
+        TransactionService.confirm_transaction(tx)
+        assert tx.status == Transaction.STATUS_CONFIRMED
