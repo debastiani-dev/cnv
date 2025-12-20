@@ -1,16 +1,36 @@
 
-{% extends "layouts/base_public.html" %}
+{% extends "layouts/base.html" %}
 {% load i18n %}
 {% load static %}
 
 {% block title %}{% trans "Login" %}{% endblock %}
 
-{% block content %}
-<div class="relative min-h-screen bg-white text-gen-navy flex flex-col justify-center items-center overflow-hidden">
-    <!-- Interactive Network Canvas -->
-    <canvas id="network-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-40"></canvas>
+{% block layout %}
+<style>
+    /* "V" Watermark (Copied from Home) */
+    .watermark-v {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80vw;
+        height: 80vh;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10 10 L50 90 L90 10' fill='none' stroke='%23ffffff' stroke-width='2' opacity='0.05'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        pointer-events: none;
+        z-index: 0;
+    }
+</style>
 
-    <div class="relative z-10 w-full max-w-md bg-white/80 backdrop-blur-xl p-10 rounded-xl shadow-2xl border border-white/50 animate-fade-in-up">
+<div class="relative min-h-screen bg-gray-50 text-gen-navy flex flex-col justify-center items-center overflow-hidden">
+    <!-- Fixed Watermark -->
+    <div class="watermark-v"></div>
+
+    <!-- Interactive Network Canvas -->
+    <canvas id="network-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-40 mix-blend-multiply"></canvas>
+
+    <div class="relative z-10 w-full max-w-md bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-10 md:p-12 rounded-3xl shadow-2xl border border-white/50 animate-fade-in-up">
         <div class="space-y-8">
             <!-- Header -->
             <div class="text-center space-y-4">
