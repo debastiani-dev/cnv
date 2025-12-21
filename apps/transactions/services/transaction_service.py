@@ -83,25 +83,24 @@ class TransactionService:
         1. Is it active?
         2. Is it biologically safe? (Cattle Withdrawal)
         """
-        if hasattr(item_object, "is_active") and not item_object.is_active:
-            # If it's cattle, status SOLD or DEAD means inactive usually.
-            # But let's check specifically if it is Cattle and status.
-            if isinstance(item_object, Cattle):
-                if item_object.status != Cattle.STATUS_AVAILABLE:
-                    raise ValidationError(
-                        _("Cattle is not available for sale (Status: %(status)s)")
-                        % {"status": item_object.get_status_display()}
-                    )
-            else:
-                raise ValidationError(_("This item is not active/available for sale."))
-
-        # Biological Safety Valve (Cattle Only)
+        # Specific Logic for Cattle
         if isinstance(item_object, Cattle):
+            if item_object.status != Cattle.STATUS_AVAILABLE:
+                raise ValidationError(
+                    _("Cattle is not available for sale (Status: %(status)s)")
+                    % {"status": item_object.get_status_display()}
+                )
+
+            # Biological Safety Valve (Cattle Only)
             is_blocked, reason = HealthService.check_withdrawal_status(item_object)
             if is_blocked:
                 raise ValidationError(
                     _("Sanitary Block: %(reason)s") % {"reason": reason}
                 )
+
+        # General Logic for other items
+        elif hasattr(item_object, "is_active") and not item_object.is_active:
+            raise ValidationError(_("This item is not active/available for sale."))
 
         return True
 

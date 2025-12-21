@@ -1,0 +1,73 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Close Lot" %} #{{ lot.lot_number }}{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+    <div class="md:flex md:items-center md:justify-between mb-6">
+        <div class="min-w-0 flex-1">
+            <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                {% trans "Close Lot" %} #{{ lot.lot_number }}
+            </h1>
+        </div>
+    </div>
+
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <div class="mb-6 bg-yellow-50 border border-yellow-200 rounded p-4">
+                 <h4 class="text-sm font-semibold text-yellow-800">{% trans "Confirm Sale Details" %}</h4>
+                 <p class="text-xs text-yellow-700 mt-1">
+                    {% trans "This action will finalize the transaction and create a legal invoice draft. Ensure the hammer price and buyer are correct." %}
+                 </p>
+            </div>
+
+            <div class="mb-6 grid grid-cols-2 gap-4 text-sm">
+                <div>
+                     <span class="block font-medium text-gray-500">{% trans "Animals" %}</span>
+                     <span class="block font-bold text-gray-900">{{ lot.animals.count }}</span>
+                </div>
+                <div>
+                    <span class="block font-medium text-gray-500">{% trans "Reserve Price" %}</span>
+                    <span class="block font-bold text-gray-900">R$ {{ lot.reserve_price }}</span>
+               </div>
+                <div>
+                    <span class="block font-medium text-gray-500">{% trans "Est. Cost Basis" %}</span>
+                    <span class="block font-bold text-gray-900">R$ {{ lot.cost_at_creation }}</span>
+               </div>
+            </div>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="buyer" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Buyer (Partner)" %}</label>
+                    <select id="buyer" name="buyer" required class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        <option value="" disabled selected>{% trans "-- Select Buyer --" %}</option>
+                        {% for partner in buyers %}
+                            <option value="{{ partner.pk }}">{{ partner.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="hammer_price" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Final Hammer Price (Total Lot Price)" %}</label>
+                    <div class="relative mt-2 rounded-md shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                          <span class="text-gray-500 sm:text-sm">R$</span>
+                        </div>
+                        <input type="number" name="hammer_price" id="hammer_price" step="0.01" required class="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-x-6 border-t border-gray-900/10 pt-6">
+                    <a href="{% url 'commercial:manage_lots' lot.event.pk %}" class="text-sm font-semibold leading-6 text-gray-900">{% trans "Cancel" %}</a>
+                    <button type="submit" class="rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                        {% trans "🔨 SOLD!" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

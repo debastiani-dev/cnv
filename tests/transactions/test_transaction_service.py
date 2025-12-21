@@ -1,5 +1,6 @@
 from datetime import timedelta
 from decimal import Decimal
+from unittest.mock import patch
 
 import pytest
 from django.core.exceptions import ValidationError
@@ -132,26 +133,41 @@ class TestTransactionService:
     def test_validate_item_for_sale_inactive(self):
         """Test that validating an inactive item for SALE raises ValidationError."""
 
+        # 1. Non-Cattle Inactive
         class MockItem:
             is_active = False
+            pk = 1
 
-        # Assuming the service has this helper, or it's part of confirm logic
-        # If specific to Sales, check TransactionService for validation method.
-        # If not present publicly, maybe we test confirm_transaction raises error?
-        # Let's assume confirm_transaction logic handles validation.
+        with pytest.raises(ValidationError, match="not active/available"):
+            TransactionService.validate_item_for_sale(MockItem())
 
-        # But wait, Validation usually happens BEFORE confirm.
-        # If logic is extracted, use it. If not, this test might need adjustment based on implementation.
-        # Falling back to direct method call if exists, or try/except on confirm.
+    def test_validate_item_for_sale_cattle_unavailable(self):
+        """Test Cattle status validation."""
+        # Cattle not AVAILABLE
+        cow = baker.make(Cattle, status=Cattle.STATUS_SOLD)
 
-        if hasattr(TransactionService, "validate_item_availability"):
-            with pytest.raises(ValidationError, match="not active/available"):
-                TransactionService.validate_item_availability(
-                    MockItem(), Transaction.TYPE_SALE
-                )
-        else:
-            # Skip if helper not exposed, reliance on integration test
-            pass
+        with pytest.raises(ValidationError, match="Cattle is not available"):
+            TransactionService.validate_item_for_sale(cow)
+
+    def test_validate_item_sanitary_block(self):
+        """Test sanitary block (line 102)."""
+        cow = baker.make(Cattle)
+        with patch(
+            "apps.transactions.services.transaction_service.HealthService.check_withdrawal_status",
+            return_value=(True, "Blocked"),
+        ):
+            with pytest.raises(ValidationError, match="Sanitary Block: Blocked"):
+                TransactionService.validate_item_for_sale(cow)
+
+    def test_confirm_transaction_already_confirmed(self):
+        """Test early return if already confirmed (line 115)."""
+        tx = baker.make(Transaction, status=Transaction.STATUS_CONFIRMED)
+
+        with patch.object(
+            TransactionService, "_validate_transaction_items"
+        ) as mock_val:
+            TransactionService.confirm_transaction(tx)
+            mock_val.assert_not_called()
 
     def test_get_stats_by_period_and_type(self):
         """Verify stats filtering."""

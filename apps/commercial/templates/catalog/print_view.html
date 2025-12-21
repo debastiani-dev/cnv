@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Lot {{ lot.lot_number }} - Catalog</title>
+    <style>
+        body { font-family: sans-serif; }
+        .hero-image { max-width: 100%; height: auto; }
+        .stats-box { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+        .batch-summary { border: 1px solid #eee; padding: 20px; }
+        .data-grid { width: 100%; border-collapse: collapse; }
+        .data-grid th, .data-grid td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        .animal-list-columns { column-count: 3; }
+        .animal-thumb { max-width: 50px; max-height: 50px; vertical-align: middle; margin-right: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        li { margin-bottom: 5px; list-style: none; }
+    </style>
+</head>
+<body>
+
+<h1>Lot {{ lot.lot_number }}</h1>
+
+{% if lot.animals.count == 1 %}
+    {% with animal=lot.animals.first %}
+        {% if animal.image %}
+            <img src="{{ animal.image.url }}" class="hero-image" alt="Animal {{ animal.tag }}">
+        {% else %}
+            <img src="{% static 'img/default_cow.png' %}" class="hero-image" alt="Animal {{ animal.tag }}">
+        {% endif %}
+        
+        <div class="stats-box">
+            Tag: {{ animal.tag }} | Weight: {{ animal.current_weight|default:"-" }}kg | Breed: {{ animal.get_breed_display }}
+        </div>
+    {% endwith %}
+
+{% else %}
+    <div class="batch-summary">
+        <h3>Uniform Pen of {{ lot.animals.count }} Animals</h3>
+        <!-- Note: lot.avg_weight/avg_age/total_weight not strictly implemented in model yet. 
+             If needed, we can add properties to model or calculate in view. 
+             For now, hardcoding placeholder or minimal loop. -->
+        <table class="data-grid">
+            <tr>
+                <th>Count</th>
+                <th>Avg Weight (Est)</th>
+                <th>Total Weight (Est)</th>
+            </tr>
+            <tr>
+                <td>{{ lot.animals.count }}</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        </table>
+        
+        <ul class="animal-list-columns">
+            {% for animal in lot.animals.all %}
+                <li>
+                    {% if animal.image %}
+                        <img src="{{ animal.image.url }}" class="animal-thumb" alt="{{ animal.tag }}">
+                    {% else %}
+                        <img src="{% static 'img/default_cow.png' %}" class="animal-thumb" alt="{{ animal.tag }}">
+                    {% endif %}
+                    <span class="animal-tag">{{ animal.tag }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+</body>
+</html>

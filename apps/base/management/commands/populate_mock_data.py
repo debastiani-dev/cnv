@@ -1,4 +1,6 @@
 import random
+
+# pylint: disable=too-many-lines
 import string
 from datetime import timedelta
 from decimal import Decimal
@@ -12,6 +14,7 @@ from model_bakery import baker
 # New Models
 from apps.authentication.models import User
 from apps.cattle.models import Cattle
+from apps.commercial.models import SalesEvent, SalesLot
 from apps.finance.models.finance import CostEntry
 from apps.health.models import (
     ActiveIngredient,
@@ -109,6 +112,7 @@ class Command(BaseCommand):
                 self._create_purchases(partners, ingredients, count)
                 self._create_weighing_sessions(cattle_list, count)
                 self._create_costs(cattle_list)
+                self._create_commercial_data(cattle_list)
 
                 # 4. System
                 self._create_tasks(
@@ -621,10 +625,9 @@ class Command(BaseCommand):
             try:
                 sale.update_total()
                 TransactionService.confirm_transaction(sale)
-            except ValidationError as e:
-                self.stdout.write(
-                    self.style.WARNING(f"Skipping sale confirmation: {e}")
-                )
+            except ValidationError:
+                # Squelch withdrawal warnings for mock data
+                pass
 
     def _create_purchases(self, partners, ingredients, count):
         self.stdout.write("Creating Purchases...")
@@ -931,3 +934,77 @@ class Command(BaseCommand):
             sample_size = min(len(cows), random.randint(5, 15))
             if sample_size > 0:
                 plan.cows.set(random.sample(cows, k=sample_size))
+
+    def _create_commercial_data(self, cattle_list):
+        self.stdout.write("Creating Commercial Data...")
+
+        events = []
+
+        # 1. Create specific test event
+        test_event = baker.make(
+            SalesEvent,
+            name="Browser Auction",  # Short name
+            date=timezone.now().date() + timedelta(days=5),
+            sales_type=SalesEvent.TYPE_AUCTION,
+            is_active=True,
+            description=self._short_str("Desc"),
+        )
+        events.append(test_event)
+
+        # 2. Random events
+        for _ in range(5):
+            events.append(
+                baker.make(
+                    SalesEvent,
+                    name=self._short_str("Event"),  # Limit name chars
+                    is_active=True,
+                    description=self._short_str("Desc"),
+                )
+            )
+
+        # 3. Create Lots for each event
+        for event in events:
+            # Create 3-5 lots per event
+            for i in range(random.randint(3, 5)):
+                # Pick 1-5 random available cattle
+                # Note: In real world, we should pick ONLY available cattle.
+                # For mock, we reuse list but let's try to pick 'available' ones if possible
+                available_ones = [
+                    c for c in cattle_list if c.status == Cattle.STATUS_AVAILABLE
+                ]
+                if not available_ones:
+                    available_ones = cattle_list  # Fallback
+
+                lot_animals = random.sample(
+                    available_ones, k=min(len(available_ones), random.randint(1, 5))
+                )
+
+                lot = baker.make(
+                    SalesLot,
+                    event=event,
+                    lot_number=i + 1,
+                    cost_at_creation=sum(a.total_cost for a in lot_animals)
+                    or Decimal("100.00"),
+                    reserve_price=sum(a.total_cost for a in lot_animals) * 2
+                    or Decimal("200.00"),
+                    status=SalesLot.STATUS_AVAILABLE,
+                )
+                lot.animals.set(lot_animals)
+
+        # 4. Ensure specific test cattle exist and are available
+        self.stdout.write("Creating Specific Browser Test Cattle...")
+        for i in range(5):
+            tag = f"BROWSER-{i}"
+            if not Cattle.objects.filter(tag=tag).exists():
+                baker.make(
+                    Cattle,
+                    tag=tag,
+                    status=Cattle.STATUS_AVAILABLE,
+                    current_weight=Decimal("500.00"),
+                    breed=Cattle.BREED_ANGUS,
+                )
+            else:
+                # Reset status if exists
+                c = Cattle.objects.get(tag=tag)
+                c.status = Cattle.STATUS_AVAILABLE
+                c.save()

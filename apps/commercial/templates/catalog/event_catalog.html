@@ -1,0 +1,214 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n static %}
+
+{% block title %}{{ event.name }} - {% trans "Catalog" %}{% endblock %}
+
+{% block content %}
+<style>
+    @media print {
+        #static-sidebar, header, nav, .no-print, .sticky { display: none !important; }
+        #main-content { margin-left: 0 !important; padding: 0 !important; }
+        body { background-color: white; }
+        .print\:shadow-none { box-shadow: none !important; }
+        .print\:border-0 { border: none !important; }
+        .print\:w-full { width: 100% !important; max-width: 100% !important; }
+        .page-break { page-break-after: always; }
+        /* Ensure table borders show in print */
+        table, th, td { border: 1px solid #e5e7eb; border-collapse: collapse; }
+        th { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; }
+    }
+</style>
+
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb & Action Header -->
+    <div class="md:flex md:items-center md:justify-between mb-8 no-print">
+        <div class="min-w-0 flex-1">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">{% trans "Event Catalog" %}</h2>
+            <nav class="flex" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-4">
+                  <li>
+                    <div class="flex">
+                      <a href="{% url 'commercial:event_list' %}" class="text-sm font-medium text-gray-500 hover:text-gray-700">{% trans "Commercial" %}</a>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="flex items-center">
+                      <svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                      </svg>
+                      <a href="{% url 'commercial:manage_lots' event.uuid %}" class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">{{ event.name }}</a>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="flex items-center">
+                      <svg class="h-5 w-5 flex-shrink-0 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                      </svg>
+                      <span class="ml-4 text-sm font-medium text-gray-500" aria-current="page">{% trans "Catalog" %}</span>
+                    </div>
+                  </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="mt-4 flex md:ml-4 md:mt-0">
+            <button onclick="window.print()" class="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                <svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.752.097 1.126.153A2.212 2.212 0 0118 8.653v4.097A2.25 2.25 0 0115.75 15h-.241l.305 1.984A1.75 1.75 0 0114.084 19H5.915a1.75 1.75 0 01-1.73-1.484l-.305-1.984H3.75a2.25 2.25 0 01-2.25-2.25V8.653c0-1.152.894-2.11 2.019-2.202a48.376 48.376 0 011.126-.153V2.75zM6.75 2.5a.25.25 0 00-.25.25v3.5c0 .138.112.25.25.25h6.5a.25.25 0 00.25-.25v-3.5a.25.25 0 00-.25-.25h-6.5zm-3.5 12h13.5a.75.75 0 00.75-.75v-4.097a.712.712 0 00-.65-.712 49.904 49.904 0 00-12.7 0 .712.712 0 00-.65.712v4.097c0 .414.336.75.75.75zM5.7 15h8.6l-.21 1.364a.25.25 0 01-.247.211H6.157a.25.25 0 01-.247-.211L5.7 15z" clip-rule="evenodd" />
+                </svg>
+                {% trans "Print Catalog" %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Catalog Container -->
+    <div class="bg-white shadow-xl sm:rounded-lg overflow-hidden border border-gray-200 print:shadow-none print:border-0 print:w-full">
+        <!-- Event Cover -->
+        <div class="text-center py-12 bg-gradient-to-br from-gray-50 to-gray-100 border-b border-gray-200 print:bg-white print:border-b-2 print:border-gray-800">
+            <h1 class="text-4xl font-bold uppercase tracking-wider text-gray-900">{{ event.name }}</h1>
+            <div class="mt-4 flex justify-center items-center gap-2 text-gray-600">
+                 <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0h18M5.25 12h13.5m-13.5 3.75h9.75" />
+                </svg>
+                <span class="text-lg">{{ event.date|date:"F j, Y" }}</span>
+            </div>
+            
+            <div class="mt-4">
+                 <span class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 uppercase print:hidden">{{ event.get_sales_type_display }}</span>
+                 <p class="hidden print:block mt-2 text-gray-500 uppercase font-semibold text-sm">{{ event.get_sales_type_display }}</p>
+            </div>
+        </div>
+
+        <div class="p-8 print:p-0">
+            {% for lot in lots %}
+            <div class="mb-16 print:mb-12 {% if not forloop.last %}page-break{% endif %}">
+                
+                <!-- Lot Card -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden print:border-0">
+                    <!-- Lot Header -->
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center print:bg-white print:border-b-2 print:border-gray-800 print:px-0">
+                        <div>
+                             <h2 class="text-2xl font-bold text-gray-900">{% trans "LOT" %} #{{ lot.lot_number }}</h2>
+                             {% if lot.status == "SOLD" %}
+                             <span class="ml-3 inline-flex items-center rounded-md bg-red-100 px-3 py-1 text-sm font-bold text-red-800 ring-1 ring-inset ring-red-600/20 uppercase print:bg-white print:border print:border-red-600 print:text-red-600">
+                                 {% trans "SOLD" %}
+                             </span>
+                             {% elif lot.status == "WITHDRAWN" %}
+                             <span class="ml-3 inline-flex items-center rounded-md bg-gray-100 px-3 py-1 text-sm font-bold text-gray-800 ring-1 ring-inset ring-gray-600/20 uppercase print:bg-white print:border print:border-gray-600">
+                                 {% trans "WITHDRAWN" %}
+                             </span>
+                             {% elif lot.status == "PASSED" %}
+                             <span class="ml-3 inline-flex items-center rounded-md bg-yellow-100 px-3 py-1 text-sm font-bold text-yellow-800 ring-1 ring-inset ring-yellow-600/20 uppercase print:bg-white print:border print:border-yellow-600">
+                                 {% trans "PASSED" %}
+                             </span>
+                             {% endif %}
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-gray-500 uppercase tracking-wide">{% trans "Reserve Price" %}</span>
+                            <span class="block text-xl font-bold text-indigo-600 print:text-black">R$ {{ lot.reserve_price }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Lot Stats -->
+                    <dl class="grid grid-cols-2 divide-x divide-gray-200 border-b border-gray-200 bg-white print:border-b print:border-gray-200">
+                        <div class="px-6 py-3 text-center print:px-2">
+                             <dt class="text-xs font-medium text-gray-500 uppercase">{% trans "Animals" %}</dt>
+                             <dd class="mt-1 text-2xl font-semibold text-gray-900">{{ lot.animals.count }}</dd>
+                        </div>
+                        <div class="px-6 py-3 text-center print:px-2">
+                             <dt class="text-xs font-medium text-gray-500 uppercase">{% trans "Avg Weight" %}</dt>
+                             <dd class="mt-1 text-2xl font-semibold text-gray-900">{{ lot.average_weight }} <span class="text-sm font-normal text-gray-500">kg</span></dd>
+                        </div>
+                    </dl>
+
+                    <!-- Single Animal Layout -->
+                    {% if lot.animals.count == 1 %}
+                        {% with animal=lot.animals.first %}
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8 print:grid-cols-2 print:p-0 print:mt-4">
+                             <!-- Image Column -->
+                            <div class="md:col-span-1">
+                                <div class="aspect-w-4 aspect-h-3 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                                    <a href="{% url 'cattle:detail' animal.pk %}" class="block h-full w-full">
+                                        {% if animal.image %}
+                                            <img src="{{ animal.image.url }}" alt="Animal {{ animal.tag }}" class="object-cover w-full h-full hover:opacity-90 transition-opacity">
+                                        {% else %}
+                                            <img src="{% static 'img/default_cow.png' %}" alt="Animal {{ animal.tag }}" class="object-cover w-full h-full hover:opacity-90 transition-opacity">
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Details Column -->
+                            <div class="md:col-span-2 print:col-span-1">
+                                <dl class="grid grid-cols-2 gap-6">
+                                     <div>
+                                        <dt class="text-sm font-medium text-gray-500">{% trans "Tag / ID" %}</dt>
+                                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ animal.tag }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">{% trans "Breed" %}</dt>
+                                        <dd class="mt-1 text-lg text-gray-900">{{ animal.get_breed_display }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">{% trans "Sex" %}</dt>
+                                        <dd class="mt-1 text-lg text-gray-900">{{ animal.get_sex_display }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">{% trans "Date of Birth" %}</dt>
+                                        <dd class="mt-1 text-lg text-gray-900">{{ animal.birth_date|date:"d/m/Y" }} <span class="text-sm text-gray-500">({{ animal.age }})</span></dd>
+                                    </div>
+                                </dl>
+
+                                <div class="mt-6 pt-6 border-t border-gray-100">
+                                    <h4 class="text-sm font-medium text-gray-900">{% trans "Observations" %}</h4>
+                                    <p class="mt-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-100 italic print:bg-white print:border-none print:p-0">
+                                        {{ animal.notes|default:"-" }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endwith %}
+
+                    <!-- Group Lot Layout -->
+                    {% else %}
+                        <div class="overflow-x-auto print:overflow-visible">
+                            <table class="min-w-full divide-y divide-gray-300">
+                                <thead class="bg-gray-50 print:bg-gray-100">
+                                    <tr>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 w-20">{% trans "Image" %}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Tag" %}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Breed" %}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Sex" %}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Age" %}</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{% trans "Weight" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    {% for animal in lot.animals.all %}
+                                    <tr>
+                                        <td class="whitespace-nowrap py-3 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                            <a href="{% url 'cattle:detail' animal.pk %}">
+                                                {% if animal.image %}
+                                                    <img src="{{ animal.image.url }}" alt="{{ animal.tag }}" class="h-12 w-12 rounded-md object-cover border border-gray-200 hover:opacity-80">
+                                                {% else %}
+                                                    <img src="{% static 'img/default_cow.png' %}" alt="{{ animal.tag }}" class="h-12 w-12 rounded-md object-cover border border-gray-200 hover:opacity-80">
+                                                {% endif %}
+                                            </a>
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-3 text-sm font-medium text-gray-900">{{ animal.tag }}</td>
+                                        <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500">{{ animal.get_breed_display }}</td>
+                                        <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500">{{ animal.get_sex_display }}</td>
+                                        <td class="whitespace-nowrap px-3 py-3 text-sm text-gray-500">{{ animal.age }}</td>
+                                        <td class="whitespace-nowrap px-3 py-3 text-sm font-medium text-gray-900">{{ animal.current_weight|default:"-" }} kg</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

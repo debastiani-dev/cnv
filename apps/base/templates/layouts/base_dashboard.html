@@ -19,7 +19,7 @@
 
     <div x-data="{
                  sidebarOpen: false,
-                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'transactions' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names or 'finance' in request.resolver_match.app_names %}financials{% elif 'tasks' in request.resolver_match.app_names %}tasks{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
+                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'transactions' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names or 'finance' in request.resolver_match.app_names %}financials{% elif 'commercial' in request.resolver_match.app_names %}commercial{% elif 'tasks' in request.resolver_match.app_names %}tasks{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
                  }" class="min-h-screen relative z-0">
 
     <!-- Mobile Sidebar (Off-canvas) -->
@@ -245,6 +245,30 @@
                                                class="{% if 'transactions' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Transactions" %}</a></li>
                                         <li><a href="{% url 'partners:list' %}"
                                                class="{% if 'partners' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Partners" %}</a></li>
+                                    </ul>
+                                </li>
+
+    <!-- Commercial -->
+                                <li>
+                                    <button type="button" @click="openCategory === 'commercial' ? openCategory = null : openCategory = 'commercial'"
+                                            class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                            :class="openCategory === 'commercial' ? 'text-stone-900' : ''">
+                                        <span class="flex gap-x-3 items-center">
+                                            <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
+                                            </svg>
+                                            {% trans "Commercial" %}
+                                        </span>
+                                        <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                             :class="openCategory === 'commercial' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                  d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                                  clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <ul x-show="openCategory === 'commercial'" x-cloak>
+                                        <li><a href="{% url 'commercial:event_list' %}"
+                                               class="{% if 'commercial' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sales Events" %}</a></li>
                                     </ul>
                                 </li>
 
@@ -478,6 +502,30 @@
                                        class="{% if 'transactions' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Transactions" %}</a></li>
                                 <li><a href="{% url 'partners:list' %}"
                                        class="{% if 'partners' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Partners" %}</a></li>
+                            </ul>
+                        </li>
+
+    <!-- Commercial -->
+                        <li>
+                            <button type="button" @click="openCategory === 'commercial' ? openCategory = null : openCategory = 'commercial'"
+                                    class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                    :class="openCategory === 'commercial' ? 'text-stone-900' : ''">
+                                <span class="flex gap-x-3 items-center">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" />
+                                    </svg>
+                                    {% trans "Commercial" %}
+                                </span>
+                                <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                     :class="openCategory === 'commercial' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <ul x-show="openCategory === 'commercial'" x-cloak>
+                                <li><a href="{% url 'commercial:event_list' %}"
+                                       class="{% if 'commercial' in request.resolver_match.app_names %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Sales Events" %}</a></li>
                             </ul>
                         </li>
 

@@ -1,0 +1,294 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Manage Lots" %} - {{ event.name }}{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="md:flex md:items-center md:justify-between mb-6">
+        <div class="min-w-0 flex-1">
+            <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                {% trans "Manage Lots for" %} {{ event.name }}
+            </h1>
+        </div>
+        <div class="mt-4 flex md:ml-4 md:mt-0">
+             <a href="{% url 'commercial:event_catalog' event.uuid %}" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                <svg class="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                </svg>
+                {% trans "View Catalog" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Left Panel: Available Source -->
+        <div class="bg-white shadow sm:rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Available Animals" %}</h3>
+                <div class="mt-2 max-w-xl text-sm text-gray-500">
+                    <p>{% trans "Select animals to add to a new lot." %}</p>
+                </div>
+                
+                <div class="mt-5 border-t border-gray-200 pt-4">
+                    <input type="text" id="animal-search" placeholder="{% trans 'Search by Tag, Name or Breed...' %}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mb-4">
+                    <ul class="divide-y divide-gray-100 h-96 overflow-y-auto" id="animal-list">
+                        {% for animal in available_animals %}
+                        <li class="flex gap-x-4 py-3 draggable-source" draggable="true" data-id="{{ animal.pk }}" data-cost="{{ animal.total_cost.amount }}">
+                            <div class="flex-none h-10 w-10">
+                                <a href="{% url 'cattle:detail' animal.pk %}">
+                                    {% if animal.image %}
+                                        <img src="{{ animal.image.url }}" alt="" class="h-10 w-10 rounded-full bg-gray-50 object-cover border border-gray-200">
+                                    {% else %}
+                                        <img src="{% static 'img/default_cow.png' %}" alt="" class="h-10 w-10 rounded-full bg-gray-50 object-cover border border-gray-200">
+                                    {% endif %}
+                                </a>
+                            </div>
+                            <div class="min-w-0 flex-auto">
+                                <p class="text-sm font-semibold leading-6 text-gray-900">
+                                    {{ animal.tag }}
+                                    {% if animal.name %}
+                                        <span class="ml-1 text-gray-500 font-normal">({{ animal.name }})</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mt-1 truncated text-xs leading-5 text-gray-500">{{ animal.get_breed_display }} | {{ animal.current_weight|default:"-" }}kg</p>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 select-animal-cb" value="{{ animal.pk }}">
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="py-4 text-center text-sm text-gray-500">{% trans "No available animals found." %}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Lot Builder -->
+        <div class="bg-white shadow sm:rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Lot Builder" %}</h3>
+                
+                <form method="post" action="." class="mt-5 space-y-4">
+                    {% csrf_token %}
+                    <!-- Lot Details -->
+                    <div>
+                        <label for="lot_number" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Lot Number" %}</label>
+                        <input type="number" name="lot_number" id="lot_number" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+
+                    <div>
+                         <label for="reserve_price" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Reserve Price" %}</label>
+                         <input type="number" step="0.01" name="reserve_price" id="reserve_price" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+
+                    <!-- Selected Animals Drop Zone -->
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-[150px] bg-gray-50 flex flex-col justify-center items-center text-gray-400" id="drop-zone">
+                        <span>{% trans "Drag animals here or use checkboxes" %}</span>
+                    </div>
+
+                    <!-- Cost Analysis -->
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-500">{% trans "Selected Count:" %}</span>
+                            <span class="text-sm font-bold text-gray-900" id="selected-count">0</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-sm font-medium text-gray-500">{% trans "Total Cost (Est):" %}</span>
+                            <span class="text-sm font-bold text-gray-900" id="total-cost">0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Hidden input for selected animals -->
+                    <div id="hidden-inputs"></div>
+
+                    <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        {% trans "Create Lot" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Created Lots List -->
+    <div class="mt-8 bg-white shadow sm:rounded-lg overflow-hidden">
+        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Created Lots" %}</h3>
+        </div>
+        <ul class="divide-y divide-gray-200">
+            {% for lot in lots %}
+            <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 flex items-center justify-between">
+                 <div class="min-w-0 flex-1">
+                     <div class="flex items-center gap-x-3">
+                        <h4 class="text-sm font-semibold text-gray-900">{% trans "Lot" %} #{{ lot.lot_number }}</h4>
+                        <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                            {{ lot.animals.count }} {% trans "Animals" %}
+                        </span>
+                        {% if lot.status == "SOLD" %}
+                        <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                            {% trans "SOLD" %}
+                        </span>
+                        {% endif %}
+                        
+
+                        
+                        <!-- Lot Animals Preview -->
+                        <div class="flex -space-x-1 overflow-hidden ml-2 items-center">
+                            {% for animal in lot.animals.all|slice:":5" %}
+                                <a href="{% url 'cattle:detail' animal.pk %}" class="relative inline-block h-6 w-6 rounded-full ring-2 ring-white hover:z-10">
+                                    {% if animal.image %}
+                                        <img class="h-6 w-6 rounded-full object-cover" src="{{ animal.image.url }}" alt="{{ animal.tag }}" title="{{ animal.tag }}">
+                                    {% else %}
+                                        <img class="h-6 w-6 rounded-full object-cover" src="{% static 'img/default_cow.png' %}" alt="{{ animal.tag }}" title="{{ animal.tag }}">
+                                    {% endif %}
+                                </a>
+                            {% endfor %}
+                            {% if lot.animals.count > 5 %}
+                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-2 ring-white">
+                                    <span class="text-[8px] font-medium leading-none text-gray-500">+{{ lot.animals.count|add:"-5" }}</span>
+                                </span>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs text-gray-500 hidden sm:inline ml-2">
+                            {% for animal in lot.animals.all|slice:":3" %}
+                                {{ animal.tag }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                            {% if lot.animals.count > 3 %}...{% endif %}
+                        </span>
+                     </div>
+                     <div class="mt-1 flex items-center gap-x-4 text-xs text-gray-500">
+                         <span>{% trans "Reserve" %}: R$ {{ lot.reserve_price }}</span>
+                         <span>&bull;</span>
+                         <span>{% trans "Est. Cost" %}: R$ {{ lot.cost_at_creation }}</span>
+                     </div>
+                 </div>
+                 <div class="flex items-center gap-x-4">
+                    {% if lot.status == "AVAILABLE" %}
+                        <a href="{% url 'commercial:lot_close' lot.pk %}" class="text-green-600 hover:text-green-900 text-sm font-bold border border-green-200 bg-green-50 px-3 py-1 rounded hover:bg-green-100">{% trans "Close / Sell" %}</a>
+                        <div class="h-4 w-px bg-gray-200"></div>
+                        <a href="{% url 'commercial:lot_update' lot.pk %}" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">{% trans "Edit" %}</a>
+                        <a href="{% url 'commercial:lot_delete' lot.pk %}" class="text-red-600 hover:text-red-900 text-sm font-medium">{% trans "Delete" %}</a>
+                    {% else %}
+                        <span class="text-sm font-medium text-gray-500">{% trans "Closed" %}</span>
+                    {% endif %}
+                 </div>
+            </li>
+            {% empty %}
+            <li class="px-4 py-8 text-center text-sm text-gray-500">
+                {% trans "No lots created yet." %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sourceList = document.querySelectorAll('.draggable-source');
+        const dropZone = document.getElementById('drop-zone');
+        const hiddenInputsContainer = document.getElementById('hidden-inputs');
+        const selectedCountSpan = document.getElementById('selected-count');
+        const totalCostSpan = document.getElementById('total-cost');
+        
+        let selectedAnimals = new Set();
+        let currentCost = 0;
+        
+        // Helper to update summary
+        function updateSummary() {
+            selectedCountSpan.textContent = selectedAnimals.size.toString();
+            totalCostSpan.textContent = currentCost.toFixed(2);
+            
+            // Rebuild hidden inputs
+            hiddenInputsContainer.innerHTML = '';
+            selectedAnimals.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'animals';
+                input.value = id;
+                hiddenInputsContainer.appendChild(input);
+            });
+            
+            // Visual feedback on list items
+            sourceList.forEach(item => {
+                const id = item.dataset.id;
+                const checkbox = item.querySelector('.select-animal-cb');
+                if (selectedAnimals.has(id)) {
+                    item.classList.add('bg-indigo-50');
+                    checkbox.checked = true;
+                } else {
+                    item.classList.remove('bg-indigo-50');
+                    checkbox.checked = false;
+                }
+            });
+        }
+        
+        // Handle Checkbox changes
+        document.querySelectorAll('.select-animal-cb').forEach(cb => {
+            cb.addEventListener('change', function(e) {
+                const li = this.closest('li');
+                const id = li.dataset.id;
+                const cost = Number.parseFloat(li.dataset.cost || '0');
+                
+                if (this.checked) {
+                    if (!selectedAnimals.has(id)) {
+                        selectedAnimals.add(id);
+                        currentCost += cost;
+                    }
+                } else if (selectedAnimals.has(id)) {
+                    selectedAnimals.delete(id);
+                    currentCost -= cost;
+                }
+                updateSummary();
+            });
+        });
+
+        // Search Filter
+        const searchInput = document.getElementById('animal-search');
+        searchInput.addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            sourceList.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(term)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Basic Drag and Drop (Select on Drop)
+        sourceList.forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', item.dataset.id);
+            });
+        });
+        
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('border-indigo-500', 'bg-indigo-50');
+        });
+        
+        dropZone.addEventListener('dragleave', function(e) {
+            this.classList.remove('border-indigo-500', 'bg-indigo-50');
+        });
+        
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('border-indigo-500', 'bg-indigo-50');
+            const id = e.dataTransfer.getData('text/plain');
+            
+            // Find element to get cost
+            const item = document.querySelector(`.draggable-source[data-id="${id}"]`);
+            if (item) {
+                const cost = Number.parseFloat(item.dataset.cost || '0');
+                if (!selectedAnimals.has(id)) {
+                    selectedAnimals.add(id);
+                    currentCost += cost;
+                    updateSummary();
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

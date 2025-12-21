@@ -38,6 +38,7 @@ urlpatterns = [
         "notifications/", include("apps.notifications.urls", namespace="notifications")
     ),
     path("finance/", include("apps.finance.urls", namespace="finance")),
+    path("commercial/", include("apps.commercial.urls", namespace="commercial")),
     path("", include("apps.website.urls", namespace="website")),
 ]
 

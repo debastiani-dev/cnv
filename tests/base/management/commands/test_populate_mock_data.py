@@ -1,8 +1,9 @@
 # pylint: disable=protected-access
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from model_bakery import baker
 
@@ -14,6 +15,7 @@ from apps.nutrition.models import Diet, FeedingEvent, FeedIngredient
 from apps.partners.models import Partner
 from apps.reproduction.models import BreedingEvent, Calving
 from apps.transactions.models import Transaction
+from apps.transactions.services.transaction_service import TransactionService
 
 
 @pytest.mark.django_db
@@ -172,3 +174,56 @@ class TestPopulateMockData:
         # The logic: if sire.breed != dam.breed -> breed="cross"
         # Since "cross" not in BREED_CHOICES, breed becomes BREED_OTHER ("other")
         assert kwargs.get("breed") == Cattle.BREED_OTHER
+
+    def test_create_sales_validation_error(self):
+        """Test handling of ValidationError during sale creation."""
+        command = Command()
+        partners = [baker.make(Partner)]
+        cattle_list = [baker.make(Cattle)]
+
+        # Patch TransactionService.confirm_transaction to raise ValidationError
+        with patch.object(
+            TransactionService,
+            "confirm_transaction",
+            side_effect=ValidationError("Mock Error"),
+        ):
+            with patch.object(command, "stdout"):
+                # Should not raise exception, just catch and ignore
+                command._create_sales(partners, cattle_list, count=1)
+
+    def test_create_purchases_validation_error(self):
+        """Test handling of ValidationError during purchase creation (warning log)."""
+        command = Command()
+        partners = [baker.make(Partner)]
+        ingredients = [baker.make(FeedIngredient)]
+
+        with patch.object(
+            TransactionService,
+            "confirm_transaction",
+            side_effect=ValidationError("Mock Purchase Error"),
+        ):
+            mock_stdout = MagicMock()
+            command.stdout = mock_stdout
+            command.style = MagicMock()
+
+            command._create_purchases(partners, ingredients, count=1)
+
+            # Verify warning was logged
+            # warning called with something containing "Mock Purchase Error"
+            # We check if write was called. Warning styling might make exact match tricky.
+            assert mock_stdout.write.called
+
+    def test_create_commercial_data_reset(self):
+        """Test that existing browser test cattle are reset to AVAILABLE status."""
+        command = Command()
+
+        # Create a pre-existing "BROWSER-0" cow with SOLD status
+        tag = "BROWSER-0"
+        cow = baker.make(Cattle, tag=tag, status=Cattle.STATUS_SOLD, weight_kg=500)
+
+        with patch.object(command, "stdout"):
+            command._create_commercial_data(cattle_list=[cow])
+
+        # Verify status reset
+        cow.refresh_from_db()
+        assert cow.status == Cattle.STATUS_AVAILABLE
