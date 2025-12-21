@@ -1,0 +1,102 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{{ batch }}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8" x-data="{ stockModalOpen: false }">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="min-w-0 flex-1">
+      <h1 class="text-3xl font-bold leading-9 text-gray-900 sm:truncate sm:tracking-tight">
+        Semen: {{ batch.bull.tag|default:batch.bull_name_external }}
+      </h1>
+      <p class="mt-2 text-sm text-gray-700">{{ batch.get_type_display }} - {{ batch.breed }}</p>
+    </div>
+    
+    <div class="mt-4 flex items-center gap-x-3 md:ml-4 md:mt-0">
+      <button type="button" @click="stockModalOpen = true" class="block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-500">
+        {% trans "Adjust Stock" %}
+      </button>
+      <a href="{% url 'genetics:semen-update' batch.pk %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        {% trans "Edit" %}
+      </a>
+      <a href="{% url 'genetics:semen-delete' batch.pk %}" class="block rounded-md bg-red-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-red-500">
+        {% trans "Delete" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+      <dt class="truncate text-sm font-medium text-gray-500">{% trans "Current Quantity" %}</dt>
+      <dd class="mt-1 text-3xl font-semibold tracking-tight {% if batch.current_quantity <= batch.min_stock_alert %}text-red-600{% else %}text-gray-900{% endif %}">
+        {{ batch.current_quantity }}
+        {% if batch.current_quantity <= batch.min_stock_alert %}
+          <span class="ml-2 inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+            {% trans "Low Stock!" %}
+          </span>
+        {% endif %}
+      </dd>
+    </div>
+    <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+      <dt class="truncate text-sm font-medium text-gray-500">{% trans "Initial Quantity" %}</dt>
+      <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ batch.initial_quantity }}</dd>
+    </div>
+    <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+      <dt class="truncate text-sm font-medium text-gray-500">{% trans "Min Stock Alert" %}</dt>
+      <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ batch.min_stock_alert }}</dd>
+    </div>
+  </div>
+
+  <div class="mt-6 border-t border-gray-200">
+    <dl class="divide-y divide-gray-200">
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium text-gray-900">{% trans "Storage Tank" %}</dt>
+        <dd class="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">
+          <a href="{% url 'genetics:tank-detail' batch.tank.pk %}" class="text-indigo-600 hover:text-indigo-900">
+            {{ batch.tank.name }}
+          </a>
+        </dd>
+      </div>
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium text-gray-900">{% trans "Canister/Cane" %}</dt>
+        <dd class="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">{{ batch.canister }}</dd>
+      </div>
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium text-gray-900">{% trans "Batch Code" %}</dt>
+        <dd class="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">{{ batch.batch_code|default:"-" }}</dd>
+      </div>
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium text-gray-900">{% trans "Registration Number" %}</dt>
+        <dd class="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">{{ batch.registration_number|default:"-" }}</dd>
+      </div>
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium text-gray-900">{% trans "Purchase Date" %}</dt>
+        <dd class="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">{{ batch.purchase_date|date:"SHORT_DATE_FORMAT" }}</dd>
+      </div>
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium text-gray-900">{% trans "Cost per Unit" %}</dt>
+        <dd class="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">R$ {{ batch.cost_per_unit }}</dd>
+      </div>
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium text-gray-900">{% trans "Total Cost" %}</dt>
+        <dd class="mt-1 text-sm text-gray-900 font-semibold sm:col-span-2 sm:mt-0">
+          R$ {{ batch.cost_per_unit|floatformat:2 }} × {{ batch.initial_quantity }} = R$ {% widthratio batch.cost_per_unit 1 batch.initial_quantity %}
+        </dd>
+      </div>
+      {% if batch.supplier %}
+      <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <dt class="text-sm font-medium text-gray-900">{% trans "Supplier" %}</dt>
+        <dd class="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">
+          <a href="{% url 'partners:detail' batch.supplier.pk %}" class="text-indigo-600 hover:text-indigo-900">
+            {{ batch.supplier.name }}
+          </a>
+        </dd>
+      </div>
+      {% endif %}
+    </dl>
+  </div>
+  <!-- Include Modal -->
+  {% include "genetics/partials/stock_adjustment_modal.html" with batch_type="Semen" %}
+</div>
+{% endblock %}

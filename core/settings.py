@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "apps.finance",
     "apps.commercial",
     "apps.notifications",
+    "apps.genetics",
     "django_filters",
     "django_celery_beat",
 ]

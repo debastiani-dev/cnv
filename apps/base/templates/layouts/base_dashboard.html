@@ -19,7 +19,7 @@
 
     <div x-data="{
                  sidebarOpen: false,
-                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'transactions' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names or 'finance' in request.resolver_match.app_names %}financials{% elif 'commercial' in request.resolver_match.app_names %}commercial{% elif 'tasks' in request.resolver_match.app_names %}tasks{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
+                 openCategory: '{% if 'cattle' in request.resolver_match.app_names or 'weight' in request.resolver_match.app_names or 'locations' in request.resolver_match.app_names %}animals{% elif 'reproduction' in request.resolver_match.app_names %}reproduction{% elif 'genetics' in request.resolver_match.app_names %}genetics{% elif 'nutrition' in request.resolver_match.app_names %}nutrition{% elif 'health' in request.resolver_match.app_names %}health{% elif 'transactions' in request.resolver_match.app_names or 'partners' in request.resolver_match.app_names or 'finance' in request.resolver_match.app_names %}financials{% elif 'commercial' in request.resolver_match.app_names %}commercial{% elif 'tasks' in request.resolver_match.app_names %}tasks{% elif 'authentication' in request.resolver_match.app_names %}administration{% endif %}'
                  }" class="min-h-screen relative z-0">
 
     <!-- Mobile Sidebar (Off-canvas) -->
@@ -159,6 +159,34 @@
                                            class="{% if request.resolver_match.url_name == 'diagnosis_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Pregnancy Checks" %}</a></li>
                                     <li><a href="{% url 'reproduction:season_list' %}"
                                            class="{% if request.resolver_match.url_name == 'season_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Seasons" %}</a></li>
+                                </ul>
+                            </li>
+
+    <!-- Genetics (Inventory Management) -->
+                            <li>
+                                <button type="button" @click="openCategory === 'genetics' ? openCategory = null : openCategory = 'genetics'"
+                                        class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                        :class="openCategory === 'genetics' ? 'text-stone-900' : ''">
+                                    <span class="flex gap-x-3 items-center">
+                                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                                        </svg>
+                                        {% trans "Genetics" %}
+                                    </span>
+                                    <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                         :class="openCategory === 'genetics' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                              clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <ul x-show="openCategory === 'genetics'" x-cloak>
+                                    <li><a href="{% url 'genetics:tank-list' %}"
+                                           class="{% if 'genetics' in request.resolver_match.app_names and 'tank' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Storage Tanks" %}</a></li>
+                                    <li><a href="{% url 'genetics:semen-list' %}"
+                                           class="{% if request.resolver_match.url_name == 'semen-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Semen Inventory" %}</a></li>
+                                    <li><a href="{% url 'genetics:embryo-list' %}"
+                                           class="{% if request.resolver_match.url_name == 'embryo-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Embryo Inventory" %}</a></li>
                                 </ul>
                             </li>
 
@@ -416,6 +444,34 @@
                                        class="{% if request.resolver_match.url_name == 'diagnosis_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Pregnancy Checks" %}</a></li>
                                 <li><a href="{% url 'reproduction:season_list' %}"
                                        class="{% if request.resolver_match.url_name == 'season_list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Seasons" %}</a></li>
+                            </ul>
+                        </li>
+
+    <!-- Genetics (Inventory Management) -->
+                        <li>
+                            <button type="button" @click="openCategory === 'genetics' ? openCategory = null : openCategory = 'genetics'"
+                                    class="group flex w-full items-center justify-between gap-x-3 py-2 px-6 text-left text-sm font-semibold leading-6 text-stone-700 hover:bg-stone-400 hover:text-stone-900"
+                                    :class="openCategory === 'genetics' ? 'text-stone-900' : ''">
+                                <span class="flex gap-x-3 items-center">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+                                    </svg>
+                                    {% trans "Genetics" %}
+                                </span>
+                                <svg class="h-5 w-5 shrink-0 block transform transition-transform duration-200"
+                                     :class="openCategory === 'genetics' ? 'rotate-90' : ''" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                                          clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <ul x-show="openCategory === 'genetics'" x-cloak>
+                                <li><a href="{% url 'genetics:tank-list' %}"
+                                       class="{% if 'genetics' in request.resolver_match.app_names and 'tank' in request.resolver_match.url_name %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Storage Tanks" %}</a></li>
+                                <li><a href="{% url 'genetics:semen-list' %}"
+                                       class="{% if request.resolver_match.url_name == 'semen-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Semen Inventory" %}</a></li>
+                                <li><a href="{% url 'genetics:embryo-list' %}"
+                                       class="{% if request.resolver_match.url_name == 'embryo-list' %}bg-stone-400 text-stone-900{% else %}bg-stone-200 text-stone-700 hover:text-stone-900 hover:bg-stone-400{% endif %} group flex gap-x-3 py-2 px-6 text-sm font-semibold leading-6 pl-14">{% trans "Embryo Inventory" %}</a></li>
                             </ul>
                         </li>
 

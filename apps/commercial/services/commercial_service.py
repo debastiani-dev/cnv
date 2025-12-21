@@ -31,7 +31,17 @@ class CommercialService:
 
         # 2. Update Biological Status for ALL animals involved
         # This prevents them from being added to other lists
-        lot.animals.update(status=Cattle.STATUS_SOLD)
+        if lot.animals.exists():
+            lot.animals.update(status=Cattle.STATUS_SOLD)
+
+        # 2b. Handle Genetic Material Inventory
+        if lot.content_object and hasattr(lot.content_object, "current_quantity"):
+            # Reduce stock
+            # Note: Verification that stock exists should happen at creation or pre-close validation
+            # For now, we assume valid state or allow negative (backorder) if business rules permit,
+            # but usually we enforce non-negative.
+            lot.content_object.current_quantity -= lot.quantity
+            lot.content_object.save(update_fields=["current_quantity"])
 
         # 3. Financial Integration (Create Draft Invoice)
         # We check if a Draft Sale already exists for this Partner on this Date.

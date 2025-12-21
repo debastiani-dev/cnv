@@ -39,6 +39,7 @@ urlpatterns = [
     ),
     path("finance/", include("apps.finance.urls", namespace="finance")),
     path("commercial/", include("apps.commercial.urls", namespace="commercial")),
+    path("genetics/", include("apps.genetics.urls", namespace="genetics")),
     path("", include("apps.website.urls", namespace="website")),
 ]
 

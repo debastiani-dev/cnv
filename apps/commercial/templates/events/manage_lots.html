@@ -4,7 +4,7 @@
 {% block title %}{% trans "Manage Lots" %} - {{ event.name }}{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" x-data="{ tab: 'animal', selectedBatch: null, selectedBatchName: '', selectedBatchType: '' }">
     <div class="md:flex md:items-center md:justify-between mb-6">
         <div class="min-w-0 flex-1">
             <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
@@ -21,36 +21,43 @@
         </div>
     </div>
 
+    <!-- Type Tabs -->
+    <div class="border-b border-gray-200 mb-6">
+      <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <a href="#" @click.prevent="tab = 'animal'" :class="tab === 'animal' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
+          {% trans "Animals" %}
+        </a>
+        <a href="#" @click.prevent="tab = 'semen'" :class="tab === 'semen' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
+          {% trans "Semen" %}
+        </a>
+        <a href="#" @click.prevent="tab = 'embryo'" :class="tab === 'embryo' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'" class="whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
+          {% trans "Embryos" %}
+        </a>
+      </nav>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Left Panel: Available Source -->
         <div class="bg-white shadow sm:rounded-lg">
             <div class="px-4 py-5 sm:p-6">
-                <h3 class="text-base font-semibold leading-6 text-gray-900">{% trans "Available Animals" %}</h3>
-                <div class="mt-2 max-w-xl text-sm text-gray-500">
-                    <p>{% trans "Select animals to add to a new lot." %}</p>
-                </div>
+                <h3 class="text-base font-semibold leading-6 text-gray-900" x-text="tab === 'animal' ? '{% trans "Available Animals" %}' : (tab === 'semen' ? '{% trans "Available Semen Batches" %}' : '{% trans "Available Embryo Batches" %}')"></h3>
                 
                 <div class="mt-5 border-t border-gray-200 pt-4">
-                    <input type="text" id="animal-search" placeholder="{% trans 'Search by Tag, Name or Breed...' %}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mb-4">
-                    <ul class="divide-y divide-gray-100 h-96 overflow-y-auto" id="animal-list">
+                    <input type="text" id="source-search" placeholder="{% trans 'Search...' %}" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 mb-4">
+                    
+                    <!-- ANIMAL LIST -->
+                    <ul x-show="tab === 'animal'" class="divide-y divide-gray-100 h-96 overflow-y-auto source-list" id="animal-list">
                         {% for animal in available_animals %}
                         <li class="flex gap-x-4 py-3 draggable-source" draggable="true" data-id="{{ animal.pk }}" data-cost="{{ animal.total_cost.amount }}">
                             <div class="flex-none h-10 w-10">
-                                <a href="{% url 'cattle:detail' animal.pk %}">
-                                    {% if animal.image %}
-                                        <img src="{{ animal.image.url }}" alt="" class="h-10 w-10 rounded-full bg-gray-50 object-cover border border-gray-200">
-                                    {% else %}
-                                        <img src="{% static 'img/default_cow.png' %}" alt="" class="h-10 w-10 rounded-full bg-gray-50 object-cover border border-gray-200">
-                                    {% endif %}
-                                </a>
+                                {% if animal.image %}
+                                    <img src="{{ animal.image.url }}" alt="" class="h-10 w-10 rounded-full bg-gray-50 object-cover border border-gray-200">
+                                {% else %}
+                                    <img src="{% static 'img/default_cow.png' %}" alt="" class="h-10 w-10 rounded-full bg-gray-50 object-cover border border-gray-200">
+                                {% endif %}
                             </div>
                             <div class="min-w-0 flex-auto">
-                                <p class="text-sm font-semibold leading-6 text-gray-900">
-                                    {{ animal.tag }}
-                                    {% if animal.name %}
-                                        <span class="ml-1 text-gray-500 font-normal">({{ animal.name }})</span>
-                                    {% endif %}
-                                </p>
+                                <p class="text-sm font-semibold leading-6 text-gray-900">{{ animal.tag }}</p>
                                 <p class="mt-1 truncated text-xs leading-5 text-gray-500">{{ animal.get_breed_display }} | {{ animal.current_weight|default:"-" }}kg</p>
                             </div>
                             <div class="flex items-center">
@@ -59,6 +66,40 @@
                         </li>
                         {% empty %}
                         <li class="py-4 text-center text-sm text-gray-500">{% trans "No available animals found." %}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <!-- SEMEN LIST -->
+                    <ul x-show="tab === 'semen'" class="divide-y divide-gray-100 h-96 overflow-y-auto source-list" style="display: none;">
+                        {% for batch in available_semen %}
+                        <li class="flex gap-x-4 py-3 cursor-pointer hover:bg-gray-50" @click="selectedBatch = '{{ batch.pk }}'; selectedBatchName = '{{ batch.bull_name_external|escapejs }}'; selectedBatchType = 'semen'">
+                            <div class="min-w-0 flex-auto">
+                                <p class="text-sm font-semibold leading-6 text-gray-900">{{ batch }}</p>
+                                <p class="mt-1 truncated text-xs leading-5 text-gray-500">{% trans "Qty" %}: {{ batch.current_quantity }} | {% trans "Cost" %}: {{ batch.cost_per_unit }}</p>
+                            </div>
+                            <div class="flex items-center" x-show="selectedBatch === '{{ batch.pk }}'">
+                                <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="py-4 text-center text-sm text-gray-500">{% trans "No available semen batches." %}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <!-- EMBRYO LIST -->
+                    <ul x-show="tab === 'embryo'" class="divide-y divide-gray-100 h-96 overflow-y-auto source-list" style="display: none;">
+                        {% for batch in available_embryos %}
+                        <li class="flex gap-x-4 py-3 cursor-pointer hover:bg-gray-50" @click="selectedBatch = '{{ batch.pk }}'; selectedBatchName = '{{ batch }}'; selectedBatchType = 'embryo'">
+                            <div class="min-w-0 flex-auto">
+                                <p class="text-sm font-semibold leading-6 text-gray-900">{{ batch }}</p>
+                                <p class="mt-1 truncated text-xs leading-5 text-gray-500">{% trans "Qty" %}: {{ batch.current_quantity }} | {% trans "Cost" %}: {{ batch.cost_per_unit }}</p>
+                            </div>
+                            <div class="flex items-center" x-show="selectedBatch === '{{ batch.pk }}'">
+                                <svg class="h-5 w-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                            </div>
+                        </li>
+                        {% empty %}
+                        <li class="py-4 text-center text-sm text-gray-500">{% trans "No available embryo batches." %}</li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -72,6 +113,9 @@
                 
                 <form method="post" action="." class="mt-5 space-y-4">
                     {% csrf_token %}
+                    <input type="hidden" name="lot_type" x-model="tab">
+                    <input type="hidden" name="genetic_batch_id" x-model="selectedBatch">
+
                     <!-- Lot Details -->
                     <div>
                         <label for="lot_number" class="block text-sm font-medium leading-6 text-gray-900">{% trans "Lot Number" %}</label>
@@ -83,13 +127,29 @@
                          <input type="number" step="0.01" name="reserve_price" id="reserve_price" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                     </div>
 
-                    <!-- Selected Animals Drop Zone -->
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-[150px] bg-gray-50 flex flex-col justify-center items-center text-gray-400" id="drop-zone">
+                    <!-- Selected Animals Drop Zone (Only for Animals) -->
+                    <div x-show="tab === 'animal'" class="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-[150px] bg-gray-50 flex flex-col justify-center items-center text-gray-400" id="drop-zone">
                         <span>{% trans "Drag animals here or use checkboxes" %}</span>
                     </div>
 
-                    <!-- Cost Analysis -->
-                    <div class="bg-gray-50 p-4 rounded-md">
+                    <!-- Selected Genetic Batch (Only for Genetics) -->
+                    <div x-show="tab !== 'animal'" class="bg-indigo-50 border border-indigo-200 rounded-md p-4">
+                        <template x-if="selectedBatch">
+                            <div>
+                                <p class="text-sm font-bold text-indigo-900" x-text="selectedBatchName"></p>
+                                <div class="mt-2">
+                                     <label for="quantity" class="block text-xs font-medium leading-6 text-indigo-900">{% trans "Quantity to Sell" %}</label>
+                                     <input type="number" name="quantity" min="1" class="block w-24 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6">
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="!selectedBatch">
+                            <p class="text-sm text-indigo-500 italic">{% trans "Select a batch from the list on the left." %}</p>
+                        </template>
+                    </div>
+
+                    <!-- Cost Analysis (Animal Only for now, keeping generic for simple animal drag drop) -->
+                    <div x-show="tab === 'animal'" class="bg-gray-50 p-4 rounded-md">
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-medium text-gray-500">{% trans "Selected Count:" %}</span>
                             <span class="text-sm font-bold text-gray-900" id="selected-count">0</span>
@@ -122,40 +182,51 @@
                  <div class="min-w-0 flex-1">
                      <div class="flex items-center gap-x-3">
                         <h4 class="text-sm font-semibold text-gray-900">{% trans "Lot" %} #{{ lot.lot_number }}</h4>
-                        <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                            {{ lot.animals.count }} {% trans "Animals" %}
-                        </span>
+                        
+                        {% if lot.content_object %}
+                            <!-- GENETIC LOT -->
+                            <span class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-600/20">
+                                {{ lot.quantity }} {% trans "Units" %}
+                            </span>
+                            <span class="text-sm font-medium text-gray-900 ml-2">
+                                {{ lot.content_object }}
+                            </span>
+                        {% else %}
+                            <!-- ANIMAL LOT -->
+                            <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                {{ lot.animals.count }} {% trans "Animals" %}
+                            </span>
+                            
+                            <!-- Lot Animals Preview -->
+                            <div class="flex -space-x-1 overflow-hidden ml-2 items-center">
+                                {% for animal in lot.animals.all|slice:":5" %}
+                                    <a href="{% url 'cattle:detail' animal.pk %}" class="relative inline-block h-6 w-6 rounded-full ring-2 ring-white hover:z-10">
+                                        {% if animal.image %}
+                                            <img class="h-6 w-6 rounded-full object-cover" src="{{ animal.image.url }}" alt="{{ animal.tag }}" title="{{ animal.tag }}">
+                                        {% else %}
+                                            <img class="h-6 w-6 rounded-full object-cover" src="{% static 'img/default_cow.png' %}" alt="{{ animal.tag }}" title="{{ animal.tag }}">
+                                        {% endif %}
+                                    </a>
+                                {% endfor %}
+                                {% if lot.animals.count > 5 %}
+                                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-2 ring-white">
+                                        <span class="text-[8px] font-medium leading-none text-gray-500">+{{ lot.animals.count|add:"-5" }}</span>
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <span class="text-xs text-gray-500 hidden sm:inline ml-2">
+                                {% for animal in lot.animals.all|slice:":3" %}
+                                    {{ animal.tag }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                                {% if lot.animals.count > 3 %}...{% endif %}
+                            </span>
+                        {% endif %}
+
                         {% if lot.status == "SOLD" %}
                         <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
                             {% trans "SOLD" %}
                         </span>
                         {% endif %}
-                        
-
-                        
-                        <!-- Lot Animals Preview -->
-                        <div class="flex -space-x-1 overflow-hidden ml-2 items-center">
-                            {% for animal in lot.animals.all|slice:":5" %}
-                                <a href="{% url 'cattle:detail' animal.pk %}" class="relative inline-block h-6 w-6 rounded-full ring-2 ring-white hover:z-10">
-                                    {% if animal.image %}
-                                        <img class="h-6 w-6 rounded-full object-cover" src="{{ animal.image.url }}" alt="{{ animal.tag }}" title="{{ animal.tag }}">
-                                    {% else %}
-                                        <img class="h-6 w-6 rounded-full object-cover" src="{% static 'img/default_cow.png' %}" alt="{{ animal.tag }}" title="{{ animal.tag }}">
-                                    {% endif %}
-                                </a>
-                            {% endfor %}
-                            {% if lot.animals.count > 5 %}
-                                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-2 ring-white">
-                                    <span class="text-[8px] font-medium leading-none text-gray-500">+{{ lot.animals.count|add:"-5" }}</span>
-                                </span>
-                            {% endif %}
-                        </div>
-                        <span class="text-xs text-gray-500 hidden sm:inline ml-2">
-                            {% for animal in lot.animals.all|slice:":3" %}
-                                {{ animal.tag }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                            {% if lot.animals.count > 3 %}...{% endif %}
-                        </span>
                      </div>
                      <div class="mt-1 flex items-center gap-x-4 text-xs text-gray-500">
                          <span>{% trans "Reserve" %}: R$ {{ lot.reserve_price }}</span>
@@ -185,7 +256,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const sourceList = document.querySelectorAll('.draggable-source');
+        const draggableItems = document.querySelectorAll('.draggable-source');
+        const searchableItems = document.querySelectorAll('.source-list li');
         const dropZone = document.getElementById('drop-zone');
         const hiddenInputsContainer = document.getElementById('hidden-inputs');
         const selectedCountSpan = document.getElementById('selected-count');
@@ -210,7 +282,7 @@
             });
             
             // Visual feedback on list items
-            sourceList.forEach(item => {
+            draggableItems.forEach(item => {
                 const id = item.dataset.id;
                 const checkbox = item.querySelector('.select-animal-cb');
                 if (selectedAnimals.has(id)) {
@@ -244,10 +316,10 @@
         });
 
         // Search Filter
-        const searchInput = document.getElementById('animal-search');
+        const searchInput = document.getElementById('source-search');
         searchInput.addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
-            sourceList.forEach(item => {
+            searchableItems.forEach(item => {
                 const text = item.textContent.toLowerCase();
                 if (text.includes(term)) {
                     item.style.display = '';
@@ -258,7 +330,7 @@
         });
 
         // Basic Drag and Drop (Select on Drop)
-        sourceList.forEach(item => {
+        draggableItems.forEach(item => {
             item.addEventListener('dragstart', function(e) {
                 e.dataTransfer.setData('text/plain', item.dataset.id);
             });

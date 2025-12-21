@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument, redefined-outer-name
 import locale
 
 import pytest
@@ -8,6 +8,8 @@ from django.test import Client
 from model_bakery import baker
 
 from apps.cattle.models.cattle import Cattle
+from apps.genetics.models.genetics import SemenBatch, StorageTank
+from apps.partners.models.partner import Partner
 
 User = get_user_model()
 
@@ -30,7 +32,33 @@ def cattle():
 
 @pytest.fixture
 def bull():
-    return baker.make(Cattle, sex=Cattle.SEX_MALE)
+    return baker.make(
+        Cattle, sex=Cattle.SEX_MALE, tag="BULL01", status=Cattle.STATUS_AVAILABLE
+    )
+
+
+@pytest.fixture
+def tank(db):
+    return StorageTank.objects.create(name="Tank 1", capacity_liters=20)
+
+
+@pytest.fixture
+def partner(db):
+    return Partner.objects.create(name="Supplier 1", is_supplier=True, is_customer=True)
+
+
+@pytest.fixture
+def semen_batch(db, tank, bull):
+    return SemenBatch.objects.create(
+        tank=tank,
+        canister="A1",
+        initial_quantity=100,
+        current_quantity=100,
+        purchase_date="2023-01-01",
+        bull=bull,
+        batch_code="B001",
+        cost_per_unit=50.00,
+    )
 
 
 def pytest_configure(config):

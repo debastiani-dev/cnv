@@ -9,6 +9,7 @@ from apps.base.utils.money import Money
 from apps.cattle.models import Cattle
 from apps.commercial.models import SalesEvent, SalesLot
 from apps.commercial.services.commercial_service import CommercialService
+from apps.genetics.models.genetics import EmbryoBatch, SemenBatch
 from apps.partners.models import Partner
 
 MANAGE_LOTS_URL_NAME = "commercial:manage_lots"
@@ -32,6 +33,11 @@ class ManageLotsView(LoginRequiredMixin, DetailView):
             status=Cattle.STATUS_AVAILABLE
         ).exclude(pk__in=existing_lot_animals)
 
+        context["available_semen"] = SemenBatch.objects.filter(current_quantity__gt=0)
+        context["available_embryos"] = EmbryoBatch.objects.filter(
+            current_quantity__gt=0
+        )
+
         context["lots"] = self.object.lots.all().order_by("lot_number")
 
         return context
@@ -41,33 +47,70 @@ class ManageLotsView(LoginRequiredMixin, DetailView):
         # Basic manual form handling for simplicity
         lot_number = request.POST.get("lot_number")
         reserve_price = request.POST.get("reserve_price")
-        animal_ids = request.POST.getlist("animals")  # Expecting 'animals' input list
+        lot_type = request.POST.get("lot_type", "animal")  # Default to animal
 
-        if lot_number and reserve_price and animal_ids:
-            # Create Lot
-            # Calculate cost
-            animals = Cattle.objects.filter(pk__in=animal_ids)
-            # Use Money for currency calculations
-            total_cost = Money(sum(a.total_cost for a in animals))
-            reserve_price = Money(reserve_price)
-
-            lot = SalesLot.objects.create(
-                event=self.object,
-                lot_number=lot_number,
-                reserve_price=reserve_price,
-                cost_at_creation=total_cost,
-                status=SalesLot.STATUS_AVAILABLE,
-            )
-            lot.animals.set(animals)
-
-            messages.success(
-                request,
-                f"Lot {lot.lot_number} created with {lot.animals.count()} animals.",
-            )
+        if not lot_number or not reserve_price:
+            messages.error(request, "Please provide Lot Number and Reserve Price.")
             return self.get(request, *args, **kwargs)
 
-        messages.error(request, "Please provide Lot Number, Price and select Animals.")
-        return self.get(request, *args, **kwargs)
+        try:
+            reserve_price = Money(reserve_price)
+            msg = None
+
+            if lot_type == "animal":
+                animal_ids = request.POST.getlist("animals")
+                if not animal_ids:
+                    messages.error(request, "Please select at least one animal.")
+                    return self.get(request, *args, **kwargs)
+
+                animals = Cattle.objects.filter(pk__in=animal_ids)
+                total_cost = Money(sum(a.total_cost for a in animals))
+
+                lot = SalesLot.objects.create(
+                    event=self.object,
+                    lot_number=lot_number,
+                    reserve_price=reserve_price,
+                    cost_at_creation=total_cost,
+                    status=SalesLot.STATUS_AVAILABLE,
+                )
+                lot.animals.set(animals)
+                msg = (
+                    f"Lot {lot.lot_number} created with {lot.animals.count()} animals."
+                )
+
+            elif lot_type in ["semen", "embryo"]:
+                batch_id = request.POST.get("genetic_batch_id")
+                quantity = int(request.POST.get("quantity", 0))
+
+                if not batch_id or quantity <= 0:
+                    messages.error(request, "Please select a batch and valid quantity.")
+                    return self.get(request, *args, **kwargs)
+
+                if lot_type == "semen":
+                    batch = SemenBatch.objects.get(pk=batch_id)
+                else:
+                    batch = EmbryoBatch.objects.get(pk=batch_id)
+
+                total_cost = Money(batch.cost_per_unit * quantity)
+
+                lot = SalesLot.objects.create(
+                    event=self.object,
+                    lot_number=lot_number,
+                    reserve_price=reserve_price,
+                    cost_at_creation=total_cost,
+                    status=SalesLot.STATUS_AVAILABLE,
+                    content_object=batch,
+                    quantity=quantity,
+                )
+                msg = f"Lot {lot.lot_number} created with {quantity} units of {batch}."
+
+            if msg:
+                messages.success(request, msg)
+            return self.get(request, *args, **kwargs)
+
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            messages.error(request, f"Error creating lot: {e}")
+            return self.get(request, *args, **kwargs)
 
 
 class SalesLotUpdateView(LoginRequiredMixin, UpdateView):

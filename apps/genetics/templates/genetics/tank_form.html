@@ -1,0 +1,86 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="min-w-0 flex-1">
+      <h1 class="text-3xl font-bold leading-9 text-gray-900 sm:truncate sm:tracking-tight">{{ title }}</h1>
+    </div>
+  </div>
+
+  <form method="post" class="space-y-6 max-w-4xl">
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+      <div class="rounded-md bg-red-50 p-4">
+        <div class="flex">
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">{% trans "Please correct the errors below" %}</h3>
+            <div class="mt-2 text-sm text-red-700">
+              {{ form.non_field_errors }}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="bg-white shadow sm:rounded-lg">
+      <div class="px-4 py-5 sm:p-6 space-y-6">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div class="col-span-2 sm:col-span-1">
+            <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.name.label }}</label>
+            {{ form.name|add_class:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+            {% if form.name.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div class="col-span-2 sm:col-span-1">
+            <label for="{{ form.serial_number.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.serial_number.label }}</label>
+            {{ form.serial_number|add_class:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+            {% if form.serial_number.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.serial_number.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div class="col-span-2">
+            <label for="{{ form.location_description.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.location_description.label }}</label>
+            {{ form.location_description|add_class:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+            {% if form.location_description.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.location_description.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div class="col-span-2 sm:col-span-1">
+            <label for="{{ form.capacity_liters.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.capacity_liters.label }}</label>
+            {{ form.capacity_liters|add_class:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+            {% if form.capacity_liters.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.capacity_liters.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div class="col-span-2 sm:col-span-1">
+            <label for="{{ form.last_refill_date.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.last_refill_date.label }}</label>
+            {{ form.last_refill_date|add_class:"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" }}
+            {% if form.last_refill_date.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.last_refill_date.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-x-3">
+      <a href="{% url 'genetics:tank-list' %}" class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        {% trans "Cancel" %}
+      </a>
+      <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        {% trans "Save" %}
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

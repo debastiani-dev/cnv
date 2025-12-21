@@ -1,4 +1,5 @@
-from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -36,7 +37,22 @@ class SalesLot(BaseModel):
 
     # FLEXIBILITY: Supports single Bull or Pen of 50 Heifers
     animals = models.ManyToManyField(
-        Cattle, related_name="sales_lots", verbose_name=_("Animals")
+        Cattle, related_name="sales_lots", verbose_name=_("Animals"), blank=True
+    )
+
+    # Generic Relation for Genetic Material (SemenBatch, EmbryoBatch)
+    # Since our models use UUIDs, object_id must be capable of storing them.
+    # We use CharField to be safe and compatible with UUIDs.
+    content_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, null=True, blank=True
+    )
+    object_id = models.CharField(max_length=36, null=True, blank=True)
+    content_object = GenericForeignKey("content_type", "object_id")
+
+    quantity = models.PositiveIntegerField(
+        _("Quantity"),
+        default=1,
+        help_text=_("Number of items (e.g., doses) in this lot"),
     )
 
     lot_number = models.PositiveIntegerField(_("Lot #"))

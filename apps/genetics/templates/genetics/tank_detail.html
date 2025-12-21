@@ -1,0 +1,155 @@
+{% extends "layouts/base_dashboard.html" %}
+{% load i18n %}
+
+{% block title %}{{ tank.name }}{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-6 lg:px-8">
+  <!-- Header -->
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="min-w-0 flex-1">
+      <h1 class="text-3xl font-bold leading-9 text-gray-900 sm:truncate sm:tracking-tight">{{ tank.name }}</h1>
+      <p class="mt-2 text-sm text-gray-700">{{ tank.location_description }} • SN: {{ tank.serial_number|default:"-" }}</p>
+    </div>
+    
+    <div class="mt-4 flex items-center gap-x-3 md:ml-4 md:mt-0">
+      <a href="{% url 'genetics:tank-update' tank.pk %}" class="block rounded-md bg-white px-3 py-2 text-center text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        {% trans "Edit" %}
+      </a>
+      <a href="{% url 'genetics:tank-delete' tank.pk %}" class="block rounded-md bg-red-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-red-500">
+        {% trans "Delete" %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 border-b-4 border-blue-500">
+      <dt class="truncate text-sm font-medium text-gray-500">{% trans "Capacity" %}</dt>
+      <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ tank.capacity_liters }} L</dd>
+    </div>
+     <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 border-b-4 border-indigo-500">
+      <dt class="truncate text-sm font-medium text-gray-500">{% trans "Semen" %}</dt>
+      <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
+          <span class="text-sm font-normal text-gray-500">{% trans "Doses" %}:</span> {{ inventory_summary.total_semen_doses }}
+      </dd>
+    </div>
+    <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 border-b-4 border-purple-500">
+      <dt class="truncate text-sm font-medium text-gray-500">{% trans "Embryos" %}</dt>
+      <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
+          <span class="text-sm font-normal text-gray-500">{% trans "Qty" %}:</span> {{ inventory_summary.total_embryos }}
+      </dd>
+    </div>
+    <div class="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6 border-b-4 border-stone-500">
+      <dt class="truncate text-sm font-medium text-gray-500">{% trans "Last Refill" %}</dt>
+      <dd class="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{{ tank.last_refill_date|date:"SHORT_DATE_FORMAT"|default:"-" }}</dd>
+    </div>
+  </div>
+
+  <!-- Content Grouped by Canister -->
+  <div class="mt-10">
+      <h2 class="text-xl font-bold text-gray-900 mb-6">{% trans "Tank Contents by Canister" %}</h2>
+      
+      {% regroup semen_batches by canister as semen_canisters %}
+      {% regroup embryo_batches by canister as embryo_canisters %}
+
+      <!-- Combine checks logic in template is hard, so we just iterate available groupings -->
+      
+      {% if not semen_canisters and not embryo_canisters %}
+          <div class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+             <p class="text-gray-500">{% trans "This tank is empty." %}</p>
+          </div>
+      {% endif %}
+
+      <div class="space-y-8">
+          <!-- Semen Section -->
+          {% if semen_canisters %}
+          <div>
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4 flex items-center">
+                <span class="bg-indigo-100 text-indigo-800 p-1 rounded mr-2">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                </span>
+                {% trans "Semen Inventory" %}
+            </h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {% for canister in semen_canisters %}
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h4 class="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">{{ canister.grouper }}</h4>
+                    <ul class="space-y-3">
+                        {% for batch in canister.list %}
+                        <li class="bg-white p-3 rounded shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <a href="{% url 'genetics:semen-detail' batch.pk %}" class="font-medium text-indigo-600 hover:text-indigo-900 block">
+                                        {{ batch.bull.tag|default:batch.bull_name_external }}
+                                    </a>
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ batch.get_type_display }}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="block font-bold {% if batch.current_quantity <= batch.min_stock_alert %}text-red-600{% else %}text-gray-900{% endif %}">
+                                        {{ batch.current_quantity }}
+                                    </span>
+                                    {% if batch.current_quantity <= batch.min_stock_alert %}
+                                    <span class="text-xs text-red-600 font-medium">{% trans "Low" %}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="border-t border-gray-200 my-6"></div>
+
+          <!-- Embryo Section -->
+          {% if embryo_canisters %}
+          <div>
+            <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4 flex items-center">
+                <span class="bg-purple-100 text-purple-800 p-1 rounded mr-2">
+                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                </span>
+                {% trans "Embryo Inventory" %}
+            </h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {% for canister in embryo_canisters %}
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h4 class="font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">{{ canister.grouper }}</h4>
+                    <ul class="space-y-3">
+                        {% for batch in canister.list %}
+                        <li class="bg-white p-3 rounded shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <a href="{% url 'genetics:embryo-detail' batch.pk %}" class="font-medium text-purple-600 hover:text-purple-900 block">
+                                        {{ batch.sire_name }} x {{ batch.dam_name }}
+                                    </a>
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ batch.get_grade_display }} • {{ batch.stage }}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="block font-bold {% if batch.current_quantity <= batch.min_stock_alert %}text-red-600{% else %}text-gray-900{% endif %}">
+                                        {{ batch.current_quantity }}
+                                    </span>
+                                    {% if batch.current_quantity <= batch.min_stock_alert %}
+                                    <span class="text-xs text-red-600 font-medium">{% trans "Low" %}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+      </div>
+  </div>
+</div>
+{% endblock %}
