@@ -2,781 +2,402 @@
 {% load i18n %}
 {% load humanize %}
 
-{% block title %}{% trans "Dashboard" %}{% endblock %}
+{% block title %}{% trans "Command Center" %}{% endblock %}
 
 {% block content %}
-<style>
-    .rounded-3xl {
-        border-radius: 0.5rem !important;
-    }
-    .p-10 {
-        padding: 1.5rem !important;
-    }
-    .px-10 {
-        padding-left: 1.5rem !important;
-        padding-right: 1.5rem !important;
-    }
-    .gap-10 {
-        gap: 1.5rem !important;
-    }
-    .space-y-12 > :not([hidden]) ~ :not([hidden]) {
-        margin-top: 1.5rem !important;
-    }
-    .h-12 {
-        height: 3rem !important;
-    }
-    .w-12 {
-        width: 3rem !important;
-    }
-    .ml-8 {
-        margin-left: 2rem !important;
-    }
-</style>
-<div class="px-2 py-3 sm:px-3 lg:px-4 max-w-full mx-auto space-y-6">
-    <!-- Page Header -->
-    <div class="md:flex md:items-center md:justify-between">
-        <div class="min-w-0 flex-1">
-            <h2 class="text-3xl font-bold leading-9 text-gray-900 sm:truncate sm:tracking-tight">
-                {% trans "Dashboard" %}
-            </h2>
-        </div>
-    </div>
+<div class="px-4 py-6 max-w-full mx-auto space-y-8">
 
-    <!-- Resting Violations Alert -->
-    {% if location_stats.resting_violations %}
-    <div class="rounded-md bg-red-50 p-4 border border-red-200">
-        <div class="flex">
-            <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="ml-3">
-                <h3 class="text-sm font-medium text-red-800">{% trans "Resting Status Violations" %}</h3>
-                <div class="mt-2 text-sm text-red-700">
-                    <p class="mb-2">{% trans "The following locations are set to 'Resting' but currently contain animals:" %}</p>
-                    <ul class="list-disc space-y-1 pl-5">
-                       {% for loc in location_stats.resting_violations %}
-                         <li><strong>{{ loc.name }}</strong>: {{ loc.current_head_count }} animals</li>
-                       {% endfor %}
-                    </ul>
+    <!-- SECTION 1: THE WAR ROOM (Alerts & Compliance) -->
+    <!-- Logic: Only renders if alerts exist -->
+    {% if alerts %}
+    <div class="space-y-4">
+        {% for alert in alerts %}
+        <div class="rounded-md p-4 border {% if alert.level == 'critical' %}bg-red-50 border-red-200{% else %}bg-yellow-50 border-yellow-200{% endif %}">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    {% if alert.level == 'critical' %}
+                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                    </svg>
+                    {% else %}
+                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    </svg>
+                    {% endif %}
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium {% if alert.level == 'critical' %}text-red-800{% else %}text-yellow-800{% endif %}">
+                        {{ alert.msg }}
+                    </h3>
+                    {% if alert.link %}
+                    <div class="mt-2 text-sm {% if alert.level == 'critical' %}text-red-700{% else %}text-yellow-700{% endif %}">
+                        <a href="{{ alert.link }}" class="font-medium underline hover:text-red-600">
+                            {% trans "View Details" %} <span aria-hidden="true">&rarr;</span>
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
     {% endif %}
 
-    <!-- Low Stock Alert -->
-    {% if low_stock_ingredients %}
-    <div class="rounded-md bg-yellow-50 p-4 border border-yellow-200">
-        <div class="flex">
-            <div class="flex-shrink-0">
-                <!-- Warning Icon -->
-                <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="ml-3">
-                <h3 class="text-sm font-medium text-yellow-800">{% trans "Low Feed Stock Alert" %}</h3>
-                <div class="mt-2 text-sm text-yellow-700">
-                    <p class="mb-2">{% trans "The following ingredients are below the minimum stock level:" %}</p>
-                    <ul class="list-disc space-y-1 pl-5">
-                       {% for ing in low_stock_ingredients %}
-                         <li><strong>{{ ing.name }}</strong>: {{ ing.stock_quantity }} kg (Min: {{ ing.min_stock_alert }} kg)</li>
-                       {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Overdue Tasks Alert -->
-    {% if overdue_tasks_count > 0 %}
-    <div class="rounded-md bg-rose-50 p-4 border border-rose-200">
-        <div class="flex">
-            <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-rose-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="ml-3">
-                <h3 class="text-sm font-medium text-rose-800">{% trans "Overdue Tasks Alert" %}</h3>
-                <div class="mt-2 text-sm text-rose-700">
-                    <p>{% blocktrans count counter=overdue_tasks_count %}You have {{ counter }} overdue task.{% plural %}You have {{ counter }} overdue tasks.{% endblocktrans %}</p>
-                    <p class="mt-1">
-                        <a href="{% url 'tasks:list' %}?mode=my_tasks&overdue=1" class="font-medium underline hover:text-rose-600">{% trans "View overdue tasks" %}</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- KPI Cards -->
-    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-        <!-- Total Cattle -->
-        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
-            <div class="p-10">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
-                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.011.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
-                        </svg>
-                    </div>
-                    <div class="ml-8 w-0 flex-1">
-                        <dl>
-                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Total Cattle" %}</dt>
-                            <dd>
-                                <div class="text-2xl font-bold text-gray-900">{{ cattle_stats.total }}</div>
-                            </dd>
-                        </dl>
-                    </div>
+    <!-- SECTION 2: THE PULSE (KPI Cards) -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        
+        <!-- 1. Net Cash Flow (30d) -->
+        <div class="bg-white overflow-hidden rounded-xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-6">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Net Cash Flow (30d)" %}</dt>
+                    <dd class="mt-2 flex items-baseline">
+                        <span class="text-3xl font-bold {% if finance.net_30d >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                            R$ {{ finance.net_30d|intcomma }}
+                        </span>
+                    </dd>
+                </dl>
+                <div class="mt-2 text-sm text-gray-400">
+                    <span class="text-emerald-600">
+                        <i class="bi bi-arrow-down"></i> {{ finance.cash_in_30d|intcomma }}
+                    </span>
+                    <span class="mx-1">/</span>
+                    <span class="text-rose-600">
+                        <i class="bi bi-arrow-up"></i> {{ finance.cash_out_30d|intcomma }}
+                    </span>
                 </div>
             </div>
         </div>
 
-        <!-- Animals in Withdrawal -->
-        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
-            <div class="p-10">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
-                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                        </svg>
-                    </div>
-                    <div class="ml-8 w-0 flex-1">
-                        {% if active_withdrawal_count > 0 %}
-                        <!-- Danger State -->
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Withdrawal Status" %}</dt>
-                            <dd>
-                                <div class="text-2xl font-bold text-rose-600">{{ active_withdrawal_count }} {% trans "Blocked" %}</div>
-                            </dd>
-                        </dl>
-                        {% else %}
-                        <!-- Safe State -->
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Withdrawal Status" %}</dt>
-                            <dd>
-                                <div class="text-2xl font-bold text-emerald-600">{% trans "Compliant" %}</div>
-                            </dd>
-                        </dl>
-                        {% endif %}
-                    </div>
+        <!-- 2. Commercial Pipeline -->
+        <div class="bg-white overflow-hidden rounded-xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-6">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Commercial Pipeline" %}</dt>
+                    <dd class="mt-2 flex items-baseline">
+                        <span class="text-3xl font-bold text-indigo-600">
+                            R$ {{ finance.pipeline_value|intcomma }}
+                        </span>
+                    </dd>
+                </dl>
+                <div class="mt-2 text-sm text-gray-500">
+                    {% trans "Value of Available Lots" %}
                 </div>
             </div>
         </div>
 
-
-
-        <!-- Net Profit -->
-        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
-            <div class="p-10">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
-                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div class="ml-8 w-0 flex-1">
-                        <dl>
-                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Net Profit" %} <span class="text-xs text-gray-400">({% trans "90d" %})</span></dt>
-                            <dd>
-                                <div class="text-2xl font-bold {% if net_profit >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                                    R$ {{ net_profit|intcomma }}
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
+        <!-- 3. Herd Status -->
+        <div class="bg-white overflow-hidden rounded-xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-6">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Herd Status" %}</dt>
+                    <dd class="mt-2 flex items-baseline">
+                        <span class="text-3xl font-bold text-gray-900">
+                            {{ herd.total_headcount|intcomma }}
+                        </span>
+                        <span class="ml-2 text-sm text-gray-500">{% trans "Head" %}</span>
+                    </dd>
+                </dl>
+                <div class="mt-2 text-sm text-gray-400">
+                    <span class="text-emerald-600" title="{% trans 'Births this month' %}">
+                        +{{ herd.births_month }}
+                    </span>
+                    <span class="mx-1">/</span>
+                    <span class="text-rose-600" title="{% trans 'Deaths this month' %}">
+                        -{{ herd.deaths_month }}
+                    </span>
+                    <span class="ml-1 text-xs text-gray-400">({% trans "This Month" %})</span>
                 </div>
             </div>
         </div>
 
-        <!-- Weight ADG -->
-        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
-            <div class="p-10">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
-                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                        </svg>
-                    </div>
-                    <div class="ml-8 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Herd GMD (90d)" %}</dt>
-                            <dd>
-                                <div class="text-2xl font-bold {% if weight_stats.avg_adg >= 0.6 %}text-emerald-600{% elif weight_stats.avg_adg >= 0.3 %}text-yellow-600{% else %}text-rose-600{% endif %}">
-                                    {{ weight_stats.avg_adg }} kg/d
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pregnancy Rate -->
-        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
-            <div class="p-10">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
-                        <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                    </div>
-                    <div class="ml-8 w-0 flex-1">
-                        <dl>
-                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Pregnancy Rate" %}</dt>
-                            <dd>
-                                <div class="text-2xl font-bold {% if productivity_stats.pregnancy_rate >= 80 %}text-emerald-600{% elif productivity_stats.pregnancy_rate >= 60 %}text-yellow-600{% else %}text-rose-600{% endif %}">
-                                    {{ productivity_stats.pregnancy_rate }}%
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mortality Rate -->
-        <div class="bg-white overflow-hidden rounded-3xl shadow-sm ring-1 ring-gray-200">
-            <div class="p-10">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 p-3 bg-indigo-50 rounded-lg">
-                         <svg class="h-12 w-12 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                         </svg>
-                    </div>
-                    <div class="ml-8 w-0 flex-1">
-                        <dl>
-                            <dt class="truncate text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Mortality Rate" %}</dt>
-                            <dd>
-                                <div class="text-2xl font-bold {% if productivity_stats.mortality_rate <= 2 %}text-emerald-600{% elif productivity_stats.mortality_rate <= 5 %}text-yellow-600{% else %}text-rose-600{% endif %}">
-                                    {{ productivity_stats.mortality_rate }}%
-                                </div>
-                            </dd>
-                        </dl>
-                    </div>
+        <!-- 4. Global GMD -->
+        <div class="bg-white overflow-hidden rounded-xl shadow-sm ring-1 ring-gray-200">
+            <div class="p-6">
+                <dl>
+                    <dt class="text-sm font-medium text-gray-500 uppercase tracking-wide">{% trans "Global GMD" %}</dt>
+                    <dd class="mt-2 flex items-baseline">
+                        <span class="text-3xl font-bold {% if herd.avg_adg >= 0.6 %}text-emerald-600{% elif herd.avg_adg >= 0.3 %}text-yellow-600{% else %}text-rose-600{% endif %}">
+                            {{ herd.avg_adg|floatformat:3 }}
+                        </span>
+                        <span class="ml-2 text-sm text-gray-500">kg/day</span>
+                    </dd>
+                </dl>
+                 <div class="mt-2 text-sm text-gray-400">
+                   {% trans "Avg Daily Gain (90d)" %}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Analytics Charts Section -->
-    <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-        <!-- Herd Composition -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">{% trans "Herd Composition" %}</h3>
-            <div id="herdChart"></div>
-        </div>
 
-        <!-- Stocking Rate (AU/ha) -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-6">
-            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
-                <h3 class="text-lg font-bold text-gray-900">{% trans "Stocking Rate" %}</h3>
-                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{% trans "Global" %}</span>
-            </div>
+    <!-- SECTION 3: THE DEEP DIVE (Split View) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- LEFT COLUMN (2/3): Visual Intelligence -->
+        <div class="lg:col-span-2 space-y-8">
             
-            <div id="stocking-rate-chart" class="flex justify-center"></div>
-
-            <div class="grid grid-cols-2 gap-4 mt-2 text-center border-t pt-4">
-                <div>
-                    <span class="block text-sm text-gray-400">{% trans "Total AU" %}</span>
-                    <span class="block font-bold text-gray-800" id="stat-total-au">--</span>
-                </div>
-                <div>
-                    <span class="block text-sm text-gray-400">{% trans "Area (ha)" %}</span>
-                    <span class="block font-bold text-gray-800" id="stat-total-area">--</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Global ADG (GMD) -->
-        <!-- Global ADG (GMD) -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-6 relative overflow-hidden">
-            <div class="flex justify-between items-start z-10 relative">
-                <div>
-                    <h3 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-2">{% trans "Global ADG" %}</h3>
-                    <div class="flex items-baseline mt-4">
-                        <span class="text-4xl font-bold text-gray-800" id="adg-value">--</span>
-                        <span class="ml-1 text-sm text-gray-500">kg/day</span>
+            <!-- Chart A: Financial Composition -->
+            <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">
+                    {% trans "Financial Composition" %} <span class="text-xs font-normal text-gray-500 ml-2">({% trans "Last 6 Months" %})</span>
+                </h3>
+                <div id="financialTrendChart" class="h-80 w-full">
+                    <!-- Loaded via JS -->
+                    <div class="flex items-center justify-center h-full text-gray-400 animate-pulse">
+                        {% trans "Loading Financial Data..." %}
                     </div>
                 </div>
-                
-                <span id="adg-badge" class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                    --
-                </span>
             </div>
 
-            <div id="adg-sparkline" class="absolute top-1/2 left-0 right-0 transform -translate-y-1/2 h-16"></div>
-        </div>
-
-        <!-- Financial Overview -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl p-6">
-             <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">{% trans "Financial Overview" %}</h3>
-            <div id="financialChart"></div>
-        </div>
-    </div>
-
-
-    <!-- Operations & Monitoring Section -->
-    <div class="grid grid-cols-1 gap-10 lg:grid-cols-3 items-start">
-        
-        <!-- My Tasks (Agenda) -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">
-            <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                 <h3 class="text-base font-semibold text-gray-900">{% trans "My Agenda" %}</h3>
-                 <a href="{% url 'tasks:list' %}?mode=my_tasks" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
+            <!-- Chart B: Genetic Trend -->
+            <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">
+                    {% trans "Genetic Trend" %} <span class="text-xs font-normal text-gray-500 ml-2">({% trans "Avg Weight by Birth Year" %})</span>
+                </h3>
+                <div id="geneticTrendChart" class="h-80 w-full">
+                     <!-- Loaded via JS -->
+                    <div class="flex items-center justify-center h-full text-gray-400 animate-pulse">
+                        {% trans "Loading Genetic Data..." %}
+                    </div>
+                </div>
             </div>
-            <ul class="divide-y divide-gray-200">
-                {% for task in todays_tasks %}
-                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center space-x-4">
-                         <div class="flex-shrink-0">
-                             {% if task.priority == 'CRITICAL' %}
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-rose-100">
-                                <span class="text-xs font-bold leading-none text-rose-700">!!!</span>
-                            </span>
+
+        </div>
+
+        <!-- RIGHT COLUMN (1/3): Operations & Tactics -->
+        <div class="lg:col-span-1 space-y-8">
+            
+            <!-- My Agenda -->
+            <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-xl overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                     <h3 class="font-bold text-gray-900">{% trans "My Agenda" %}</h3>
+                     <a href="{% url 'tasks:list' %}?mode=my_tasks" class="text-xs font-medium text-indigo-600 hover:text-indigo-500">{% trans "View All" %}</a>
+                </div>
+                <ul class="divide-y divide-gray-100">
+                    {% for task in operations.agenda %}
+                    <li class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                         <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">{{ task.title }}</p>
+                                <p class="text-xs text-gray-500 mt-1">Due: {{ task.due_date|date:"d M" }}</p>
+                            </div>
+                            {% if task.priority == 'CRITICAL' %}
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">!!!</span>
                             {% elif task.priority == 'HIGH' %}
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-orange-100">
-                                <span class="text-xs font-bold leading-none text-orange-700">!!</span>
-                            </span>
-                            {% else %}
-                             <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100">
-                                <i class="bi bi-check-lg text-indigo-700"></i>
-                            </span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800">!!</span>
                             {% endif %}
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-medium text-gray-900">{{ task.title }}</p>
-                             <p class="truncate text-xs {% if task.is_overdue %}text-rose-600 font-bold{% else %}text-gray-500{% endif %}">
-                                 Due: {{ task.due_date|date:"d M" }}
-                            </p>
-                        </div>
-                        <div class="text-right">
-                             <a href="{% url 'tasks:update' task.pk %}" class="btn btn-xs btn-outline-secondary rounded-full">
-                                <i class="bi bi-pencil"></i>
-                             </a>
-                        </div>
-                    </div>
-                </li>
-                {% empty %}
-                 <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No pending tasks." %}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        
-        <!-- Recent Health Events -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">
-             <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                 <h3 class="text-base font-semibold text-gray-900">{% trans "Recent Health Events" %}</h3>
-                 <a href="{% url 'health:event-list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View all" %}</a>
-             </div>
-            <ul class="divide-y divide-gray-200">
-                {% for event in recent_health_events %}
-                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center space-x-4">
-                         <div class="flex-shrink-0">
-                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
-                                <span class="text-sm font-medium leading-none text-blue-700">H</span>
+                         </div>
+                    </li>
+                    {% empty %}
+                    <li class="px-6 py-8 text-center text-sm text-gray-500">
+                        {% trans "No urgent tasks on your radar." %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Active Auctions -->
+            <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-xl overflow-hidden">
+                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                     <h3 class="font-bold text-gray-900">{% trans "Active Sales Events" %}</h3>
+                </div>
+                <ul class="divide-y divide-gray-100">
+                    {% for event in operations.active_auctions %}
+                    <li class="px-6 py-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">{{ event.name }}</p>
+                                <p class="text-xs text-gray-500 mt-0.5">{{ event.date|date:"d M Y" }}</p>
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {% trans "Active" %}
                             </span>
                         </div>
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-medium text-gray-900">{{ event.title }}</p>
-                            <p class="truncate text-xs text-gray-500">
-                                 {{ event.date|date:"d M Y" }}
-                                 {% if event.medication %} &bull; {{ event.medication.name }}{% endif %}
-                            </p>
-                        </div>
-                        <div class="text-right text-sm text-gray-500">
-                            <div class="font-medium text-gray-900">{{ event.target_count }}</div>
-                            <div class="text-xs">{% trans "Animals" %}</div>
-                        </div>
-                    </div>
-                </li>
-                {% empty %}
-                 <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No recent health events." %}</li>
-                {% endfor %}
-            </ul>
+                         <!-- Logic for '15/20 Lots Ready' would be nice here if query was heavier, keeping simple for now -->
+                    </li>
+                    {% empty %}
+                     <li class="px-6 py-8 text-center text-sm text-gray-500">
+                        {% trans "No active auctions scheduled." %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Watchlist -->
+            <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-xl overflow-hidden">
+                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                     <h3 class="font-bold text-gray-900">{% trans "Watchlist" %}</h3>
+                     <span class="text-xs text-rose-500 font-medium">{% trans "Weight Loss > 10%" %}</span>
+                </div>
+                <ul class="divide-y divide-gray-100">
+                    {% for animal in operations.watchlist %}
+                    <li class="px-6 py-4">
+                        <!-- Placeholder rendering -->
+                        {{ animal }}
+                    </li>
+                    {% empty %}
+                    <li class="px-6 py-8 text-center text-sm text-gray-500">
+                        <i class="bi bi-check-circle text-emerald-500 text-xl block mb-2"></i>
+                        {% trans "No anomalies detected." %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
         </div>
 
-        <!-- Pasture Occupancy -->
-        <div class="bg-white shadow-sm ring-1 ring-gray-200 rounded-3xl overflow-hidden h-full">
-            <div class="px-10 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                 <h3 class="text-base font-semibold text-gray-900">{% trans "Pasture Occupancy" %}</h3>
-                 <a href="{% url 'locations:list' %}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500" style="margin-left: auto;">{% trans "View Map" %}</a>
-            </div>
-            <ul class="divide-y divide-gray-200">
-                {% for item in location_stats.top_occupancy %}
-                <li class="px-10 py-4 hover:bg-gray-50 transition-colors">
-                     <div class="flex items-center justify-between mb-2">
-                         <span class="text-sm font-medium text-gray-900">{{ item.name }}</span>
-                         <span class="text-sm text-gray-500 font-medium">{{ item.occupancy_rate }}%</span>
-                     </div>
-                     <div class="w-full bg-gray-100 rounded-full h-2.5 mb-1">
-                          <div class="h-2.5 rounded-full {% if item.occupancy_rate > 100 %}bg-red-500{% elif item.occupancy_rate > 80 %}bg-yellow-500{% else %}bg-green-500{% endif %}" style="width: {% if item.occupancy_rate > 100 %}100{% else %}{{ item.occupancy_rate|floatformat:0 }}{% endif %}%"></div>
-                     </div>
-                     <p class="text-xs text-gray-400 text-right">{{ item.head_count }} / {{ item.capacity }} {% trans "animals" %}</p>
-                </li>
-                {% empty %}
-                <li class="px-10 py-4 text-center text-sm text-gray-500">{% trans "No occupancy data available." %}</li>
-                {% endfor %}
-            </ul>
-        </div>
     </div>
+
 </div>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-<!-- Data for Charts -->
-{{ cattle_stats.breed_breakdown|json_script:"cattle-stats-data" }}
-{{ sales_stats.total_revenue|json_script:"sales-total-data" }}
-{{ purchases_stats.total_cost|json_script:"purchases-total-data" }}
-{{ cost_stats.total_cost|json_script:"costs-total-data" }}
-
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- Herd Composition Chart (ApexCharts) ---
-        const cattleStatsData = JSON.parse(document.getElementById('cattle-stats-data').textContent);
-        const cattleLabels = Object.keys(cattleStatsData).map(key => key.charAt(0).toUpperCase() + key.slice(1));
-        const cattleValues = Object.values(cattleStatsData);
         
-        var herdOptions = {
-            series: cattleValues,
-            chart: {
-                type: 'donut',
-                height: 250,
-                fontFamily: 'Inter, sans-serif'
-            },
-            labels: cattleLabels,
-            colors: [
-                '#6366f1', // Indigo
-                '#10b981', // Emerald
-                '#f59e0b', // Amber
-                '#f43f5e', // Rose
-                '#06b6d4', // Cyan
-                '#8b5cf6', // Violet
-                '#84cc16', // Lime
-                '#d946ef', // Fuchsia
-                '#64748b'  // Slate
-            ],
-            plotOptions: {
-                pie: {
-                    donut: {
-                        size: '65%'
-                    }
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            legend: {
-                position: 'bottom',
-                fontSize: '14px',
-                fontFamily: 'Inter, sans-serif',
-                markers: {
-                    width: 10,
-                    height: 10,
-                    radius: 12
-                }
-            },
-             stroke: {
-                show: false
-            }
-        };
-
-        var herdChart = new ApexCharts(document.querySelector("#herdChart"), herdOptions);
-        herdChart.render();
-
-
-        // --- Financial Overview Chart (ApexCharts) ---
-        const salesTotal = JSON.parse(document.getElementById('sales-total-data').textContent);
-        const purchasesTotal = JSON.parse(document.getElementById('purchases-total-data').textContent);
-        const costsTotal = JSON.parse(document.getElementById('costs-total-data').textContent);
-
-        var financialOptions = {
-            series: [{
-                name: 'Amount',
-                data: [salesTotal, purchasesTotal, costsTotal]
-            }],
-            chart: {
-                type: 'bar',
-                height: 250,
-                fontFamily: 'Inter, sans-serif',
-                toolbar: {
-                    show: false
-                }
-            },
-            plotOptions: {
-                bar: {
-                    borderRadius: 4,
-                    columnWidth: '45%',
-                    distributed: true, // Different colors per bar
-                }
-            },
-            dataLabels: {
-                enabled: false
-            },
-            legend: {
-                show: false
-            },
-            colors: ['#10b981', '#f43f5e', '#f59e0b'], // Emerald, Rose, Amber
-            xaxis: {
-                categories: ['Sales', 'Purchases', 'Operational Costs'],
-                labels: {
-                    style: {
-                        fontSize: '14px',
-                        fontWeight: 600
-                    }
-                },
-                axisBorder: {
-                    show: false
-                },
-                axisTicks: {
-                    show: false
-                }
-            },
-             yaxis: {
-                labels: {
-                    formatter: function (value) {
-                        return "R$ " + value.toLocaleString();
-                    }
-                }
-            },
-            grid: {
-                borderColor: '#f1f5f9',
-                strokeDashArray: 4,
-                yaxis: {
-                    lines: {
-                        show: true
-                    }
-                }
-            },
-             tooltip: {
-                y: {
-                    formatter: function (val) {
-                        return "R$ " + val.toLocaleString()
-                    }
-                }
-            }
-        };
-
-        var financialChart = new ApexCharts(document.querySelector("#financialChart"), financialOptions);
-        financialChart.render();
-
-        // --- Stocking Rate Widget (Async) ---
-        async function loadStockingRate() {
+        // --- 1. Load Financial Trend Chart (Async) ---
+        async function loadFinancialTrend() {
             try {
-                const response = await fetch("{% url 'dashboard:stocking-rate-api' %}");
-                if (!response.ok) return;
+                const response = await fetch("{% url 'dashboard:chart-financial-trend' %}");
+                if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
+
+                // Transform Data for ApexCharts
+                // Expected data format from service: { 'costs': [{'month': '...', 'total': ...}], 'sales': [...] }
+                // We need to align months.
                 
-                // Update Stats text
-                document.getElementById('stat-total-au').innerText = data.total_au;
-                document.getElementById('stat-total-area').innerText = data.total_area;
+                // Helper to extract series
+                const extractSeries = (dataList) => dataList.map(item => item.total);
+                const extractLabels = (dataList) => dataList.map(item => new Date(item.month).toLocaleString('default', { month: 'short', year: 'numeric' }));
+                
+                // Assumption: API returns strictly ordered lists of same length/months.
+                // If sparse data, we'd need more robust merging logic in JS or Python.
+                // Python Service assumed strictly 6 months, but aggregation might skip empty months.
+                // Ideally, Service handles zero-filling. As MVP, we proceed.
+                
+                // Fallback labels if empty
+                let labels = [];
+                if (data.sales.length > 0) labels = extractLabels(data.sales);
+                else if (data.costs.length > 0) labels = extractLabels(data.costs);
 
-                // Determine Color based on value
-                let color = '#10B981'; // Green (Optimal)
-                if (data.rate < 0.5) color = '#F59E0B'; // Yellow (Under)
-                if (data.rate > 1.5) color = '#EF4444'; // Red (Over)
-
-                // Dynamic Scale: Default visual max is 2.5, but expand if rate is higher
-                const maxScale = Math.max(data.rate * 1.1, 2.5);
-                const seriesValue = (data.rate / maxScale) * 100;
-
-                // Render ApexChart
-                var options = {
-                    series: [seriesValue],
-                    chart: { 
-                        type: 'radialBar', 
-                        height: 200,
+                const options = {
+                    series: [
+                        { name: '{% trans "Revenue (Sales)" %}', data: extractSeries(data.sales) },
+                        { name: '{% trans "Expenses (Costs)" %}', data: extractSeries(data.costs) }
+                    ],
+                    chart: {
+                        type: 'bar',
+                        height: 320,
+                        stacked: true,
+                        toolbar: { show: false },
                         fontFamily: 'Inter, sans-serif'
                     },
+                    colors: ['#10b981', '#f43f5e'], // Emerald, Rose
                     plotOptions: {
-                        radialBar: {
-                            startAngle: -135,
-                            endAngle: 135,
-                            hollow: { size: '60%' },
-                            dataLabels: {
-                                name: { show: false },
-                                value: {
-                                    offsetY: 10,
-                                    fontSize: '18px',
-                                    fontWeight: 'bold',
-                                    fontFamily: 'Inter, sans-serif',
-                                    color: '#111827',
-                                    formatter: function () { return data.rate + " AU/ha" }
-                                }
+                        bar: {
+                            horizontal: false,
+                            columnWidth: '50%',
+                            borderRadius: 4
+                        },
+                    },
+                    dataLabels: { enabled: false },
+                    stroke: { width: 1, colors: ['#fff'] },
+                    xaxis: {
+                        categories: labels,
+                    },
+                    yaxis: {
+                         labels: {
+                            formatter: function (value) {
+                                return "R$ " + (value / 1000).toFixed(0) + "k";
                             }
                         }
                     },
-                    fill: { colors: [color] },
-                    stroke: { lineCap: 'round' },
-                    labels: ['Rate'],
+                    fill: { opacity: 1 },
+                    legend: { position: 'top', horizontalAlign: 'right' }
                 };
 
-                var chart = new ApexCharts(document.querySelector("#stocking-rate-chart"), options);
+                // Render into div
+                document.querySelector("#financialTrendChart").innerHTML = ""; // Clear loader
+                const chart = new ApexCharts(document.querySelector("#financialTrendChart"), options);
                 chart.render();
+
             } catch (error) {
-                console.error("Failed to load stocking rate:", error);
+                console.error("Error loading financial chart:", error);
+                document.querySelector("#financialTrendChart").innerHTML = 
+                    '<div class="flex items-center justify-center h-full text-red-400">Error loading data</div>';
             }
         }
-        
-        loadStockingRate();
+        loadFinancialTrend();
 
-        // --- Global ADG Widget (Async) ---
-        let adgChartInstance = null; // Store chart instance globally
-        
-        async function loadAdgWidget() {
+
+        // --- 2. Load Genetic Trend Chart (Async) ---
+        async function loadGeneticTrend() {
             try {
-                const response = await fetch("{% url 'dashboard:adg-trend-api' %}");
-                if (!response.ok) return;
+                const response = await fetch("{% url 'dashboard:chart-genetic-progress' %}");
+                if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 
-                // Explicitly convert to number
-                const adgValue = Number.parseFloat(data.value);
-                
-                // Debug logging
-                console.log('ADG Data:', data);
-                console.log('ADG Value (parsed):', adgValue, typeof adgValue);
-                
-                // 1. Update Main Number
-                document.getElementById('adg-value').innerText = data.value;
-                
-                // 2. Update Badge Color
-                const badge = document.getElementById('adg-badge');
-                badge.innerText = data.status;
-                
-                if (data.status === 'CRITICAL') {
-                    badge.className = "px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800";
-                } else if (data.status === 'PROFITABLE') {
-                    badge.className = "px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800";
-                } else {
-                     badge.className = "px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800";
-                }
+                // Data: [{'year': 2020, 'avg_weight': 250.5}, ...]
 
-                // 3. Render Sparkline
-                // Destroy existing chart instance if it exists
-                if (adgChartInstance) {
-                    adgChartInstance.destroy();
-                    adgChartInstance = null;
-                }
-                
-                // Clear the container
-                const chartElement = document.querySelector("#adg-sparkline");
-                chartElement.innerHTML = '';
-                
-                // Ensure history is not empty for chart
-                const historyData = (data.history && data.history.length > 0) ? data.history : [adgValue];
+                const labels = data.map(item => item.year);
+                const values = data.map(item => item.avg_weight);
 
-                console.log('Historical data:', historyData);
-
-                var options = {
+                const options = {
                     series: [{
-                        name: 'ADG',
-                        data: historyData
+                        name: '{% trans "Avg Weight" %}',
+                        data: values
                     }],
-                    chart: { 
-                        type: 'area',
-                        height: 60, 
-                        sparkline: { enabled: true },
-                        animations: {
-                            enabled: false
-                        }
+                    chart: {
+                        height: 320,
+                        type: 'line',
+                        zoom: { enabled: false },
+                        toolbar: { show: false },
+                        fontFamily: 'Inter, sans-serif'
                     },
-                    stroke: { 
-                        curve: 'smooth',
-                        width: 3,
-                        colors: ['#6366F1'] // Indigo color for neutral line
-                    },
-                    fill: { 
-                        type: 'gradient',
-                        gradient: {
-                            shadeIntensity: 1,
-                            opacityFrom: 0.7,
-                            opacityTo: 0.2,
-                            stops: [0, 90, 100]
-                        }
-                    },
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'straight', width: 3 },
                     colors: ['#6366F1'], // Indigo
-                    dataLabels: {
-                        enabled: false
+                    grid: {
+                        row: {
+                            colors: ['#f3f3f3', 'transparent'], 
+                            opacity: 0.5
+                        },
                     },
-                    markers: {
-                        size: 0
+                    xaxis: {
+                        categories: labels,
+                        title: { text: '{% trans "Birth Year" %}' }
                     },
-                    annotations: {
-                        yaxis: [
-                            {
-                                y: 0,
-                                y2: 0.6,
-                                fillColor: '#EF4444',
-                                opacity: 0.15,
-                                borderColor: 'transparent',
-                                label: {
-                                    text: 'Poor Growth',
-                                    style: {
-                                        fontSize: '0',
-                                        background: 'transparent'
-                                    }
-                                }
-                            },
-                            {
-                                y: 0.6,
-                                fillColor: '#10B981',
-                                opacity: 0.15,
-                                borderColor: 'transparent',
-                                label: {
-                                    text: 'Good Growth',
-                                    style: {
-                                        fontSize: '0',
-                                        background: 'transparent'
-                                    }
-                                }
-                            },
-                            {
-                                y: 0.6,
-                                borderColor: '#F59E0B',
-                                strokeDashArray: 4,
-                                borderWidth: 2,
-                                opacity: 0.8,
-                                label: {
-                                    text: 'Target: 0.6 kg/day',
-                                    style: {
-                                        fontSize: '0',
-                                        background: 'transparent'
-                                    }
-                                }
-                            }
-                        ]
-                    },
-                    tooltip: { 
-                        enabled: true,
-                        fixed: { enabled: false },
-                        x: { show: false },
-                        y: {
-                            formatter: function(val) {
-                                return val.toFixed(3) + ' kg/day';
+                    yaxis: {
+                        title: { text: 'Kg' },
+                        labels: {
+                            formatter: function (value) {
+                                return value.toFixed(1);
                             }
                         }
-                    }
+                    },
+                    tooltip: {
+                         y: {
+                             formatter: function (val) {
+                                 return val.toFixed(1) + " kg"
+                             }
+                         }
+                    },
+                    markers: { size: 5 }
                 };
-                
-                console.log('Chart options:', options);
-                
-                // Create and store the new chart instance
-                adgChartInstance = new ApexCharts(chartElement, options);
-                adgChartInstance.render();
+
+                document.querySelector("#geneticTrendChart").innerHTML = ""; // Clear loader
+                const chart = new ApexCharts(document.querySelector("#geneticTrendChart"), options);
+                chart.render();
 
             } catch (error) {
-                console.error("Failed to load ADG:", error);
+                console.error("Error loading genetic chart:", error);
+                document.querySelector("#geneticTrendChart").innerHTML = 
+                    '<div class="flex items-center justify-center h-full text-red-400">Error loading data</div>';
             }
         }
-        
-        loadAdgWidget();
+        loadGeneticTrend();
 
     });
 </script>

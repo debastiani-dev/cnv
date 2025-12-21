@@ -11,7 +11,19 @@ from apps.health.services import HealthService
 
 
 @pytest.mark.django_db
+@pytest.mark.django_db
 class TestHealthServiceBatchCreate:
+    def test_get_recent_events(self):
+        # Create 10 events
+        baker.make(SanitaryEvent, _quantity=10)
+
+        # Fetch limit=5
+        events = HealthService.get_recent_events(limit=5)
+        assert len(events) == 5
+
+        # Verify order (latest first)
+        assert events[0].date >= events[4].date
+
     def test_create_batch_event_splits_cost(self):
         # Setup
         cows = baker.make(Cattle, _quantity=10)
@@ -28,7 +40,7 @@ class TestHealthServiceBatchCreate:
         event = HealthService.create_batch_event(event_data, cow_uuids)
 
         # Verify Header
-        assert event.total_cost == 100.00
+        assert event.total_cost == Decimal("100.00")
         assert SanitaryEvent.objects.count() == 1
 
         # Verify Targets

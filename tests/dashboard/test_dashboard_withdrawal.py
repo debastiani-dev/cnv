@@ -6,6 +6,7 @@ from django.utils import timezone
 from model_bakery import baker
 
 from apps.cattle.models import Cattle
+from apps.commercial.models import SalesEvent, SalesLot
 from apps.health.models import (
     Medication,
     MedicationType,
@@ -24,7 +25,11 @@ class TestDashboardWithdrawalKPI:
         client.force_login(user)
 
         # 1. Active Withdrawal
-        cow1 = baker.make(Cattle, status=Cattle.STATUS_AVAILABLE)
+        cow1 = baker.make(
+            Cattle,
+            status=Cattle.STATUS_AVAILABLE,
+            withdrawal_end_date=timezone.now().date() + timedelta(days=8),
+        )
         med1 = baker.make(
             Medication,
             withdrawal_days_meat=10,
@@ -67,20 +72,31 @@ class TestDashboardWithdrawalKPI:
         )
         baker.make(SanitaryEventTarget, event=event4, animal=cow4)
 
+        # Put cow1 (Active Withdrawal) on Sale to trigger ALERT
+        event = baker.make(
+            SalesEvent,
+            date=timezone.now().date() + timedelta(days=1),
+            sales_type=SalesEvent.TYPE_AUCTION,
+            is_active=True,
+        )
+        lot = baker.make(
+            SalesLot,
+            event=event,
+            status=SalesLot.STATUS_AVAILABLE,
+        )
+        lot.animals.add(cow1)
+
         # Request Dashboard
         response = client.get(reverse("dashboard:home"))
         assert response.status_code == 200
 
         # Check context
-        assert response.context["active_withdrawal_count"] == 1
-        assert "recent_health_events" in response.context
-        # We created 3 events (event1, event2, event4).
-        # event1: -2 days
-        # event2: -10 days
-        # event4: today
-        # Order should be event4, event1, event2
-        recent = response.context["recent_health_events"]
-        assert len(recent) == 3
-        assert recent[0] == event4
-        assert recent[1] == event1
-        assert recent[2] == event2
+        # "active_withdrawal_count" is removed.
+        # "recent_health_events" is removed.
+        # We now check for Critical Alerts.
+        assert "alerts" in response.context
+        alerts = response.context["alerts"]
+
+        # We expect a Safety Violation alert
+        msg_list = [a["msg"] for a in alerts]
+        assert any("SAFETY VIOLATION" in m for m in msg_list)

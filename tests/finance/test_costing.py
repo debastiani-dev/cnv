@@ -140,4 +140,18 @@ class TestCosting:
             assert cost.category == "NUTRITION"
             assert cost.amount == Decimal("100.50")
             assert cost.description == "Bulk feed"
+            assert cost.description == "Bulk feed"
             assert cost.animal in cattle_list
+
+    def test_get_cost_stats(self):
+        """Verify get_cost_stats aggregation."""
+        # Create costs today
+        baker.make(CostEntry, amount=Decimal("100.00"), date=timezone.now().date())
+        baker.make(CostEntry, amount=Decimal("50.00"), date=timezone.now().date())
+
+        # Cost older than 90 days (should be excluded)
+        old_date = timezone.now().date() - timezone.timedelta(days=100)
+        baker.make(CostEntry, amount=Decimal("500.00"), date=old_date)
+
+        stats = CostingService.get_cost_stats(days=90)
+        assert stats["total_cost"] == Decimal("150.00")
