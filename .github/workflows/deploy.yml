@@ -1,0 +1,55 @@
+name: Deploy CNV
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy Files to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "."
+          target: "/var/www/cnv"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          timeout: 60s
+          command_timeout: 30m
+          script: |
+            cd /var/www/cnv
+            
+            # --- Create Env Files ---
+            # Production
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.prod
+            echo "DEBUG=False" >> .env.prod
+            echo "ALLOWED_HOSTS=yourdomain.com.br" >> .env.prod
+            echo "SECRET_KEY=${{ secrets.PROD_SECRET_KEY }}" >> .env.prod
+            
+            # Staging
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.staging
+            echo "DEBUG=True" >> .env.staging
+            echo "ALLOWED_HOSTS=staging.yourdomain.com.br" >> .env.staging
+            echo "SECRET_KEY=${{ secrets.STAGING_SECRET_KEY }}" >> .env.staging
+
+            # --- Start Services ---
+            # 1. Start Nginx (for SSL)
+            docker compose -f docker-compose.prod.yml up -d nginx
+
+            # 2. Build and Start App
+            docker compose -f docker-compose.prod.yml up -d --build --force-recreate
+            
+            # 3. Clean up old images
+            docker image prune -f
