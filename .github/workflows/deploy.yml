@@ -3,7 +3,6 @@ name: Deploy CNV
 on:
   push:
     branches: [ "main", "develop" ]
-  # Allows you to click a "Run workflow" button manually in GitHub
   workflow_dispatch:
 
 jobs:
@@ -13,7 +12,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. Determine Target (Staging vs Prod)
+      # 1. Determine Target Environment
       - name: Set Deployment Target
         id: target
         run: |
@@ -46,25 +45,31 @@ jobs:
           script: |
             cd /var/www/cnv
             
-            # --- Regenerate Env Files (Safety) ---
+            # --- 2. Regenerate Env Files (Security) ---
+            # Production
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.prod
             echo "DEBUG=False" >> .env.prod
             echo "ALLOWED_HOSTS=neloredovale.com.br,www.neloredovale.com.br" >> .env.prod
             echo "SECRET_KEY=${{ secrets.PROD_SECRET_KEY }}" >> .env.prod
             
+            # Staging
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.staging
             echo "DEBUG=True" >> .env.staging
             echo "ALLOWED_HOSTS=staging.neloredovale.com.br" >> .env.staging
             echo "SECRET_KEY=${{ secrets.STAGING_SECRET_KEY }}" >> .env.staging
 
-            # --- Smart Deploy ---
-            echo "Deploying to: $TARGET_SERVICE"
+            # --- 3. Deploy & Migrate ---
+            echo "Starting deployment for: $TARGET_SERVICE"
             
-            # 1. Ensure Nginx is up (No restart, just check)
+            # Ensure Nginx is running (Critical for SSL)
             docker compose -f docker-compose.prod.yml up -d nginx
 
-            # 2. Rebuild ONLY the target service (prod OR staging)
+            # Rebuild ONLY the target environment
             docker compose -f docker-compose.prod.yml up -d --build --force-recreate $TARGET_SERVICE
             
-            # 3. Clean up
+            # Run Database Migrations Automatically
+            echo "Applying migrations..."
+            docker compose -f docker-compose.prod.yml exec -t $TARGET_SERVICE python manage.py migrate --noinput
+            
+            # Cleanup old images to save disk space
             docker image prune -f
