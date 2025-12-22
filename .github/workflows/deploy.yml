@@ -35,13 +35,13 @@ jobs:
             # Production
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.prod
             echo "DEBUG=False" >> .env.prod
-            echo "ALLOWED_HOSTS=yourdomain.com.br" >> .env.prod
+            echo "ALLOWED_HOSTS=neloredovale.com.br,www.neloredovale.com.br" >> .env.prod
             echo "SECRET_KEY=${{ secrets.PROD_SECRET_KEY }}" >> .env.prod
             
             # Staging
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.staging
             echo "DEBUG=True" >> .env.staging
-            echo "ALLOWED_HOSTS=staging.yourdomain.com.br" >> .env.staging
+            echo "ALLOWED_HOSTS=staging.neloredovale.com.br" >> .env.staging
             echo "SECRET_KEY=${{ secrets.STAGING_SECRET_KEY }}" >> .env.staging
 
             # --- Start Services ---
