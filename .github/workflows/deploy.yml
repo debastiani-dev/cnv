@@ -71,5 +71,8 @@ jobs:
             echo "Applying migrations..."
             docker compose -f docker-compose.prod.yml exec -t $TARGET_SERVICE python manage.py migrate --noinput
             
+            # Reload Nginx to capture new container IPs
+            docker compose -f docker-compose.prod.yml exec nginx nginx -s reload
+
             # Cleanup old images to save disk space
             docker image prune -f
