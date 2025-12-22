@@ -3,6 +3,8 @@ name: Deploy CNV
 on:
   push:
     branches: [ "main", "develop" ]
+  # Allows you to click a "Run workflow" button manually in GitHub
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -10,6 +12,16 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      # 1. Determine Target (Staging vs Prod)
+      - name: Set Deployment Target
+        id: target
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "TARGET_SERVICE=web_prod" >> $GITHUB_ENV
+          else
+            echo "TARGET_SERVICE=web_staging" >> $GITHUB_ENV
+          fi
 
       - name: Copy Files to VPS
         uses: appleboy/scp-action@v0.1.7
@@ -22,34 +34,37 @@ jobs:
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.0
+        env:
+          TARGET_SERVICE: ${{ env.TARGET_SERVICE }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          envs: TARGET_SERVICE
           timeout: 60s
           command_timeout: 30m
           script: |
             cd /var/www/cnv
             
-            # --- Create Env Files ---
-            # Production
+            # --- Regenerate Env Files (Safety) ---
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.prod
             echo "DEBUG=False" >> .env.prod
             echo "ALLOWED_HOSTS=neloredovale.com.br,www.neloredovale.com.br" >> .env.prod
             echo "SECRET_KEY=${{ secrets.PROD_SECRET_KEY }}" >> .env.prod
             
-            # Staging
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.staging
             echo "DEBUG=True" >> .env.staging
             echo "ALLOWED_HOSTS=staging.neloredovale.com.br" >> .env.staging
             echo "SECRET_KEY=${{ secrets.STAGING_SECRET_KEY }}" >> .env.staging
 
-            # --- Start Services ---
-            # 1. Start Nginx (for SSL)
+            # --- Smart Deploy ---
+            echo "Deploying to: $TARGET_SERVICE"
+            
+            # 1. Ensure Nginx is up (No restart, just check)
             docker compose -f docker-compose.prod.yml up -d nginx
 
-            # 2. Build and Start App
-            docker compose -f docker-compose.prod.yml up -d --build --force-recreate
+            # 2. Rebuild ONLY the target service (prod OR staging)
+            docker compose -f docker-compose.prod.yml up -d --build --force-recreate $TARGET_SERVICE
             
-            # 3. Clean up old images
+            # 3. Clean up
             docker image prune -f
