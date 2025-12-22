@@ -41,7 +41,8 @@ COPY . .
 RUN npm run build
 
 # Collect Static Files
-RUN python manage.py collectstatic --noinput
+RUN SECRET_KEY=building_secret_key \
+    python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
