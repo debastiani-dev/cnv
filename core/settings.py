@@ -206,3 +206,8 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 60.0,  # Run every 60 seconds
     },
 }
+
+if not DEBUG and not ALLOWED_HOSTS:
+    raise ValueError(
+        "CRITICAL: ALLOWED_HOSTS is empty in Production mode! Check .env file."
+    )
