@@ -48,6 +48,8 @@ jobs:
             # --- 2. Regenerate Env Files (Security) ---
             # Production
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.prod
+            echo "DB_HOST=db_prod" >> .env.prod
+            echo "DB_NAME=cnv_prod" >> .env.prod
             echo "DEBUG=False" >> .env.prod
             echo "ALLOWED_HOSTS=neloredovale.com.br,www.neloredovale.com.br" >> .env.prod
             echo "CSRF_TRUSTED_ORIGINS=https://neloredovale.com.br,https://www.neloredovale.com.br" >> .env.prod
@@ -55,6 +57,8 @@ jobs:
             
             # Staging
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" > .env.staging
+            echo "DB_HOST=db_staging" >> .env.staging
+            echo "DB_NAME=cnv_staging" >> .env.staging
             echo "DEBUG=True" >> .env.staging
             echo "ALLOWED_HOSTS=staging.neloredovale.com.br" >> .env.staging
             echo "CSRF_TRUSTED_ORIGINS=https://staging.neloredovale.com.br" >> .env.staging
