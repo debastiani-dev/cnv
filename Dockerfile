@@ -37,6 +37,9 @@ RUN npm install
 # Copy project files
 COPY . .
 
+# Compile translations
+RUN python manage.py compilemessages
+
 # Build CSS
 RUN npm run build
 
