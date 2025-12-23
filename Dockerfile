@@ -38,7 +38,8 @@ RUN npm install
 COPY . .
 
 # Compile translations
-RUN python manage.py compilemessages
+RUN SECRET_KEY=building_secret_key \
+    python manage.py compilemessages
 
 # Build CSS
 RUN npm run build
