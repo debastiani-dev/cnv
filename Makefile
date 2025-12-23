@@ -248,3 +248,9 @@ populate-db:
 renew-ssl:
 	@echo "${GREEN}Renewing SSL certificates...${RESET}"
 	bash scripts/renew_ssl.sh
+
+## Populates staging database without flushing
+.PHONY: populate-staging
+populate-staging:
+	@echo "${GREEN}Populating staging database (no flush)...${RESET}"
+	docker compose -f docker-compose.prod.yml exec web_staging python manage.py populate_mock_data
