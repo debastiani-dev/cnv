@@ -242,3 +242,9 @@ populate-db:
 	@$(MAKE) dev/create-admin
 	@echo "${GREEN}Populating database with mock data...${RESET}"
 	docker compose exec web python manage.py populate_mock_data
+
+## Renews SSL certificates
+.PHONY: renew-ssl
+renew-ssl:
+	@echo "${GREEN}Renewing SSL certificates...${RESET}"
+	bash scripts/renew_ssl.sh
