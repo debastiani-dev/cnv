@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Avg, Count, F, Q, Sum
 from django.db.models.functions import ExtractYear, TruncMonth
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from apps.cattle.models.cattle import Cattle
 from apps.commercial.models.events import SalesEvent
@@ -40,7 +41,10 @@ class DashboardService:
                 {
                     "level": "critical",
                     "msg": (
-                        f"SAFETY VIOLATION: {unsafe_lots.count()} Active Lots contain animals in withdrawal period!"
+                        _(
+                            "SAFETY VIOLATION: %(count)s Active Lots contain animals in withdrawal period!"
+                        )
+                        % {"count": unsafe_lots.count()}
                     ),
                     "link": "/commercial/lots?filter=unsafe",
                 }
@@ -57,7 +61,10 @@ class DashboardService:
                 {
                     "level": "warning",
                     "msg": (
-                        f"OPERATIONAL: {resting_violations.count()} Resting Pastures have animals in them!"
+                        _(
+                            "OPERATIONAL: %(count)s Resting Pastures have animals in them!"
+                        )
+                        % {"count": resting_violations.count()}
                     ),
                     "link": "/locations/list?filter=violation",
                 }
@@ -74,7 +81,8 @@ class DashboardService:
                 {
                     "level": "warning",
                     "msg": (
-                        f"INVENTORY: {low_stock.count()} Ingredients are running low on stock."
+                        _("INVENTORY: %(count)s Ingredients are running low on stock.")
+                        % {"count": low_stock.count()}
                     ),
                     "link": "/nutrition/ingredients?filter=low_stock",
                 }
@@ -89,7 +97,10 @@ class DashboardService:
                     {
                         "level": "critical",
                         "msg": (
-                            f"ATTENTION: You have {overdue_count} overdue tasks requiring immediate action."
+                            _(
+                                "ATTENTION: You have %(count)s overdue tasks requiring immediate action."
+                            )
+                            % {"count": overdue_count}
                         ),
                         "link": "/tasks/list/?overdue=1&mode=my_tasks",
                     }
@@ -109,7 +120,8 @@ class DashboardService:
                 {
                     "level": "warning",
                     "msg": (
-                        f"OPERATIONAL: There are {unassigned_overdue_count} unassigned overdue tasks."
+                        _("OPERATIONAL: There are %(count)s unassigned overdue tasks.")
+                        % {"count": unassigned_overdue_count}
                     ),
                     "link": "/tasks/list/?overdue=1",
                 }

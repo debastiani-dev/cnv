@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cabanha Nelore do Vale 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 13:31+0000\n"
-"PO-Revision-Date: 2025-12-20 07:44+0000\n"
+"POT-Creation-Date: 2025-12-23 13:54+0000\n"
+"PO-Revision-Date: 2025-12-23 13:55+0000\n"
 "Last-Translator:   <admin@example.com>\n"
 "Language-Team: Portuguese (Brazil) <pt_BR@li.org>\n"
 "Language: pt_BR\n"
@@ -104,8 +104,8 @@ msgid ""
 "Cannot delete the last active superuser. Please promote another user to "
 "superuser first."
 msgstr ""
-"Não é possível excluir o último superusuário ativo. Por favor, promova outro "
-"usuário para superusuário primeiro."
+"Não é possível excluir o último superusuário ativo. Por favor, promova outro"
+" usuário para superusuário primeiro."
 
 #: apps/authentication/templates/authentication/login.html:6
 #: apps/authentication/views/login.py:11
@@ -137,8 +137,8 @@ msgid ""
 "Are you sure you want to delete user <strong>%(name)s</strong>? It will be "
 "moved to the Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir o gado <strong>%(name)s</strong>? Ele será "
-"movido para a Lixeira."
+"Tem certeza de que deseja excluir o gado <strong>%(name)s</strong>? Ele será"
+" movido para a Lixeira."
 
 #: apps/authentication/templates/authentication/user_confirm_delete.html:20
 #: apps/authentication/templates/authentication/user_confirm_permanent_delete.html:20
@@ -869,7 +869,8 @@ msgid "Close sidebar"
 msgstr "Fechar barra lateral"
 
 #: apps/base/templates/layouts/base_dashboard.html:72
-#: apps/base/templates/layouts/base_dashboard.html:357 apps/dashboard/apps.py:9
+#: apps/base/templates/layouts/base_dashboard.html:357
+#: apps/dashboard/apps.py:9
 msgid "Dashboard"
 msgstr "Painel"
 
@@ -1110,6 +1111,32 @@ msgstr "Administração"
 #: apps/base/templates/layouts/base_dashboard.html:628
 msgid "Open sidebar"
 msgstr "Abrir barra lateral"
+
+#: apps/base/templates/layouts/base_dashboard.html:644
+#| msgid "Notifications"
+msgid "View notifications"
+msgstr "Ver notificações"
+
+#: apps/base/templates/layouts/base_dashboard.html:655
+#: apps/notifications/apps.py:9 apps/notifications/models/notification.py:34
+#: apps/notifications/templates/notifications/list.html:7
+msgid "Notifications"
+msgstr "Notificações"
+
+#: apps/base/templates/layouts/base_dashboard.html:656
+#| msgid "Mark all as read"
+msgid "Mark all read"
+msgstr "Marcar todas como lidas"
+
+#: apps/base/templates/layouts/base_dashboard.html:715
+#| msgid "Notifications"
+msgid "No new notifications"
+msgstr "Sem novas notificações"
+
+#: apps/base/templates/layouts/base_dashboard.html:719
+#| msgid "Search notifications..."
+msgid "View all notifications"
+msgstr "Ver todas notificações"
 
 #: apps/base/templates/layouts/base_dashboard.html:746
 msgid "Open user menu"
@@ -1402,7 +1429,8 @@ msgstr "Imagem de Perfil"
 #: apps/reproduction/models/mating.py:43
 #: apps/reproduction/templates/reproduction/matingplan_form.html:87
 #: apps/reproduction/templates/reproduction/matingplan_list.html:35
-#: apps/tasks/models/tasks.py:60 apps/tasks/templates/tasks/task_detail.html:26
+#: apps/tasks/models/tasks.py:60
+#: apps/tasks/templates/tasks/task_detail.html:26
 #: apps/tasks/templates/tasks/task_list.html:101
 #: apps/transactions/models/transaction.py:39
 msgid "Status"
@@ -1587,7 +1615,8 @@ msgid "Add Task"
 msgstr "Adicionar Tarefa"
 
 #: apps/cattle/templates/cattle/cattle_detail.html:207
-#: apps/tasks/models/tasks.py:51 apps/tasks/templates/tasks/task_detail.html:74
+#: apps/tasks/models/tasks.py:51
+#: apps/tasks/templates/tasks/task_detail.html:74
 #: apps/tasks/templates/tasks/task_list.html:99
 #: apps/tasks/templates/tasks/task_trash_list.html:25
 msgid "Due Date"
@@ -1604,14 +1633,16 @@ msgid "Title"
 msgstr "Título"
 
 #: apps/cattle/templates/cattle/cattle_detail.html:209
-#: apps/tasks/models/tasks.py:54 apps/tasks/templates/tasks/task_detail.html:58
+#: apps/tasks/models/tasks.py:54
+#: apps/tasks/templates/tasks/task_detail.html:58
 #: apps/tasks/templates/tasks/task_list.html:100
 #: apps/tasks/templates/tasks/task_trash_list.html:26
 msgid "Priority"
 msgstr "Prioridade"
 
 #: apps/cattle/templates/cattle/cattle_detail.html:210
-#: apps/tasks/models/tasks.py:72 apps/tasks/templates/tasks/task_detail.html:84
+#: apps/tasks/models/tasks.py:72
+#: apps/tasks/templates/tasks/task_detail.html:84
 #: apps/tasks/templates/tasks/task_list.html:102
 msgid "Assigned To"
 msgstr "Atribuído Para"
@@ -2262,9 +2293,11 @@ msgid "Delete Lot"
 msgstr "Excluir Lote"
 
 #: apps/commercial/templates/events/lot_confirm_delete.html:12
-msgid "Are you sure you want to delete this lot? This action cannot be undone."
+msgid ""
+"Are you sure you want to delete this lot? This action cannot be undone."
 msgstr ""
-"Tem certeza de que deseja excluir este lote? Esta ação não pode ser desfeita."
+"Tem certeza de que deseja excluir este lote? Esta ação não pode ser "
+"desfeita."
 
 #: apps/commercial/templates/events/lot_confirm_delete.html:14
 msgid "Warning: All"
@@ -2393,6 +2426,37 @@ msgstr "Fechado"
 #: apps/commercial/templates/events/manage_lots.html:250
 msgid "No lots created yet."
 msgstr "Nenhum lote criado ainda."
+
+#: apps/dashboard/services.py:45
+#, python-format
+msgid ""
+"SAFETY VIOLATION: %(count)s Active Lots contain animals in withdrawal "
+"period!"
+msgstr ""
+"VIOLAÇÃO DE SEGURANÇA: %(count)s Lotes Ativos contêm animais em período de "
+"carência!"
+
+#: apps/dashboard/services.py:63
+#, python-format
+msgid "OPERATIONAL: %(count)s Resting Pastures have animals in them!"
+msgstr "OPERACIONAL: %(count)s Pastos em Descanso contêm animais!"
+
+#: apps/dashboard/services.py:81
+#, python-format
+msgid "INVENTORY: %(count)s Ingredients are running low on stock."
+msgstr "ESTOQUE: %(count)s Ingredientes estão com estoque baixo."
+
+#: apps/dashboard/services.py:97
+#, python-format
+msgid ""
+"ATTENTION: You have %(count)s overdue tasks requiring immediate action."
+msgstr ""
+"ATENÇÂO: Você tem %(count)s tarefas atrasadas que requerem ação imediata."
+
+#: apps/dashboard/services.py:118
+#, python-format
+msgid "OPERATIONAL: There are %(count)s unassigned overdue tasks."
+msgstr "OPERACIONAL: Há %(count)s tarefas não atribuídas atrasadas."
 
 #: apps/dashboard/templates/dashboard/home.html:5
 msgid "Command Center"
@@ -2654,8 +2718,8 @@ msgstr "Voltar para Custos"
 
 #: apps/finance/templates/finance/cost_trash_list.html:50
 msgid ""
-"Are you sure you want to permanently delete this cost? This action cannot be "
-"undone."
+"Are you sure you want to permanently delete this cost? This action cannot be"
+" undone."
 msgstr ""
 "Tem certeza de que deseja excluir permanentemente este custo? Esta ação não "
 "pode ser desfeita."
@@ -2951,8 +3015,8 @@ msgid ""
 "Are you sure you want to delete this semen batch? It will be moved to the "
 "Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir este lote de sêmen? Ele será movido para a "
-"Lixeira."
+"Tem certeza de que deseja excluir este lote de sêmen? Ele será movido para a"
+" Lixeira."
 
 #: apps/genetics/templates/genetics/semen_confirm_permanent_delete.html:4
 #: apps/genetics/templates/genetics/semen_confirm_permanent_delete.html:9
@@ -3028,8 +3092,9 @@ msgid ""
 "Are you sure you want to <strong>permanently delete</strong> storage tank "
 "<strong>%(name)s</strong>? This action cannot be undone."
 msgstr ""
-"Tem certeza de que deseja <strong>excluir permanentemente</strong> o botijão "
-"de armazenamento <strong>%(name)s</strong>? Esta ação não pode ser desfeita."
+"Tem certeza de que deseja <strong>excluir permanentemente</strong> o botijão"
+" de armazenamento <strong>%(name)s</strong>? Esta ação não pode ser "
+"desfeita."
 
 #: apps/genetics/templates/genetics/tank_confirm_restore.html:4
 #: apps/genetics/templates/genetics/tank_confirm_restore.html:9
@@ -3456,7 +3521,8 @@ msgstr "Gerenciar Alvos"
 
 #: apps/health/templates/health/event_form_update.html:50
 msgid ""
-"Select animals to remove from this event. Cost per head will be recalculated."
+"Select animals to remove from this event. Cost per head will be "
+"recalculated."
 msgstr ""
 "Selecione animais para remover deste evento. O custo por cabeça será "
 "recalculado."
@@ -3525,8 +3591,8 @@ msgid ""
 "Are you sure you want to delete medication <strong>%(name)s</strong>? It "
 "will be moved to the Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir a medicação <strong>%(name)s</strong>? Ela "
-"será movida para a Lixeira."
+"Tem certeza de que deseja excluir a medicação <strong>%(name)s</strong>? Ela"
+" será movida para a Lixeira."
 
 #: apps/health/templates/health/medication_confirm_permanent_delete.html:4
 #: apps/health/templates/health/medication_confirm_permanent_delete.html:10
@@ -3605,11 +3671,11 @@ msgid_plural ""
 "You are about to apply a health protocol to <strong>%(count)s</strong> "
 "animals."
 msgstr[0] ""
-"Você está prestes a aplicar um protocolo sanitário a <strong>%(count)s</"
-"strong> animal."
+"Você está prestes a aplicar um protocolo sanitário a "
+"<strong>%(count)s</strong> animal."
 msgstr[1] ""
-"Você está prestes a aplicar um protocolo sanitário a <strong>%(count)s</"
-"strong> animais."
+"Você está prestes a aplicar um protocolo sanitário a "
+"<strong>%(count)s</strong> animais."
 
 #: apps/health/templates/health/protocol_apply.html:28
 msgid "Select the protocol recipe to apply."
@@ -3646,8 +3712,8 @@ msgid ""
 "Are you sure you want to move the protocol <strong>%(name)s</strong> to the "
 "trash?"
 msgstr ""
-"Tem certeza de que deseja mover o protocolo <strong>%(name)s</strong> para a "
-"lixeira?"
+"Tem certeza de que deseja mover o protocolo <strong>%(name)s</strong> para a"
+" lixeira?"
 
 #: apps/health/templates/health/protocol_detail.html:47
 #: apps/health/templates/health/protocol_list.html:47
@@ -3865,8 +3931,8 @@ msgstr "Protocolo movido para a lixeira."
 #: apps/health/views/protocol_views.py:115
 msgid "Cannot delete this protocol because it is being used by other records."
 msgstr ""
-"Não é possível excluir este protocolo porque ele está sendo usado por outros "
-"registros.Não é possível excluir este objeto porque ele é referenciado por "
+"Não é possível excluir este protocolo porque ele está sendo usado por outros"
+" registros.Não é possível excluir este objeto porque ele é referenciado por "
 "outros objetos."
 
 #: apps/health/views/protocol_views.py:121
@@ -4173,11 +4239,6 @@ msgstr "Local excluído permanentemente."
 msgid "Cattle moved successfully."
 msgstr "Gado movido com sucesso."
 
-#: apps/notifications/apps.py:9 apps/notifications/models/notification.py:34
-#: apps/notifications/templates/notifications/list.html:7
-msgid "Notifications"
-msgstr "Notificações"
-
 #: apps/notifications/models/notification.py:10
 msgid "Alert"
 msgstr "Alerta"
@@ -4429,8 +4490,8 @@ msgid ""
 "Are you sure you want to PERMANENTLY delete the diet \"%(name)s\"? This "
 "action CANNOT be undone."
 msgstr ""
-"Tem certeza de que deseja excluir PERMANENTEMENTE a dieta \"%(name)s\"? Esta "
-"ação NÃO pode ser desfeita."
+"Tem certeza de que deseja excluir PERMANENTEMENTE a dieta \"%(name)s\"? Esta"
+" ação NÃO pode ser desfeita."
 
 #: apps/nutrition/templates/nutrition/diet_confirm_permanent_delete.html:24
 msgid "Cannot delete this diet"
@@ -4691,7 +4752,8 @@ msgstr "Parceiro"
 
 #: apps/partners/models/partner.py:40
 msgid "Cannot delete partner because they have associated Sales."
-msgstr "Não é possível excluir o parceiro porque ele possui Vendas associadas."
+msgstr ""
+"Não é possível excluir o parceiro porque ele possui Vendas associadas."
 
 #: apps/partners/models/partner.py:45
 msgid "Cannot delete partner because they have associated Purchases."
@@ -4734,7 +4796,8 @@ msgstr "Restaurar Parceiro"
 
 #: apps/partners/templates/partners/partner_confirm_restore.html:12
 #, python-format
-msgid "Are you sure you want to restore the partner <strong>%(name)s</strong>?"
+msgid ""
+"Are you sure you want to restore the partner <strong>%(name)s</strong>?"
 msgstr ""
 "Tem certeza de que deseja restaurar o parceiro <strong>%(name)s</strong>?"
 
@@ -5075,11 +5138,13 @@ msgstr "Excluir Evento de Reprodução"
 #: apps/reproduction/templates/reproduction/breeding_event_confirm_delete.html:11
 #, python-format
 msgid ""
-"Are you sure you want to delete the breeding event for <strong>%(tag)s</"
-"strong> on <strong>%(date)s</strong>? It will be moved to the Trash Bin."
+"Are you sure you want to delete the breeding event for "
+"<strong>%(tag)s</strong> on <strong>%(date)s</strong>? It will be moved to "
+"the Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir o evento de reprodução de <strong>%(tag)s</"
-"strong> em <strong>%(date)s</strong>? Ele será movido para a Lixeira."
+"Tem certeza de que deseja excluir o evento de reprodução de "
+"<strong>%(tag)s</strong> em <strong>%(date)s</strong>? Ele será movido para "
+"a Lixeira."
 
 #: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:4
 #: apps/reproduction/templates/reproduction/breeding_event_confirm_permanent_delete.html:10
@@ -5103,8 +5168,8 @@ msgstr "Restaurar Evento de Reprodução"
 #: apps/reproduction/templates/reproduction/breeding_event_confirm_restore.html:12
 #, python-format
 msgid ""
-"Are you sure you want to restore the breeding event for <strong>%(tag)s</"
-"strong> on <strong>%(date)s</strong>?"
+"Are you sure you want to restore the breeding event for "
+"<strong>%(tag)s</strong> on <strong>%(date)s</strong>?"
 msgstr ""
 "Tem certeza de que deseja restaurar o evento de reprodução de "
 "<strong>%(tag)s</strong> em <strong>%(date)s</strong>?"
@@ -5172,11 +5237,13 @@ msgstr "Excluir Registro de Parto"
 #: apps/reproduction/templates/reproduction/calving_confirm_delete.html:11
 #, python-format
 msgid ""
-"Are you sure you want to delete the calving record for <strong>%(tag)s</"
-"strong> on <strong>%(date)s</strong>? It will be moved to the Trash Bin."
+"Are you sure you want to delete the calving record for "
+"<strong>%(tag)s</strong> on <strong>%(date)s</strong>? It will be moved to "
+"the Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir o registro de parto de <strong>%(tag)s</"
-"strong> em <strong>%(date)s</strong>? Ele será movido para a Lixeira."
+"Tem certeza de que deseja excluir o registro de parto de "
+"<strong>%(tag)s</strong> em <strong>%(date)s</strong>? Ele será movido para "
+"a Lixeira."
 
 #: apps/reproduction/templates/reproduction/calving_confirm_permanent_delete.html:4
 #: apps/reproduction/templates/reproduction/calving_confirm_permanent_delete.html:9
@@ -5208,11 +5275,11 @@ msgstr "Restaurar Registro de Parto"
 #: apps/reproduction/templates/reproduction/calving_confirm_restore.html:11
 #, python-format
 msgid ""
-"Are you sure you want to restore the calving record for <strong>%(tag)s</"
-"strong> on <strong>%(date)s</strong>?"
+"Are you sure you want to restore the calving record for "
+"<strong>%(tag)s</strong> on <strong>%(date)s</strong>?"
 msgstr ""
-"Tem certeza de que deseja restaurar o registro de parto de <strong>%(tag)s</"
-"strong> em <strong>%(date)s</strong>?"
+"Tem certeza de que deseja restaurar o registro de parto de "
+"<strong>%(tag)s</strong> em <strong>%(date)s</strong>?"
 
 #: apps/reproduction/templates/reproduction/calving_form.html:4
 msgid "Record Calving & New Calf"
@@ -5440,8 +5507,8 @@ msgstr "Excluir Plano de Acasalamento"
 msgid ""
 "Are you sure you want to delete the mating plan <strong>%(plan)s</strong>?"
 msgstr ""
-"Tem certeza de que deseja excluir o plano de acasalamento <strong>%(plan)s</"
-"strong>?"
+"Tem certeza de que deseja excluir o plano de acasalamento "
+"<strong>%(plan)s</strong>?"
 
 #: apps/reproduction/templates/reproduction/matingplan_confirm_delete.html:13
 msgid "This action will move the plan to the trash."
@@ -5455,8 +5522,8 @@ msgstr "Excluir Permanentemente Plano de Acasalamento"
 #: apps/reproduction/templates/reproduction/matingplan_confirm_permanent_delete.html:12
 #, python-format
 msgid ""
-"Are you sure you want to <strong>permanently delete</strong> the mating plan "
-"<strong>%(plan)s</strong>?"
+"Are you sure you want to <strong>permanently delete</strong> the mating plan"
+" <strong>%(plan)s</strong>?"
 msgstr ""
 "Tem certeza de que deseja <strong>excluir permanentemente</strong> o plano "
 "de acasalamento <strong>%(plan)s</strong>?"
@@ -5611,8 +5678,9 @@ msgstr "Excluir Diagnóstico de Gestação"
 #: apps/reproduction/templates/reproduction/pregnancy_check_confirm_delete.html:11
 #, python-format
 msgid ""
-"Are you sure you want to delete the pregnancy check for <strong>%(tag)s</"
-"strong> on <strong>%(date)s</strong>? It will be moved to the Trash Bin."
+"Are you sure you want to delete the pregnancy check for "
+"<strong>%(tag)s</strong> on <strong>%(date)s</strong>? It will be moved to "
+"the Trash Bin."
 msgstr ""
 "Tem certeza de que deseja excluir o diagnóstico de gestação de "
 "<strong>%(tag)s</strong> em <strong>%(date)s</strong>? Ele será movido para "
@@ -5627,12 +5695,12 @@ msgstr "Excluir Diagnóstico de Gestação Permanentemente"
 #, python-format
 msgid ""
 "Are you sure you want to <strong>permanently delete</strong> the pregnancy "
-"check for <strong>%(tag)s</strong> on <strong>%(date)s</strong>? This action "
-"cannot be undone."
+"check for <strong>%(tag)s</strong> on <strong>%(date)s</strong>? This action"
+" cannot be undone."
 msgstr ""
 "Tem certeza de que deseja <strong>excluir permanentemente</strong> o "
-"diagnóstico de gestação de <strong>%(tag)s</strong> em <strong>%(date)s</"
-"strong>? Esta ação não pode ser desfeita."
+"diagnóstico de gestação de <strong>%(tag)s</strong> em "
+"<strong>%(date)s</strong>? Esta ação não pode ser desfeita."
 
 #: apps/reproduction/templates/reproduction/pregnancy_check_confirm_restore.html:4
 #: apps/reproduction/templates/reproduction/pregnancy_check_confirm_restore.html:9
@@ -5642,8 +5710,8 @@ msgstr "Restaurar Diagnóstico de Gestação"
 #: apps/reproduction/templates/reproduction/pregnancy_check_confirm_restore.html:11
 #, python-format
 msgid ""
-"Are you sure you want to restore the pregnancy check for <strong>%(tag)s</"
-"strong> on <strong>%(date)s</strong>?"
+"Are you sure you want to restore the pregnancy check for "
+"<strong>%(tag)s</strong> on <strong>%(date)s</strong>?"
 msgstr ""
 "Tem certeza de que deseja restaurar o diagnóstico de gestação de "
 "<strong>%(tag)s</strong> em <strong>%(date)s</strong>?"
@@ -5723,11 +5791,11 @@ msgstr "Excluir Estação de Monta"
 #: apps/reproduction/templates/reproduction/season_confirm_delete.html:11
 #, python-format
 msgid ""
-"Are you sure you want to delete the reproductive season <strong>%(name)s</"
-"strong>? It will be moved to the Trash Bin."
+"Are you sure you want to delete the reproductive season "
+"<strong>%(name)s</strong>? It will be moved to the Trash Bin."
 msgstr ""
-"Tem certeza de que deseja excluir a estação de monta <strong>%(name)s</"
-"strong>? Ela será movida para a Lixeira."
+"Tem certeza de que deseja excluir a estação de monta "
+"<strong>%(name)s</strong>? Ela será movida para a Lixeira."
 
 #: apps/reproduction/templates/reproduction/season_confirm_permanent_delete.html:4
 #: apps/reproduction/templates/reproduction/season_confirm_permanent_delete.html:9
@@ -5740,8 +5808,8 @@ msgid ""
 "Are you sure you want to <strong>permanently delete</strong> the "
 "reproductive season <strong>%(name)s</strong>? This action cannot be undone."
 msgstr ""
-"Tem certeza de que deseja <strong>excluir permanentemente</strong> a estação "
-"de monta <strong>%(name)s</strong>? Esta ação não pode ser desfeita."
+"Tem certeza de que deseja <strong>excluir permanentemente</strong> a estação"
+" de monta <strong>%(name)s</strong>? Esta ação não pode ser desfeita."
 
 #: apps/reproduction/templates/reproduction/season_confirm_restore.html:4
 #: apps/reproduction/templates/reproduction/season_confirm_restore.html:9
@@ -5751,11 +5819,11 @@ msgstr "Restaurar Estação de Monta"
 #: apps/reproduction/templates/reproduction/season_confirm_restore.html:11
 #, python-format
 msgid ""
-"Are you sure you want to restore the reproductive season <strong>%(name)s</"
-"strong>?"
+"Are you sure you want to restore the reproductive season "
+"<strong>%(name)s</strong>?"
 msgstr ""
-"Tem certeza de que deseja restaurar a estação de monta <strong>%(name)s</"
-"strong>?"
+"Tem certeza de que deseja restaurar a estação de monta "
+"<strong>%(name)s</strong>?"
 
 #: apps/reproduction/templates/reproduction/season_form.html:21
 msgid "There were errors with your submission"
@@ -6214,8 +6282,8 @@ msgstr "Excluir Transação Permanentemente"
 #: apps/transactions/templates/transactions/transaction_confirm_permanent_delete.html:12
 #, python-format
 msgid ""
-"Are you sure you want to <strong>permanently delete</strong> the transaction "
-"from <strong>%(date)s</strong> with %(partner)s (%(total)s)?"
+"Are you sure you want to <strong>permanently delete</strong> the transaction"
+" from <strong>%(date)s</strong> with %(partner)s (%(total)s)?"
 msgstr ""
 "Tem certeza de que deseja <strong>excluir permanentemente</strong> a "
 "transação de <strong>%(date)s</strong> com %(partner)s (%(total)s)?"
@@ -6409,7 +6477,8 @@ msgstr ""
 "O clima do sul exige mais. Nosso rebanho é submetido a rigorosa pressão de "
 "seleção para <strong class=\"text-gen-green\">rusticidade</strong>, <strong "
 "class=\"text-gen-green\">fertilidade</strong> e <strong class=\"text-gen-"
-"green\">taxas de conversão</strong> sob distintas flutuações de frio e calor."
+"green\">taxas de conversão</strong> sob distintas flutuações de frio e "
+"calor."
 
 #: apps/website/templates/website/home.html:272
 msgid ""
@@ -6434,8 +6503,8 @@ msgid ""
 "bold text-gen-navy hover:text-gen-green transition-colors\">CNV Management "
 "System</a>."
 msgstr ""
-"Cada animal é rastreado desde o nascimento. Histórico genealógico completo e "
-"controle sanitário via o exclusivo <a href=\"/auth/login/\" class=\"font-"
+"Cada animal é rastreado desde o nascimento. Histórico genealógico completo e"
+" controle sanitário via o exclusivo <a href=\"/auth/login/\" class=\"font-"
 "bold text-gen-navy hover:text-gen-green transition-colors\">Sistema de "
 "Gestão CNV</a>."
 
@@ -6448,8 +6517,8 @@ msgid ""
 "Rigorous culling based on real-world zootechnical indices: fertility, "
 "maternal ability, and weight gain."
 msgstr ""
-"Descarte rigoroso baseado em índices zootécnicos do mundo real: fertilidade, "
-"habilidade materna e ganho de peso."
+"Descarte rigoroso baseado em índices zootécnicos do mundo real: fertilidade,"
+" habilidade materna e ganho de peso."
 
 #: apps/website/templates/website/home.html:317
 msgid ""
@@ -6749,11 +6818,10 @@ msgstr "Português (Brasil)"
 #~ msgstr "Violações de Status de Descanso"
 
 #~ msgid ""
-#~ "The following locations are set to 'Resting' but currently contain "
-#~ "animals:"
+#~ "The following locations are set to 'Resting' but currently contain animals:"
 #~ msgstr ""
-#~ "Os seguintes locais estão definidos como 'Descanso', mas atualmente "
-#~ "contêm animais:"
+#~ "Os seguintes locais estão definidos como 'Descanso', mas atualmente contêm "
+#~ "animais:"
 
 #~ msgid "Low Feed Stock Alert"
 #~ msgstr "Alerta de Estoque Baixo de Ração"
@@ -6763,12 +6831,6 @@ msgstr "Português (Brasil)"
 
 #~ msgid "Overdue Tasks Alert"
 #~ msgstr "Alerta de Tarefas Atrasadas"
-
-#, python-format
-#~ msgid "You have %(counter)s overdue task."
-#~ msgid_plural "You have %(counter)s overdue tasks."
-#~ msgstr[0] "Você tem %(counter)s tarefa atrasada."
-#~ msgstr[1] "Você tem %(counter)s tarefas atrasadas."
 
 #~ msgid "View overdue tasks"
 #~ msgstr "Ver tarefas atrasadas"
@@ -6841,8 +6903,8 @@ msgstr "Português (Brasil)"
 #~ "Are you sure you want to <strong>permanently delete</strong> the purchase "
 #~ "from <strong>%(date)s</strong> with %(partner)s (%(total)s)?"
 #~ msgstr ""
-#~ "Tem certeza de que deseja <strong>excluir permanentemente</strong> a "
-#~ "compra de <strong>%(date)s</strong> com %(partner)s (%(total)s)?"
+#~ "Tem certeza de que deseja <strong>excluir permanentemente</strong> a compra "
+#~ "de <strong>%(date)s</strong> com %(partner)s (%(total)s)?"
 
 #~ msgid "Restore Purchase"
 #~ msgstr "Restaurar Compra"
@@ -6949,8 +7011,7 @@ msgstr "Português (Brasil)"
 #~ msgid "Premium management system for premium cattle."
 #~ msgstr "Sistema de gerenciamento premium para gado premium."
 
-#~ msgid ""
-#~ "Experience the difference in genetic quality and performance tracking."
+#~ msgid "Experience the difference in genetic quality and performance tracking."
 #~ msgstr ""
 #~ "Experimente a diferença na qualidade genética e no acompanhamento de "
 #~ "desempenho."
@@ -6964,8 +7025,8 @@ msgstr "Português (Brasil)"
 #~ msgid ""
 #~ "Are you sure you want to delete current season: <strong>%(name)s</strong>?"
 #~ msgstr ""
-#~ "Tem certeza de que deseja excluir a estação atual: <strong>%(name)s</"
-#~ "strong>?"
+#~ "Tem certeza de que deseja excluir a estação atual: "
+#~ "<strong>%(name)s</strong>?"
 
 #~ msgid "Buyer"
 #~ msgstr "Comprador"
