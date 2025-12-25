@@ -321,6 +321,177 @@
         </div>
     </section>
 
+    <!-- Section: Gallery Carousel -->
+    {% if carousel_images %}
+    <section id="gallery" class="relative z-10 border-t border-white/5 bg-gen-navy/5">
+        <!-- Cinematic Container: Reduced height to 65vh (approx 600-700px on typical screens) -->
+        <div class="relative w-full h-[65vh] md:h-[70vh] group overflow-hidden bg-neutral-900/90">
+            
+            <!-- Scroll Track -->
+            <div id="carousel-track" class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+                {% for img_path in carousel_images %}
+                <div class="relative min-w-full h-full snap-center flex items-center justify-center overflow-hidden">
+                    
+                    <!-- 1. Blurred Background (Subtle Effect) -->
+                    <!-- Used inline style for background-image to make blur easy without duplicate request if cached -->
+                    <!-- Scale-110 to remove blur edges -->
+                    <div class="absolute inset-0 bg-cover bg-center blur-2xl opacity-30 scale-110 grayscale-[30%] transition-transform duration-[10s] ease-linear" 
+                         style="background-image: url('{% static img_path %}')"></div>
+                    
+                    <!-- 2. Main Image (Whole Picture Visible) -->
+                    <img src="{% static img_path %}" 
+                         alt="Gallery Slide {{ forloop.counter }}" 
+                         class="relative z-10 w-full h-full object-contain p-4 md:p-8 drop-shadow-2xl transition-transform duration-700 hover:scale-[1.01]">
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Overlays (Title) -->
+            <div class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none">
+                 <h2 class="font-serif text-2xl md:text-3xl text-white/90 inline-block px-8 py-2 border border-white/20 bg-black/20 rounded-full shadow-lg backdrop-blur-md tracking-wide">{% trans "Our Production" %}</h2>
+            </div>
+
+             <!-- Navigation Buttons -->
+             <button id="carousel-prev" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 text-white/50 hover:text-white transition-all p-2 rounded-full hover:bg-white/10" aria-label="{% trans 'Previous slide' %}">
+                <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <button id="carousel-next" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 text-white/50 hover:text-white transition-all p-2 rounded-full hover:bg-white/10" aria-label="{% trans 'Next slide' %}">
+                <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" /></svg>
+            </button>
+        </div>
+
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const track = document.getElementById('carousel-track');
+                const prev = document.getElementById('carousel-prev');
+                const next = document.getElementById('carousel-next');
+                
+                // Lightbox Elements
+                const lightbox = document.getElementById('lightbox');
+                const lightboxTrack = document.getElementById('lightbox-track');
+                const lightboxClose = document.getElementById('lightbox-close');
+                const lightboxPrev = document.getElementById('lightbox-prev');
+                const lightboxNext = document.getElementById('lightbox-next');
+                const slideImages = document.querySelectorAll('#carousel-track img.object-contain');
+
+                if (!track) return;
+
+                // --- Main Carousel Auto Play ---
+                const autoPlayInterval = 5000;
+                let autoPlayTimer;
+
+                const scrollNext = (element) => {
+                    if (!element) return;
+                    const w = element.clientWidth;
+                    if (element.scrollLeft + w >= element.scrollWidth - 10) {
+                         element.scrollTo({ left: 0, behavior: 'smooth' });
+                    } else {
+                        element.scrollBy({ left: w, behavior: 'smooth' });
+                    }
+                };
+                
+                const scrollPrev = (element) => {
+                     if (!element) return;
+                     const w = element.clientWidth;
+                     if (element.scrollLeft <= 0) {
+                         element.scrollTo({ left: element.scrollWidth, behavior: 'smooth' });
+                     } else {
+                        element.scrollBy({ left: -w, behavior: 'smooth' });
+                     }
+                };
+
+                const startAutoPlay = () => {
+                    stopAutoPlay();
+                    autoPlayTimer = setInterval(() => scrollNext(track), autoPlayInterval);
+                };
+
+                const stopAutoPlay = () => {
+                    if (autoPlayTimer) clearInterval(autoPlayTimer);
+                };
+
+                // --- Main Controls ---
+                if (prev) prev.addEventListener('click', () => { stopAutoPlay(); scrollPrev(track); startAutoPlay(); });
+                if (next) next.addEventListener('click', () => { stopAutoPlay(); scrollNext(track); startAutoPlay(); });
+                
+                track.addEventListener('keydown', (e) => {
+                     stopAutoPlay();
+                     if (e.key === 'ArrowLeft') scrollPrev(track);
+                     if (e.key === 'ArrowRight') scrollNext(track);
+                     startAutoPlay();
+                });
+                
+                track.addEventListener('touchstart', stopAutoPlay, {passive: true});
+                track.addEventListener('touchend', startAutoPlay, {passive: true});
+
+                // --- Lightbox Logic ---
+                let lightboxInterval;
+
+                const startLightboxAutoPlay = () => {
+                    stopLightboxAutoPlay();
+                    lightboxInterval = setInterval(() => scrollNext(lightboxTrack), 5000);
+                };
+
+                const stopLightboxAutoPlay = () => {
+                    if (lightboxInterval) clearInterval(lightboxInterval);
+                };
+
+                const openLightbox = (index) => {
+                    stopAutoPlay(); // Stop main
+                    lightbox.classList.remove('hidden');
+                    void lightbox.offsetWidth;
+                    lightbox.classList.remove('opacity-0');
+                    
+                    // Scroll to clicked image immediately (no smooth to snap instantly)
+                    lightboxTrack.scrollTo({ left: lightboxTrack.clientWidth * index, behavior: 'auto' });
+                    
+                    startLightboxAutoPlay();
+                };
+
+                const closeLightbox = () => {
+                    stopLightboxAutoPlay();
+                    lightbox.classList.add('opacity-0');
+                    setTimeout(() => {
+                        lightbox.classList.add('hidden');
+                        startAutoPlay(); // Resume main
+                    }, 300);
+                };
+
+                // Events
+                slideImages.forEach((img, index) => {
+                    img.style.cursor = 'zoom-in';
+                    img.addEventListener('click', () => openLightbox(index));
+                });
+
+                lightboxClose.addEventListener('click', closeLightbox);
+                
+                // Lightbox Controls
+                if (lightboxPrev) lightboxPrev.addEventListener('click', (e) => { e.stopPropagation(); stopLightboxAutoPlay(); scrollPrev(lightboxTrack); startLightboxAutoPlay(); });
+                if (lightboxNext) lightboxNext.addEventListener('click', (e) => { e.stopPropagation(); stopLightboxAutoPlay(); scrollNext(lightboxTrack); startLightboxAutoPlay(); });
+
+                // Lightbox Touch/Interact
+                lightboxTrack.addEventListener('touchstart', stopLightboxAutoPlay, {passive: true});
+                lightboxTrack.addEventListener('touchend', startLightboxAutoPlay, {passive: true});
+                lightboxTrack.addEventListener('click', (e) => {
+                    if (e.target === lightboxTrack) closeLightbox();
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (lightbox.classList.contains('hidden')) return;
+                    
+                    if (e.key === 'Escape') closeLightbox();
+                    if (e.key === 'ArrowRight') { stopLightboxAutoPlay(); scrollNext(lightboxTrack); startLightboxAutoPlay(); }
+                    if (e.key === 'ArrowLeft') { stopLightboxAutoPlay(); scrollPrev(lightboxTrack); startLightboxAutoPlay(); }
+                });
+
+                // Start Main
+                startAutoPlay();
+            });
+        </script>
+    </section>
+    {% endif %}
+
     <!-- Section E: Location (Physical Asset) -->
     <!-- Kept Full Width but clean -->
     <section id="location" class="relative w-full h-[500px] border-t-4 border-gen-green group map-container z-20">
@@ -383,19 +554,49 @@
     </footer>
 
 
+    <!-- Lightbox Modal (Moved to root to ensure z-index dominance) -->
+    <div id="lightbox" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl hidden opacity-0 transition-opacity duration-300">
+        <button id="lightbox-close" class="absolute top-8 right-8 text-white/70 hover:text-white z-50 p-2 bg-black/20 rounded-full backdrop-blur-md">
+            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+        
+        <!-- Lightbox Scroll Track -->
+        <div id="lightbox-track" class="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide items-center">
+            {% for img_path in carousel_images %}
+            <div class="relative min-w-full h-full snap-center flex items-center justify-center overflow-hidden p-0 md:p-8">
+                <!-- Ambient Blurred Background -->
+                <div class="absolute inset-0 bg-cover bg-center blur-3xl opacity-40 scale-110" 
+                        style="background-image: url('{% static img_path %}')"></div>
+                        
+                <img src="{% static img_path %}" alt="Full Screen Slide {{ forloop.counter }}" class="relative z-10 max-w-full max-h-full object-contain shadow-2xl select-none">
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Lightbox Nav -->
+            <button id="lightbox-prev" class="absolute left-4 top-1/2 -translate-y-1/2 z-50 text-white/50 hover:text-white p-4 hidden md:block" aria-label="Previous">
+            <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7" /></svg>
+        </button>
+        <button id="lightbox-next" class="absolute right-4 top-1/2 -translate-y-1/2 z-50 text-white/50 hover:text-white p-4 hidden md:block" aria-label="Next">
+            <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7" /></svg>
+        </button>
+    </div>
+
     <!-- Rellax.js -->
     <script src="https://cdn.jsdelivr.net/gh/dixonandmoe/rellax@master/rellax.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-             // Initialize Rellax with "center: true" to ensure elements 
-             // are in their CSS-defined positions when in the middle of the viewport.
-             new Rellax('.rellax', {
-                 center: true,
-                 wrapper: null,
-                 round: true,
-                 vertical: true,
-                 horizontal: false
-             });
+                // Initialize Rellax with "center: true" to ensure elements 
+                // are in their CSS-defined positions when in the middle of the viewport.
+                try {
+                new Rellax('.rellax', {
+                    center: true,
+                    wrapper: null,
+                    round: true,
+                    vertical: true,
+                    horizontal: false
+                });
+                } catch(e) { console.log('Rellax skipped or failed'); }
         });
     </script>
 </body>
