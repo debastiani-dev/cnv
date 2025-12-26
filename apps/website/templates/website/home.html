@@ -32,10 +32,16 @@
 
 
         /* Glassmorphism */
+        /* Glassmorphism */
+        /* Glassmorphism */
+        /* Glassmorphism */
+        /* Glassmorphism */
         .glass-card {
-            background: rgba(27, 38, 79, 0.7);
-            backdrop-filter: blur(10px);
+            /* Background handled by utility classes */
+            backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
         }
 
         /* Performance Optimization for Parallax */
@@ -43,6 +49,47 @@
             will-change: transform;
             /* Hardware acceleration hack if needed, but will-change is usually enough */
             transform: translateZ(0); 
+        }
+        /* Noise Texture */
+        .noise-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Glow Effect */
+        .glow-effect::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .group:hover .glow-effect::before {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Animation Classes */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, transform;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -52,7 +99,8 @@
     <div class="watermark-v"></div>
 
     <!-- Section A: Header (Sticky) -->
-    <nav class="fixed top-0 w-full z-50 bg-gen-navy/95 backdrop-blur-md border-b border-white/5 h-16 flex items-center shadow-lg">
+    <nav class="fixed top-0 w-full z-50 bg-gen-navy/80 backdrop-blur-xl border-b border-white/5 h-16 flex items-center shadow-2xl transition-all duration-300">
+
         <div class="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
             <!-- Icon/Logo -->
             <a href="#" class="flex items-center gap-2">
@@ -68,12 +116,13 @@
                 <a href="#genetics" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "GENETICS" %}</a>
                 <a href="#about" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "ABOUT" %}</a>
                 <a href="#methodology" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "METHODOLOGY" %}</a>
+                <a href="#gallery" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "GALLERY" %}</a>
                 <a href="#location" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "LOCATION" %}</a>
                 <a href="#contact" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "CONTACT" %}</a>
             </div>
 
             <!-- Portal Login -->
-            <a href="/auth/login/" class="px-5 py-2 border border-gen-green text-gen-green text-xs font-bold uppercase rounded hover:bg-gen-green hover:text-white transition-all">
+            <a href="/auth/login/" class="glass-shimmer px-6 py-2 border border-gen-green bg-gen-green text-white text-xs font-bold uppercase rounded hover:bg-green-800 transition-all shadow-[0_0_15px_rgba(46,89,54,0.3)] hover:shadow-[0_0_25px_rgba(46,89,54,0.6)]">
                 {% trans "Portal Login" %}
             </a>
         </div>
@@ -81,7 +130,8 @@
 
     <!-- Global Fixed Network Background -->
     <div class="fixed inset-0 z-0 pointer-events-none">
-        <canvas id="network-canvas" class="w-full h-full opacity-30"></canvas>
+        <canvas id="network-canvas" class="w-full h-full opacity-40"></canvas>
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-transparent opacity-80"></div>
     </div>
 
     <!-- Section B: Hero (First Impression) -->
@@ -96,7 +146,7 @@
              </div>
 
             <div class="space-y-4">
-                <h1 class="font-serif font-bold text-4xl md:text-6xl tracking-wide uppercase text-gen-navy drop-shadow-sm">
+                <h1 class="font-serif font-bold text-4xl md:text-6xl tracking-wide uppercase text-gen-navy drop-shadow-sm fade-in-section">
                     {% trans "Precision Genetics" %} <br>
                     <span class="text-gray-500 font-light block mt-2 text-2xl md:text-4xl">{% trans "in Rio Grande do Sul" %}</span>
                 </h1>
@@ -235,9 +285,14 @@
     <!-- Section C: About (Glossy Glass Card) -->
     <section id="about" class="py-24 relative z-10 pointer-events-none">
         <div class="max-w-7xl mx-auto px-6 pointer-events-auto">
+            <div class="text-center mb-16 rellax" data-rellax-speed="0">
+                <h2 class="font-serif text-3xl text-gen-navy inline-block px-8 py-2 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-[2px] border border-white/40 rounded-full shadow-lg">{% trans "The Cabanha" %}</h2>
+            </div>
             <!-- Glossy Glass Panel -->
             <!-- Micro-Blur Glass Panel: 2px Blur, Gradient Glare (30% -> 5%) -->
-            <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] rounded-3xl p-12 md:p-24 shadow-2xl border border-white/50 rellax" data-rellax-speed="0.5">
+            <div class="group bg-gradient-to-br from-white/5 to-transparent backdrop-blur-[6px] rounded-3xl p-12 md:p-24 shadow-2xl border border-white/20 rellax overflow-hidden relative glow-effect fade-in-section" data-rellax-speed="0.5">
+                <div class="noise-overlay"></div>
+
                 <div class="grid md:grid-cols-2 gap-16 items-center">
                     
                     <!-- Visual: Stylized Map -->
@@ -279,7 +334,8 @@
 
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Card 1 -->
-                <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-10 rounded-3xl hover:-translate-y-2 transition duration-300 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
+                <div class="group bg-gradient-to-br from-white/5 to-transparent backdrop-blur-[6px] p-10 rounded-3xl hover:-translate-y-2 transition duration-500 shadow-xl hover:shadow-2xl border border-white/20 rellax relative overflow-hidden glow-effect fade-in-section" data-rellax-speed="1.5">
+                    <div class="noise-overlay"></div>
                     <div class="text-gen-green mb-6">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                     </div>
@@ -290,7 +346,8 @@
                 </div>
 
                 <!-- Card 2 -->
-                <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-10 rounded-3xl hover:-translate-y-2 transition duration-300 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
+                <div class="group bg-gradient-to-br from-white/5 to-transparent backdrop-blur-[6px] p-10 rounded-3xl hover:-translate-y-2 transition duration-500 shadow-xl hover:shadow-2xl border border-white/20 rellax relative overflow-hidden glow-effect fade-in-section" style="transition-delay: 100ms;" data-rellax-speed="1.5">
+                    <div class="noise-overlay"></div>
                     <div class="text-gen-green mb-6">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                     </div>
@@ -301,7 +358,8 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-10 rounded-3xl hover:-translate-y-2 transition duration-300 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
+                <div class="group bg-gradient-to-br from-white/5 to-transparent backdrop-blur-[6px] p-10 rounded-3xl hover:-translate-y-2 transition duration-500 shadow-xl hover:shadow-2xl border border-white/20 rellax relative overflow-hidden glow-effect fade-in-section" style="transition-delay: 200ms;" data-rellax-speed="1.5">
+                    <div class="noise-overlay"></div>
                     <div class="text-gen-green mb-6">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                     </div>
@@ -316,7 +374,12 @@
 
     <!-- Section: Gallery Carousel -->
     {% if carousel_images %}
-    <section id="gallery" class="relative z-10 border-t border-white/5 bg-gen-navy/5">
+    <section id="gallery" class="relative z-10 border-t border-white/5">
+        <!-- Title Above Gallery -->
+        <div class="text-center py-12">
+            <h2 class="font-serif text-3xl text-gen-navy inline-block px-8 py-2 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-[2px] border border-white/40 rounded-full shadow-lg">{% trans "Our Production" %}</h2>
+        </div>
+
         <!-- Cinematic Container: Reduced height to 65vh (approx 600-700px on typical screens) -->
         <div class="relative w-full h-[65vh] md:h-[70vh] group overflow-hidden bg-neutral-900/90">
             
@@ -339,10 +402,7 @@
                 {% endfor %}
             </div>
 
-            <!-- Overlays (Title) -->
-            <div class="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none">
-                 <h2 class="font-serif text-2xl md:text-3xl text-white/90 inline-block px-8 py-2 border border-white/20 bg-black/20 rounded-full shadow-lg backdrop-blur-md tracking-wide">{% trans "Our Production" %}</h2>
-            </div>
+
 
              <!-- Navigation Buttons -->
              <button id="carousel-prev" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 text-white/50 hover:text-white transition-all p-2 rounded-full hover:bg-white/10" aria-label="{% trans 'Previous slide' %}">
@@ -433,7 +493,7 @@
                 const openLightbox = (index) => {
                     stopAutoPlay(); // Stop main
                     lightbox.classList.remove('hidden');
-                    void lightbox.offsetWidth;
+                    lightbox.offsetWidth; // Trigger reflow
                     lightbox.classList.remove('opacity-0');
                     
                     // Scroll to clicked image immediately (no smooth to snap instantly)
@@ -487,7 +547,10 @@
 
     <!-- Section E: Location (Physical Asset) -->
     <!-- Kept Full Width but clean -->
-    <section id="location" class="relative w-full h-[500px] border-t-4 border-gen-green group map-container z-20">
+    <section id="location" class="relative w-full h-[600px] mt-24 border-t-4 border-gen-green group map-container z-20">
+        
+
+
         <!-- Google Map Iframe -->
         <iframe 
             title="Cabanha Nelore do Vale Location Map"
@@ -515,11 +578,15 @@
     <!-- Section F: Contact (Glossy Glass Card) -->
     <section id="contact" class="py-24 relative z-10 pointer-events-none">
          <div class="max-w-2xl mx-auto px-6 pointer-events-auto">
-             <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] rounded-3xl p-12 text-center shadow-2xl border border-white/50 rellax" data-rellax-speed="0.5">
-                <h2 class="font-serif text-3xl text-gen-navy mb-8">{% trans "Invest in Verified Genetics." %}</h2>
+             <div class="text-center mb-16 rellax" data-rellax-speed="0">
+                <h2 class="font-serif text-3xl text-gen-navy inline-block px-8 py-2 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-[2px] border border-white/40 rounded-full shadow-lg">{% trans "Get in Touch" %}</h2>
+            </div>
+             <div class="group bg-gradient-to-br from-white/5 to-transparent backdrop-blur-[6px] rounded-3xl p-12 text-center shadow-2xl border border-white/20 rellax relative overflow-hidden glow-effect fade-in-section" data-rellax-speed="0.5">
+                <div class="noise-overlay"></div>
+                <h3 class="font-serif text-2xl text-gen-navy mb-8">{% trans "Invest in Verified Genetics." %}</h3>
                 
                 <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
-                    <a href="https://wa.me/5554999400033" class="w-full md:w-auto px-8 py-4 bg-gen-green text-white font-bold rounded shadow-lg hover:bg-green-800 transition flex items-center justify-center gap-2">
+                    <a href="https://wa.me/5554999400033" class="glass-shimmer w-full md:w-auto px-8 py-4 bg-gen-green text-white font-bold rounded shadow-[0_4px_14px_0_rgba(46,89,54,0.39)] hover:shadow-[0_6px_20px_rgba(46,89,54,0.23)] hover:bg-green-800 transition flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                         <span>{% trans "Speak with the Manager" %}</span>
                     </a>
@@ -579,9 +646,8 @@
     <script src="https://cdn.jsdelivr.net/gh/dixonandmoe/rellax@master/rellax.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-                // Initialize Rellax with "center: true" to ensure elements 
-                // are in their CSS-defined positions when in the middle of the viewport.
-                try {
+            // Initialize Rellax
+            try {
                 new Rellax('.rellax', {
                     center: true,
                     wrapper: null,
@@ -589,7 +655,28 @@
                     vertical: true,
                     horizontal: false
                 });
-                } catch(e) { console.log('Rellax skipped or failed'); }
+            } catch(e) { console.warn('Rellax skipped or failed', e); }
+
+            // Scroll Animations
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Only animate once
+                    }
+                });
+            }, observerOptions);
+
+            const sections = document.querySelectorAll('.fade-in-section');
+            sections.forEach(section => {
+                observer.observe(section);
+            });
         });
     </script>
 </body>
