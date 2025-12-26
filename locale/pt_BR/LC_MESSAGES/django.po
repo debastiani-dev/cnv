@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cabanha Nelore do Vale 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-25 17:00+0000\n"
-"PO-Revision-Date: 2025-12-25 17:01+0000\n"
+"POT-Creation-Date: 2025-12-26 18:34+0000\n"
+"PO-Revision-Date: 2025-12-26 18:35+0000\n"
 "Last-Translator:   <admin@example.com>\n"
 "Language-Team: Portuguese (Brazil) <pt_BR@li.org>\n"
 "Language: pt_BR\n"
@@ -980,6 +980,7 @@ msgstr "Estações de Monta"
 #: apps/base/templates/layouts/base_dashboard.html:459
 #: apps/commercial/templates/catalog/event_catalog.html:152
 #: apps/commercial/templates/catalog/event_catalog.html:197
+#: apps/website/templates/website/home.html:639
 msgid "Genetics"
 msgstr "Genética"
 
@@ -6413,40 +6414,45 @@ msgstr "Website"
 msgid "Cabanha Nelore do Vale | Genetic Precision"
 msgstr "Cabanha Nelore do Vale | Precisão Genética"
 
-#: apps/website/templates/website/home.html:75
-#: apps/website/templates/website/home.html:315
+#: apps/website/templates/website/home.html:116
+#: apps/website/templates/website/home.html:366
 msgid "GENETICS"
 msgstr "GENÉTICA"
 
-#: apps/website/templates/website/home.html:76
+#: apps/website/templates/website/home.html:117
 msgid "ABOUT"
 msgstr "SOBRE"
 
-#: apps/website/templates/website/home.html:77
+#: apps/website/templates/website/home.html:118
 msgid "METHODOLOGY"
 msgstr "METODOLOGIA"
 
-#: apps/website/templates/website/home.html:78
+#: apps/website/templates/website/home.html:119
+msgid "GALLERY"
+msgstr "GALERIA"
+
+#: apps/website/templates/website/home.html:120
 msgid "LOCATION"
 msgstr "LOCALIZAÇÃO"
 
-#: apps/website/templates/website/home.html:79
+#: apps/website/templates/website/home.html:121
 msgid "CONTACT"
 msgstr "CONTATO"
 
-#: apps/website/templates/website/home.html:84
+#: apps/website/templates/website/home.html:126
+#: apps/website/templates/website/home.html:643
 msgid "Portal Login"
 msgstr "Login do Portal"
 
-#: apps/website/templates/website/home.html:107
+#: apps/website/templates/website/home.html:150
 msgid "Precision Genetics"
 msgstr "Precisão Genética"
 
-#: apps/website/templates/website/home.html:108
+#: apps/website/templates/website/home.html:151
 msgid "in Rio Grande do Sul"
 msgstr "no Rio Grande do Sul"
 
-#: apps/website/templates/website/home.html:111
+#: apps/website/templates/website/home.html:154
 msgid ""
 "Merging structural integrity with proprietary data analysis to produce "
 "Nelore cattle adapted to the southern climate."
@@ -6454,15 +6460,19 @@ msgstr ""
 "Unindo integridade estrutural com análise de dados proprietária para "
 "produzir gado Nelore adaptado ao clima do sul."
 
-#: apps/website/templates/website/home.html:259
+#: apps/website/templates/website/home.html:289
+msgid "The Cabanha"
+msgstr "A Cabanha"
+
+#: apps/website/templates/website/home.html:307
 msgid "Region"
 msgstr "Região"
 
-#: apps/website/templates/website/home.html:267
+#: apps/website/templates/website/home.html:315
 msgid "ADAPTED PERFORMANCE"
 msgstr "DESEMPENHO ADAPTADO"
 
-#: apps/website/templates/website/home.html:269
+#: apps/website/templates/website/home.html:317
 msgid ""
 "The southern climate demands more. Our herd is subjected to rigorous "
 "selection pressure for <strong class=\"text-gen-green\">rusticity</strong>, "
@@ -6476,7 +6486,7 @@ msgstr ""
 "green\">taxas de conversão</strong> sob distintas flutuações de frio e "
 "calor."
 
-#: apps/website/templates/website/home.html:272
+#: apps/website/templates/website/home.html:320
 msgid ""
 "We define the Cabanha not just by the breed, but by the environment the "
 "breed conquers. This is Nelore genetics engineered for resilience."
@@ -6484,15 +6494,15 @@ msgstr ""
 "Definimos a Cabanha não apenas pela raça, mas pelo ambiente que a raça "
 "conquista. Esta é genética Nelore projetada para resiliência."
 
-#: apps/website/templates/website/home.html:284
+#: apps/website/templates/website/home.html:332
 msgid "The Precision Pillars"
 msgstr "Os Pilares da Precisão"
 
-#: apps/website/templates/website/home.html:293
+#: apps/website/templates/website/home.html:342
 msgid "TRACEABILITY"
 msgstr "RASTREABILIDADE"
 
-#: apps/website/templates/website/home.html:295
+#: apps/website/templates/website/home.html:344
 msgid ""
 "Every animal is tracked from birth. Complete genealogical history and "
 "sanitary control via the proprietary <a href=\"/auth/login/\" class=\"font-"
@@ -6504,11 +6514,11 @@ msgstr ""
 "bold text-gen-navy hover:text-gen-green transition-colors\">Sistema de "
 "Gestão CNV</a>."
 
-#: apps/website/templates/website/home.html:304
+#: apps/website/templates/website/home.html:354
 msgid "SELECTION"
 msgstr "SELEÇÃO"
 
-#: apps/website/templates/website/home.html:306
+#: apps/website/templates/website/home.html:356
 msgid ""
 "Rigorous culling based on real-world zootechnical indices: fertility, "
 "maternal ability, and weight gain."
@@ -6516,7 +6526,7 @@ msgstr ""
 "Descarte rigoroso baseado em índices zootécnicos do mundo real: fertilidade,"
 " habilidade materna e ganho de peso."
 
-#: apps/website/templates/website/home.html:317
+#: apps/website/templates/website/home.html:368
 msgid ""
 "Strategic mating to lower inbreeding coefficients and maximize heterosis in "
 "commercial herds."
@@ -6524,49 +6534,87 @@ msgstr ""
 "Acasalamento estratégico para reduzir coeficientes de endogamia e maximizar "
 "a heterose em rebanhos comerciais."
 
-#: apps/website/templates/website/home.html:351
-#| msgid "Reproduction"
+#: apps/website/templates/website/home.html:380
 msgid "Our Production"
 msgstr "Nossa Produção"
 
-#: apps/website/templates/website/home.html:355
-#| msgid "Previous"
+#: apps/website/templates/website/home.html:408
 msgid "Previous slide"
 msgstr "Slide anterior"
 
-#: apps/website/templates/website/home.html:358
+#: apps/website/templates/website/home.html:411
 msgid "Next slide"
 msgstr "Próximo slide"
 
-#: apps/website/templates/website/home.html:513
+#: apps/website/templates/website/home.html:554
+msgid "Our Headquarters"
+msgstr "Nossa Sede"
+
+#: apps/website/templates/website/home.html:574
 msgid "HEADQUARTERS"
 msgstr "SEDE"
 
-#: apps/website/templates/website/home.html:516
+#: apps/website/templates/website/home.html:577
 msgid "GPS Coordinates"
 msgstr "Coordenadas GPS"
 
-#: apps/website/templates/website/home.html:518
+#: apps/website/templates/website/home.html:579
 msgid "Open by Appointment"
 msgstr "Aberto com Hora Marcada"
 
-#: apps/website/templates/website/home.html:526
+#: apps/website/templates/website/home.html:587
+msgid "Get in Touch"
+msgstr "Entre em Contato"
+
+#: apps/website/templates/website/home.html:591
 msgid "Invest in Verified Genetics."
 msgstr "Invista em Genética Verificada."
 
-#: apps/website/templates/website/home.html:531
+#: apps/website/templates/website/home.html:596
 msgid "Speak with the Manager"
 msgstr "Fale com o Gerente"
 
-#: apps/website/templates/website/home.html:535
+#: apps/website/templates/website/home.html:600
 msgid "Follow on Instagram"
 msgstr "Siga no Instagram"
 
-#: apps/website/templates/website/home.html:546
+#: apps/website/templates/website/home.html:622
+msgid ""
+"Precision genetics adapted to the southern climate. Merging structural "
+"integrity with proprietary data analysis."
+msgstr ""
+"Genética de precisão adaptada ao clima do sul. Unindo integridade estrutural "
+"com análise de dados proprietária."
+
+#: apps/website/templates/website/home.html:637
+msgid "Explore"
+msgstr "Explorar"
+
+#: apps/website/templates/website/home.html:640
+msgid "About Us"
+msgstr "Sobre Nós"
+
+#: apps/website/templates/website/home.html:641
+msgid "Methodology"
+msgstr "Metodologia"
+
+#: apps/website/templates/website/home.html:642
+msgid "Gallery"
+msgstr "Galeria"
+
+#: apps/website/templates/website/home.html:649
+msgid "Visit Us"
+msgstr "Visite-nos"
+
+#: apps/website/templates/website/home.html:656
+msgid "Coordinates"
+msgstr "Coordenadas"
+
+#: apps/website/templates/website/home.html:669
 msgid "Cabanha Nelore do Vale. All Rights Reserved."
 msgstr "Cabanha Nelore do Vale. Todos os Direitos Reservados."
 
-#: apps/website/templates/website/home.html:550
+#: apps/website/templates/website/home.html:673
 msgid "System Architecture & Development by"
 msgstr "Arquitetura de Sistema e Desenvolvimento por"
 
