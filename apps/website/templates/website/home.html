@@ -68,6 +68,7 @@
                 <a href="#genetics" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "GENETICS" %}</a>
                 <a href="#about" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "ABOUT" %}</a>
                 <a href="#methodology" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "METHODOLOGY" %}</a>
+                <a href="#gallery" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "GALLERY" %}</a>
                 <a href="#location" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "LOCATION" %}</a>
                 <a href="#contact" class="hover:text-white hover:border-b border-gen-green transition-all pb-0.5">{% trans "CONTACT" %}</a>
             </div>
@@ -86,38 +87,31 @@
 
     <!-- Section B: Hero (First Impression) -->
     <header id="genetics" class="relative min-h-screen text-gen-navy flex flex-col justify-center items-center text-center px-4 overflow-hidden pointer-events-none">
-        <!-- Pointer events none on header wrapper to let mouse pass to canvas if needed, but we need interaction on logo? 
-             Actually canvas is behind z-0. Content is z-10. -->
         
-        <div class="relative z-10 max-w-4xl space-y-8 animate-fade-in-up rellax pointer-events-auto" data-rellax-speed="-5">
+        <div class="relative z-10 max-w-5xl space-y-12 animate-fade-in-up rellax pointer-events-auto" data-rellax-speed="-5">
              <!-- Full Logo Container - Transparent on white -->
              <div class="inline-block p-4">
-                <img src="{% static 'img/logo.png' %}" alt="Cabanha Nelore do Vale" class="h-60 md:h-96 w-auto object-contain">
+                <img src="{% static 'img/logo.png' %}" alt="Cabanha Nelore do Vale" class="h-64 md:h-[28rem] w-auto object-contain transition-transform duration-1000 hover:scale-[1.02]">
              </div>
 
-            <div class="space-y-4">
-                <h1 class="font-serif font-bold text-4xl md:text-6xl tracking-wide uppercase text-gen-navy drop-shadow-sm">
+            <div class="space-y-6">
+                <h1 class="font-serif font-bold text-5xl md:text-7xl tracking-widest uppercase text-gen-navy drop-shadow-sm leading-tight">
                     {% trans "Precision Genetics" %} <br>
-                    <span class="text-gray-500 font-light block mt-2 text-2xl md:text-4xl">{% trans "in Rio Grande do Sul" %}</span>
+                    <span class="text-gray-400 font-light block mt-4 text-3xl md:text-5xl tracking-normal">{% trans "in Rio Grande do Sul" %}</span>
                 </h1>
-                <p class="font-sans text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                <p class="font-sans text-xl text-gray-500 max-w-3xl mx-auto leading-relaxed font-light">
                     {% trans "Merging structural integrity with proprietary data analysis to produce Nelore cattle adapted to the southern climate." %}
                 </p>
             </div>
         </div>
 
         <!-- Scroll Indicator -->
-        <div class="absolute bottom-8 animate-bounce z-10 pointer-events-auto">
+        <div class="absolute bottom-12 animate-bounce z-10 pointer-events-auto opacity-50 hover:opacity-100 transition-opacity">
             <a href="#about" class="text-gen-green">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
             </a>
         </div>
     </header>
-
-    <!-- Parallax Script for Canvas is Below, but we moved Canvas up. 
-         Note: The script looks for 'network-canvas'. It will find it. 
-         We need to ensuring the script logic for 'mouse' works with fixed position. 
-         The script uses e.clientX/Y which is viewport relative suitable for fixed canvas. OK. -->
 
     <script>
         (function() {
@@ -233,36 +227,31 @@
     </script>
 
     <!-- Section C: About (Glossy Glass Card) -->
-    <section id="about" class="py-24 relative z-10 pointer-events-none">
+    <section id="about" class="py-32 relative z-10 pointer-events-none fade-in-section">
         <div class="max-w-7xl mx-auto px-6 pointer-events-auto">
-            <!-- Glossy Glass Panel -->
-            <!-- Micro-Blur Glass Panel: 2px Blur, Gradient Glare (30% -> 5%) -->
-            <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] rounded-3xl p-12 md:p-24 shadow-2xl border border-white/50 rellax" data-rellax-speed="0.5">
-                <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] rounded-[3rem] p-12 md:p-32 shadow-2xl border border-white/40 rellax" data-rellax-speed="0.5">
+                <div class="grid md:grid-cols-2 gap-20 items-center">
                     
                     <!-- Visual: Stylized Map -->
-                    <div class="relative h-96 w-full flex justify-center items-start pt-[88px] md:pt-12">
-                        <svg viewBox="0 0 300 300" class="w-full h-full text-gen-navy opacity-20 absolute top-0 left-0" >
+                    <div class="relative h-96 w-full flex justify-center items-start pt-[88px] md:pt-12 scale-110">
+                        <svg viewBox="0 0 300 300" class="w-full h-full text-gen-navy opacity-10 absolute top-0 left-0" >
                             <!-- High Fidelity RS Map: Uruguaiana (West), Jagger River (North), Lagoa dos Patos (East), Chui (South) -->
                             <!-- Python-Traced RS Map from Correct User Image -->
                             <path fill="currentColor" d="M143,33 146,33 149,34 152,34 155,34 158,34 161,34 164,33 167,33 170,35 173,36 176,36 179,36 182,37 185,37 188,37 191,37 194,38 197,40 199,43 202,44 205,45 208,46 211,47 214,49 217,50 220,53 223,55 226,58 228,61 230,64 231,67 233,70 236,73 239,75 242,76 245,76 248,77 251,77 254,77 257,78 260,78 262,80 261,83 258,86 256,89 255,92 255,95 254,98 253,101 256,103 259,104 262,105 260,108 258,111 256,114 255,117 253,120 252,123 250,126 249,129 248,132 247,135 245,138 244,141 243,144 241,147 239,150 238,153 236,156 234,159 232,162 230,165 227,168 224,171 222,174 219,176 216,178 213,181 210,183 207,185 204,187 201,188 198,190 196,193 194,193 194,190 194,187 194,184 197,184 200,184 202,183 205,182 208,179 210,176 213,175 216,172 217,169 218,166 218,163 220,161 223,161 225,158 225,155 228,154 231,152 233,149 232,146 232,143 232,140 234,138 236,141 237,138 236,135 233,136 230,137 228,139 225,141 223,139 223,136 220,135 218,133 217,130 215,133 217,136 220,138 220,141 217,144 215,147 214,150 212,153 211,156 211,159 211,162 208,163 207,165 206,168 203,168 200,169 198,171 197,174 195,177 193,179 190,182 190,185 191,188 189,191 192,194 192,197 189,199 187,202 185,205 185,208 184,211 183,214 182,217 181,220 180,223 178,226 176,229 174,232 171,235 168,238 165,241 162,243 159,246 156,248 154,246 152,243 153,240 155,237 154,234 154,231 155,228 157,225 160,225 162,222 162,219 164,216 167,215 169,217 172,220 175,217 176,214 177,211 178,208 177,205 176,202 176,199 174,198 174,201 174,204 171,205 169,208 166,211 163,211 160,210 157,209 154,207 151,205 150,202 149,199 147,196 145,193 142,190 139,189 136,187 133,185 130,182 127,179 125,176 122,174 119,173 116,172 113,170 110,169 107,167 104,165 102,162 100,159 98,156 95,154 93,157 90,159 87,160 84,161 83,159 84,156 83,153 81,150 78,147 75,144 72,141 69,138 66,135 63,133 60,130 57,130 54,130 52,132 51,135 48,136 45,136 42,136 39,136 37,133 40,132 42,129 45,126 46,123 47,120 50,119 53,117 55,114 58,111 60,108 62,105 64,102 66,99 68,96 71,93 74,90 75,87 78,84 80,81 82,78 84,75 87,74 90,74 91,72 88,70 90,68 93,66 96,65 99,62 101,59 104,57 107,55 110,54 113,52 114,49 117,46 120,44 123,43 126,43 129,42 132,41 134,38 137,37 140,35 143,33 Z" />
                         </svg>
                         <div class="z-10 text-center ml-12 md:ml-20">
-                            <div class="mb-4 w-2 h-2 bg-gen-green rounded-full mx-auto shadow-[0_0_0_8px_rgba(46,89,54,0.1)]"></div>
-                            <p class="text-sm font-sans text-gen-navy/40 font-bold uppercase tracking-widest mb-2">{% trans "Region" %}</p>
-                            <h3 class="font-display text-4xl text-gen-navy/30 font-bold uppercase">Alto Uruguai</h3>
+                            <div class="mb-6 w-3 h-3 bg-gen-green rounded-full mx-auto shadow-[0_0_0_12px_rgba(46,89,54,0.1)] animate-pulse"></div>
+                            <p class="text-xs font-sans text-gen-navy/40 font-bold uppercase tracking-[0.3em] mb-3">{% trans "Region" %}</p>
+                            <h3 class="font-display text-5xl text-gen-navy/20 font-bold uppercase tracking-widest">Alto Uruguai</h3>
                         </div>
                     </div>
 
                     <!-- Narrative -->
-                    <div class="space-y-6">
-                        <div class="w-12 h-1 bg-gen-green"></div>
-                        <h2 class="font-serif text-4xl text-gen-navy font-bold">{% trans "ADAPTED PERFORMANCE" %}</h2>
-                        <p class="text-gen-navy/90 leading-relaxed text-lg font-medium">
-                            {% blocktrans %}The southern climate demands more. Our herd is subjected to rigorous selection pressure for <strong class="text-gen-green">rusticity</strong>, <strong class="text-gen-green">fertility</strong>, and <strong class="text-gen-green">conversion rates</strong> under distinct fluctuations of cold and heat.{% endblocktrans %}
-                        </p>
-                        <p class="text-gen-navy/90 leading-relaxed text-lg font-medium">
-                            {% trans "We define the Cabanha not just by the breed, but by the environment the breed conquers. This is Nelore genetics engineered for resilience." %}
+                    <div class="space-y-10">
+                        <div class="w-20 h-0.5 bg-gen-green/50"></div>
+                        <h2 class="font-serif text-5xl md:text-6xl text-gen-navy font-bold leading-tight">{% trans "ADAPTED PERFORMANCE" %}</h2>
+                        <p class="text-gen-navy/80 leading-loose text-xl font-light">
+                            {% blocktrans %}The southern climate demands more. Our herd is subjected to rigorous selection pressure for <strong class="text-gen-green font-semibold">rusticity</strong>, <strong class="text-gen-green font-semibold">fertility</strong>, and <strong class="text-gen-green font-semibold">conversion rates</strong> under distinct fluctuations of cold and heat.{% endblocktrans %}
                         </p>
                     </div>
                 </div>
@@ -271,52 +260,53 @@
     </section>
 
     <!-- Section D: Methodology (Floating Glossy Nodes) -->
-    <section id="methodology" class="py-24 relative z-10 w-full"> <!-- Removed section bg -->
+    <section id="methodology" class="py-32 relative z-10 w-full fade-in-section">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 rellax" data-rellax-speed="0">
-                <h2 class="font-serif text-3xl text-gen-navy inline-block px-8 py-2 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-[2px] border border-white/40 rounded-full shadow-lg">{% trans "The Precision Pillars" %}</h2>
+            <div class="text-center mb-24 rellax" data-rellax-speed="0">
+                <h2 class="font-serif text-4xl text-gen-navy inline-block px-12 py-4 bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-md border border-white/60 rounded-full shadow-lg tracking-wide">{% trans "The Precision Pillars" %}</h2>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-3 gap-10">
+                <!-- Cards with updated padding/styles -->
                 <!-- Card 1 -->
-                <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-10 rounded-3xl hover:-translate-y-2 transition duration-300 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
-                    <div class="text-gen-green mb-6">
+                <div class="group bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-12 rounded-[2.5rem] hover:-translate-y-3 hover:border-white/80 hover:shadow-[0_20px_60px_rgba(46,89,54,0.15)] transition-all duration-500 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
+                    <div class="text-gen-green mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:text-gen-green/80">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
                     </div>
-                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">{% trans "TRACEABILITY" %}</h3>
-                    <p class="text-gen-navy/90 text-sm leading-relaxed font-semibold">
+                    <h3 class="font-display text-2xl text-gen-navy mb-4 tracking-widest font-bold">{% trans "TRACEABILITY" %}</h3>
+                    <p class="text-gen-navy/70 text-base leading-loose font-medium">
                         {% blocktrans %}Every animal is tracked from birth. Complete genealogical history and sanitary control via the proprietary <a href="/auth/login/" class="font-bold text-gen-navy hover:text-gen-green transition-colors">CNV Management System</a>.{% endblocktrans %}
                     </p>
                 </div>
 
                 <!-- Card 2 -->
-                <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-10 rounded-3xl hover:-translate-y-2 transition duration-300 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
-                    <div class="text-gen-green mb-6">
+                <div class="group bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-12 rounded-[2.5rem] hover:-translate-y-3 hover:border-white/80 hover:shadow-[0_20px_60px_rgba(46,89,54,0.15)] transition-all duration-500 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
+                    <div class="text-gen-green mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:text-gen-green/80">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                     </div>
-                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">{% trans "SELECTION" %}</h3>
-                    <p class="text-gen-navy/90 text-sm leading-relaxed font-semibold">
+                    <h3 class="font-display text-2xl text-gen-navy mb-4 tracking-widest font-bold">{% trans "SELECTION" %}</h3>
+                    <p class="text-gen-navy/70 text-base leading-loose font-medium">
                         {% trans "Rigorous culling based on real-world zootechnical indices: fertility, maternal ability, and weight gain." %}
                     </p>
                 </div>
 
                 <!-- Card 3 -->
-                <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-10 rounded-3xl hover:-translate-y-2 transition duration-300 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
-                    <div class="text-gen-green mb-6">
+                <div class="group bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] p-12 rounded-[2.5rem] hover:-translate-y-3 hover:border-white/80 hover:shadow-[0_20px_60px_rgba(46,89,54,0.15)] transition-all duration-500 shadow-xl border border-white/50 rellax" data-rellax-speed="1.5">
+                    <div class="text-gen-green mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:text-gen-green/80">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                     </div>
-                    <h3 class="font-display text-xl text-gen-navy mb-3 tracking-wide">{% trans "GENETICS" %}</h3>
-                    <p class="text-gen-navy/90 text-sm leading-relaxed font-semibold">
+                    <h3 class="font-display text-2xl text-gen-navy mb-4 tracking-widest font-bold">{% trans "GENETICS" %}</h3>
+                    <p class="text-gen-navy/70 text-base leading-loose font-medium">
                         {% trans "Strategic mating to lower inbreeding coefficients and maximize heterosis in commercial herds." %}
                     </p>
                 </div>
             </div>
         </div>
     </section>
-
+    
     <!-- Section: Gallery Carousel -->
     {% if carousel_images %}
-    <section id="gallery" class="relative z-10 border-t border-white/5 bg-gen-navy/5">
+    <section id="gallery" class="relative z-10 border-t border-white/5 bg-gen-navy/5 fade-in-section">
         <!-- Cinematic Container: Reduced height to 65vh (approx 600-700px on typical screens) -->
         <div class="relative w-full h-[65vh] md:h-[70vh] group overflow-hidden bg-neutral-900/90">
             
@@ -353,7 +343,7 @@
             </button>
         </div>
 
-        </div>
+
 
         <script>
             document.addEventListener('DOMContentLoaded', () => {
@@ -487,7 +477,7 @@
 
     <!-- Section E: Location (Physical Asset) -->
     <!-- Kept Full Width but clean -->
-    <section id="location" class="relative w-full h-[500px] border-t-4 border-gen-green group map-container z-20">
+    <section id="location" class="relative w-full h-[500px] border-t-4 border-gen-green group map-container z-20 fade-in-section">
         <!-- Google Map Iframe -->
         <iframe 
             title="Cabanha Nelore do Vale Location Map"
@@ -513,27 +503,26 @@
     </section>
 
     <!-- Section F: Contact (Glossy Glass Card) -->
-    <section id="contact" class="py-24 relative z-10 pointer-events-none">
+    <section id="contact" class="py-24 relative z-10 pointer-events-none fade-in-section">
          <div class="max-w-2xl mx-auto px-6 pointer-events-auto">
              <div class="bg-gradient-to-br from-white/30 to-white/5 backdrop-blur-[2px] rounded-3xl p-12 text-center shadow-2xl border border-white/50 rellax" data-rellax-speed="0.5">
                 <h2 class="font-serif text-3xl text-gen-navy mb-8">{% trans "Invest in Verified Genetics." %}</h2>
                 
-                <div class="flex flex-col md:flex-row gap-4 justify-center items-center">
-                    <a href="https://wa.me/5554999400033" class="w-full md:w-auto px-8 py-4 bg-gen-green text-white font-bold rounded shadow-lg hover:bg-green-800 transition flex items-center justify-center gap-2">
+                <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+                    <a href="https://wa.me/5554999400033" class="w-full md:w-auto px-8 py-4 bg-gen-green text-white font-bold rounded shadow-lg hover:bg-green-800 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                         <span>{% trans "Speak with the Manager" %}</span>
                     </a>
-                    <a href="https://www.instagram.com/cabanhaneloredovale/" class="w-full md:w-auto px-8 py-4 border border-gen-navy/20 text-gen-navy font-bold rounded hover:bg-gen-navy/5 transition flex items-center justify-center gap-2">
+                    <a href="https://www.instagram.com/cabanhaneloredovale/" class="w-full md:w-auto px-8 py-4 border border-gen-navy/20 text-gen-navy font-bold rounded hover:bg-gen-navy/5 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.069-4.85.069-3.204 0-3.584-.012-4.849-.069-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.949 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                         <span>{% trans "Follow on Instagram" %}</span>
                     </a>
                 </div>
-             </div>
-         </div>
+            </div>
+        </div>
     </section>
-
     <!-- Section: Footer -->
-    <footer class="bg-black text-white py-12 border-t border-white/5">
+    <footer class="bg-black text-white py-12 border-t border-white/5 fade-in-section">
         <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-sans gap-4">
             <div>
                 &copy; 2025 {% trans "Cabanha Nelore do Vale. All Rights Reserved." %}
@@ -590,6 +579,27 @@
                     horizontal: false
                 });
                 } catch(e) { console.log('Rellax skipped or failed'); }
+
+                // --- Scroll Animations ---
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '0px',
+                    threshold: 0.1
+                };
+
+                const scrollObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target); // Animate only once
+                        }
+                    });
+                }, observerOptions);
+
+                const sections = document.querySelectorAll('.fade-in-section');
+                sections.forEach(section => {
+                    scrollObserver.observe(section);
+                });
         });
     </script>
 </body>

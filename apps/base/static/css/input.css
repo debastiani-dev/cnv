@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    .fade-in-section {
+        @apply opacity-0 translate-y-10 transition-all duration-1000 ease-out !important;
+        will-change: opacity, transform;
+    }
+
+    .is-visible {
+        @apply opacity-100 translate-y-0 !important;
+    }
+}
